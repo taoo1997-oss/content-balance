@@ -110,17 +110,21 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .donut-wrap{position:relative;width:min(100%,400px);aspect-ratio:1}
 .donut{width:100%;height:100%;display:block;overflow:visible}
 .donut .seg{transition:transform .28s cubic-bezier(.2,.8,.2,1),opacity .3s;transform-box:view-box;transform-origin:center;cursor:pointer}
-.donut .seg.ghost{cursor:default}
 .donut .seg.hover{transform:translate(var(--dx),var(--dy))}
 .donut .seg.dim{opacity:.55}
+/* пустой сегмент — «слот» направления: бледный, но живой и кликабельный */
+.donut .seg.empty{opacity:.3}
+.donut .seg.empty.dim{opacity:.2}
+.donut .seg.empty.hover{opacity:.55}
 .donut .lab{pointer-events:none;fill:#fff;text-anchor:middle;font-family:var(--font)}
 .donut .lab .n{font-size:13px;font-weight:600;opacity:.92}
 .donut .lab .p{font-size:24px;font-weight:800;letter-spacing:-.02em}
 .donut .lab .c{font-size:11px;font-weight:500;opacity:.85}
 .donut .lab.sm .p{font-size:16px}
 .donut .lab.sm .n{font-size:11px}
-.donut .lab.ghost{fill:var(--ink-3)}
-.donut .lab.ghost .p{opacity:.8}
+.donut .lab.empty{fill:var(--ink-2)}
+.donut .lab.empty .n{font-size:11px;opacity:.8}
+.donut .lab.empty .p{font-size:11px;font-weight:600;opacity:.7;letter-spacing:0}
 .center{position:absolute;inset:0;display:grid;place-items:center;text-align:center;pointer-events:none}
 .center .big{font-size:38px;font-weight:800;letter-spacing:-.03em;line-height:1}
 .center .sub{color:var(--ink-3);font-size:13px;margin-top:6px;font-weight:600;letter-spacing:0}
@@ -171,6 +175,47 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .tip{margin-top:12px;padding:10px 12px;border-radius:10px;background:var(--surface-2);font-size:13px;color:var(--ink-2);display:flex;gap:8px;align-items:flex-start}
 .tip .ic{flex:none;font-size:15px}
 .tip b{color:var(--ink);font-weight:700}
+
+/* ---------- анализ снятого ---------- */
+.home .an-card{margin-top:22px;flex:none}
+.an-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.an-head h3{margin:0}
+.an-head .filters{margin:0}
+.an-sum{display:flex;align-items:center;gap:18px;margin-top:14px;flex-wrap:wrap}
+.an-sum .big{font-size:34px;font-weight:800;letter-spacing:-.03em;line-height:1}
+.an-sum .big small{font-size:13px;color:var(--ink-3);font-weight:600;margin-left:6px;letter-spacing:0}
+.an-sum .bar{flex:1;min-width:200px;margin:0}
+.an-verdict{margin-top:12px;padding:12px 14px;border-radius:12px;background:var(--surface-2);font-size:14px;color:var(--ink-2);display:flex;gap:10px;align-items:flex-start;line-height:1.4}
+.an-verdict .ic{flex:none;font-size:16px}
+.an-verdict b{color:var(--ink);font-weight:700}
+.an-cols{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:16px}
+@media (max-width:760px){.an-cols{grid-template-columns:1fr}}
+.an-col{display:flex;flex-direction:column;gap:6px;min-width:0}
+.an-col .an-cat{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px;margin-bottom:4px}
+.an-col .an-cat .dot{width:10px;height:10px;border-radius:3px}
+.an-col .an-cat .cnt{margin-left:auto;color:var(--ink-3);font-weight:600;font-size:13px}
+.an-col .an-cat .cnt b{color:var(--ink)}
+.an-row{display:grid;grid-template-columns:minmax(0,1fr) 34px;gap:8px 12px;align-items:center;padding:8px 10px;border-radius:10px;background:var(--surface-2);border:1px solid transparent;cursor:pointer;transition:border-color .2s,background .2s}
+.an-row:hover{border-color:var(--line-2);background:var(--surface-3)}
+.an-row .nm{font-weight:600;font-size:13px;display:flex;align-items:center;gap:8px;min-width:0}
+.an-row .nm span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.an-row .tag{font-size:11px;font-weight:700;padding:2px 7px;border-radius:99px;background:var(--surface);color:var(--ink-3);flex:none;letter-spacing:.02em}
+.an-row .tag.low{color:var(--warn)}
+.an-row .tag.zero{color:var(--personal)}
+.an-row .tag.hi{color:var(--good)}
+.an-row .n{text-align:right;font-weight:800;font-size:15px}
+.an-row .track{grid-column:1/-1;height:6px;border-radius:3px;background:var(--surface);overflow:hidden;position:relative}
+.an-row .track i{display:block;height:100%;border-radius:3px;transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.an-row .track .avg{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--ink-3);opacity:.9}
+.an-next{margin-top:16px}
+.an-next h4{margin:0 0 8px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-3);font-weight:700}
+.an-seq{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.an-seq .step{display:inline-flex;align-items:center;gap:8px;padding:8px 12px 8px 8px;border-radius:12px;background:var(--surface-2);border:1px solid var(--line);font-size:13px;font-weight:600;color:var(--ink);transition:border-color .2s,transform .15s;cursor:pointer}
+.an-seq .step:hover{border-color:var(--line-2);transform:translateY(-1px)}
+.an-seq .step .num{width:22px;height:22px;border-radius:7px;display:grid;place-items:center;color:#fff;font-size:12px;font-weight:800;flex:none}
+.an-seq .step small{color:var(--ink-3);font-weight:600}
+.an-seq .arr{color:var(--ink-3);font-size:14px}
+.an-foot{margin-top:12px;font-size:12px;color:var(--ink-3)}
 
 /* ---------- inner views ---------- */
 .view-head{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
@@ -455,7 +500,7 @@ function hideTip() { tt.classList.remove('show'); }
 /* ===================================================================
    Кольцевая диаграмма с анимацией
    =================================================================== */
-function Donut({ size = 360, outer = 172, inner = 96, labelMin = .07, small = false, onClick, onHover } = {}) {
+function Donut({ size = 360, outer = 172, inner = 96, labelMin = .07, emptySlot = .07, small = false, onClick, onHover } = {}) {
   const svg = s('svg', { viewBox: `0 0 ${size} ${size}`, class: 'donut' });
   const gSeg = s('g'), gLab = s('g');
   svg.append(gSeg, gLab);
@@ -480,7 +525,7 @@ function Donut({ size = 360, outer = 172, inner = 96, labelMin = .07, small = fa
     const dx = Math.cos(rad(mid)) * 7, dy = Math.sin(rad(mid)) * 7;
     n.path.style.setProperty('--dx', dx.toFixed(1) + 'px');
     n.path.style.setProperty('--dy', dy.toFixed(1) + 'px');
-    const show = share >= labelMin;
+    const show = share >= (n.data && n.data.empty ? Math.min(labelMin, .04) : labelMin);
     n.lab.style.opacity = show ? 1 : 0;
     if (show) {
       const r = (outer + inner) / 2;
@@ -489,12 +534,17 @@ function Donut({ size = 360, outer = 172, inner = 96, labelMin = .07, small = fa
   }
   function update(segments, { animate = true } = {}) {
     const total = segments.reduce((a, x) => a + x.value, 0);
-    const ghost = total === 0;
-    const list = ghost ? segments.map(x => ({ ...x, value: 1 })) : segments.filter(x => x.value > 0);
-    const T = list.reduce((a, x) => a + x.value, 0);
-    const pct = shares(list.map(x => x.value));
+    const pct = shares(segments.map(x => x.value));
+    // пустые сегменты не прячем: каждому — узкий «слот», чтобы были видны свободные направления.
+    // Слоты вместе занимают не больше 40% кольца; если пусто всё — делим поровну.
+    const empties = segments.filter(x => !x.value).length;
+    const slot = total ? Math.min(emptySlot, .4 / empties) : 1 / segments.length;
+    const restFrac = 1 - (total ? slot * empties : 0);
     let a = -90;
-    const targets = list.map((x, i) => { const sw = x.value / T * 360; const t = { ...x, tStart: a, tEnd: a + sw, pct: pct[i], ghost }; a += sw; return t; });
+    const targets = segments.map((x, i) => {
+      const empty = !x.value, sw = (empty ? slot : x.value / total * restFrac) * 360;
+      const t = { ...x, tStart: a, tEnd: a + sw, pct: pct[i], empty }; a += sw; return t;
+    });
     // удалить ушедшие
     for (const [k, n] of nodes) if (!targets.find(t => t.key === k)) { n.path.remove(); n.lab.remove(); nodes.delete(k); }
     // создать новые / обновить данные
@@ -514,13 +564,12 @@ function Donut({ size = 360, outer = 172, inner = 96, labelMin = .07, small = fa
       gSeg.append(n.path); gLab.append(n.lab);
       n.data = t;
       n.path.setAttribute('fill', t.color);
-      n.path.classList.toggle('ghost', ghost);
-      n.path.style.opacity = ghost ? .28 : 1;
-      n.lab.classList.toggle('ghost', ghost);
+      n.path.classList.toggle('empty', t.empty);
+      n.lab.classList.toggle('empty', t.empty);
       n.tn.textContent = t.label;
-      n.tp.textContent = t.pct + '%';
-      n.path.style.strokeWidth = (!ghost && t.tEnd - t.tStart >= 359.9) ? '0' : '2';
-      n.tc.textContent = ghost || small ? '' : (t.sub || pIdeas(t.value));
+      n.tp.textContent = t.empty ? 'пусто' : t.pct + '%';
+      n.path.style.strokeWidth = t.tEnd - t.tStart >= 359.9 ? '0' : '2';
+      n.tc.textContent = t.empty || small ? '' : (t.sub || pIdeas(t.value));
       n.fromStart = n.start; n.fromEnd = n.end;
     });
     if (raf) cancelAnimationFrame(raf);
@@ -542,7 +591,7 @@ function Donut({ size = 360, outer = 172, inner = 96, labelMin = .07, small = fa
   let hoverKey = null;
   svg.addEventListener('pointermove', e => {
     const p = e.target.closest ? e.target.closest('.seg') : null;
-    const key = p && !p.classList.contains('ghost') ? p.dataset.key : null;
+    const key = p ? p.dataset.key : null;
     if (key !== hoverKey) {
       hoverKey = key;
       for (const [k, n] of nodes) { n.path.classList.toggle('hover', k === key); n.path.classList.toggle('dim', key && k !== key); }
@@ -552,7 +601,7 @@ function Donut({ size = 360, outer = 172, inner = 96, labelMin = .07, small = fa
   svg.addEventListener('pointerleave', () => { hoverKey = null; for (const n of nodes.values()) { n.path.classList.remove('hover', 'dim'); } hideTip(); });
   svg.addEventListener('click', e => {
     const p = e.target.closest ? e.target.closest('.seg') : null;
-    if (!p || p.classList.contains('ghost')) return;
+    if (!p) return;
     onClick && onClick(nodes.get(p.dataset.key).data, e, p);
   });
   const segEl = key => nodes.get(key)?.path;
@@ -631,7 +680,7 @@ function HomeView() {
     onClick: (seg, e, path) => { const o = originFromEl(path); if (o) setOrigin(o.x, o.y); go({ level: 'cat', catId: seg.key }, { dir: 'in', origin: o }); },
     onHover: (seg, e) => {
       const c = cat(seg.key), all = ideasIn(c.id), dn = all.filter(i => i.done).length;
-      showTip(`${c.name} · ${seg.pct}%<small>${pIdeas(all.length)} · снято ${dn} · открыть →</small>`, e.clientX, e.clientY);
+      showTip(`${c.name} · ${seg.pct}%<small>${all.length ? `${pIdeas(all.length)} · снято ${dn}` : 'пока пусто'} · открыть →</small>`, e.clientX, e.clientY);
     }
   });
   const center = h('div.center', {}, h('div', {}, h('div.big', { id: 'cTotal' }), h('div.sub', { id: 'cSub' })));
@@ -641,7 +690,7 @@ function HomeView() {
     h('div.add-row', {},
       h('button.add-btn.personal', { onclick: e => openAddSheet(P.id, null, e) }, h('span.plus', {}, '+'), 'добавить личное'),
       h('button.add-btn.expert', { onclick: e => openAddSheet(E.id, null, e) }, h('span.plus', {}, '+'), 'добавить экспертное')),
-    h('p.hint', {}, 'Нажми на сегмент, чтобы открыть подтемы. Размер сегмента — доля идей и роликов в этой линии.'));
+    h('p.hint', {}, 'Нажми на сегмент, чтобы открыть подтемы. Размер сегмента — доля идей и роликов в этой линии; бледные сегменты пустые, но тоже открываются.'));
 
   /* --- план на месяц --- */
   const ringBar = s('circle', { class: 'bar', cx: 48, cy: 48, r: 40 });
@@ -664,9 +713,11 @@ function HomeView() {
   const balCard = h('div.card', {}, h('h3', {}, 'Снято · баланс реализованного'),
     h('div.bal-nums', {}, balBig), balBar, balLegend, balTip);
 
-  el.append(h('div.grid', {}, chart, h('div.side', {}, planCard, balCard)));
+  const analysis = AnalysisCard();
+  el.append(h('div.grid', {}, chart, h('div.side', {}, planCard, balCard)), analysis.el);
 
   function update() {
+    analysis.update();
     const ideasP = ideasIn(P.id), ideasE = ideasIn(E.id);
     const total = ideasP.length + ideasE.length;
     // по часовой от верха: сначала экспертное (правая половина), затем личное (левая) — как кнопки под кольцом
@@ -738,6 +789,116 @@ function HomeView() {
 }
 
 /* ===================================================================
+   Анализ снятого — только реализованные ролики, чисто количественно
+   =================================================================== */
+const AN_PERIODS = [[30, '30 дней'], [90, '90 дней'], [0, 'всё время']];
+const fmtNum = v => Number.isInteger(v) ? String(v) : v.toFixed(1).replace('.', ',');
+/* какого контента не хватает: считаем по снятым (done) роликам за период */
+function analyze(days) {
+  const since = days ? Date.now() - days * 864e5 : 0;
+  const done = state.ideas.filter(i => i.done && (i.doneAt || i.createdAt || 0) >= since);
+  const D = done.length, nc = state.categories.length || 1;
+  const cats = state.categories.map(c => {
+    const n = done.filter(i => i.catId === c.id).length;
+    const subs = c.subtopics.map(sb => ({
+      cat: c, sub: sb, color: subColor(c, sb),
+      done: done.filter(i => i.subId === sb.id).length,
+      queue: ideasIn(c.id, sb.id).filter(i => !i.done).length
+    }));
+    const avg = subs.length ? n / subs.length : 0;
+    // ярлыки «мало/много» имеют смысл, когда в линии уже есть хоть какая-то выборка
+    const judge = subs.length > 1 && n >= 3;
+    return { cat: c, done: n, expected: D / nc, subs, avg, judge };
+  });
+  // «что снимать дальше»: жадно — сначала линия, где снято меньше, внутри неё подтема, где снято меньше всего
+  const sim = cats.map(c => ({ done: c.done, subs: c.subs.map(x => ({ x, done: x.done })) }));
+  const next = [];
+  for (let k = 0; k < 5; k++) {
+    const pool = sim.filter(c => c.subs.length);
+    if (!pool.length) break;
+    pool.sort((a, b) => a.done - b.done || b.subs.length - a.subs.length);
+    const c = pool[0];
+    c.subs.sort((a, b) => a.done - b.done || b.x.queue - a.x.queue);
+    const sb = c.subs[0];
+    next.push(sb.x); c.done++; sb.done++;
+  }
+  return { D, cats, next };
+}
+function AnalysisCard() {
+  const filters = h('div.filters');
+  const sumBig = h('div.big'), sumBar = h('div.bar'), legend = h('div.legend'), verdict = h('div.an-verdict');
+  const cols = h('div.an-cols'), seq = h('div.an-seq');
+  const nextBox = h('div.an-next', {}, h('h4', {}, 'Что снимать дальше, чтобы выровнять баланс'), seq);
+  const el = h('div.card.an-card', {},
+    h('div.an-head', {}, h('h3', {}, 'Анализ снятого · только реализованное'), filters),
+    h('div.an-sum', {}, sumBig, sumBar), legend, verdict, cols, nextBox,
+    h('p.an-foot', {}, 'Считаются только ролики с галочкой «снято» — планы и очередь не учитываются. Ориентир: линии 50/50, внутри линии — подтемы поровну. Штрих на полоске — среднее по линии.'));
+  const openSub = (x, e) => go({ level: 'sub', catId: x.cat.id, subId: x.sub.id }, { dir: 'in', origin: originFromEl(e.currentTarget) });
+  function update() {
+    const period = state.analysisPeriod ?? 0;
+    filters.innerHTML = '';
+    for (const [d, lbl] of AN_PERIODS) filters.append(h('button', { class: period === d ? 'on' : '', onclick: () => { state.analysisPeriod = d; commit(); } }, lbl));
+    const { D, cats, next } = analyze(period);
+    const periodTxt = period ? `за ${period} дней` : 'за всё время';
+    sumBig.innerHTML = `${D}<small>${plural(D, 'ролик снят', 'ролика снято', 'роликов снято')} ${periodTxt}</small>`;
+    const pct = shares(cats.map(c => c.done));
+    sumBar.innerHTML = ''; legend.innerHTML = ''; cols.innerHTML = ''; seq.innerHTML = ''; verdict.innerHTML = '';
+    cats.forEach((c, i) => {
+      if (D) sumBar.append(h('i', { style: `width:${pct[i]}%;background:${c.cat.color}` }));
+      legend.append(h('div.it', {}, h('span.dot', { style: `background:${c.cat.color}` }), `${c.cat.name} `, h('b', {}, D ? `${c.done} · ${pct[i]}%` : '0')));
+    });
+    nextBox.hidden = !D;
+    if (!D) {
+      verdict.append(h('span.ic', {}, '📊'), h('span', {}, `Снятых роликов ${periodTxt} нет. Отметь галочкой то, что уже вышло, — анализ считает только реализованное, а не планы.`));
+      return;
+    }
+    // вердикт: какой линии и каких подтем не хватает
+    const sorted = [...cats].sort((x, y) => x.done - y.done);
+    const lag = sorted[0], lead = sorted[sorted.length - 1], diff = lead.done - lag.done;
+    const zeroSubs = cats.flatMap(c => c.subs).filter(x => !x.done);
+    const weak = cats.flatMap(c => c.subs.filter(x => x.done && c.judge && x.done < c.avg - .34));
+    const parts = [];
+    if (diff === 0) parts.push(h('span', {}, 'Линии в балансе ', h('b', {}, '50/50'), '. '));
+    else parts.push(h('span', {}, 'Не хватает линии ', h('b', { style: `color:${lag.cat.color}` }, `«${lag.cat.name}»`), `: отстаёт на ${pVideos(diff)}. `));
+    if (zeroSubs.length) parts.push(h('span', {}, 'Ни разу не снято: ', h('b', {}, zeroSubs.map(x => x.sub.name).join(', ')), '. '));
+    else parts.push('Каждая подтема закрыта хотя бы раз. ');
+    if (weak.length) parts.push(h('span', {}, 'Ниже среднего по своей линии: ', h('b', {}, weak.map(x => x.sub.name).join(', ')), '.'));
+    verdict.append(h('span.ic', {}, diff === 0 && !zeroSubs.length && !weak.length ? '⚖️' : '🎯'), h('span', {}, parts));
+    // колонки по линиям: подтемы от самой редкой к самой частой
+    for (const c of cats) {
+      const col = h('div.an-col', {}, h('div.an-cat', {}, h('span.dot', { style: `background:${c.cat.color}` }), c.cat.name,
+        h('span.cnt', {}, h('b', {}, c.done), ` из ${D} · норма ${fmtNum(c.expected)}`)));
+      if (!c.subs.length) col.append(h('div.empty', { style: 'padding:14px' }, 'Подтем нет'));
+      const scale = Math.max(1, ...c.subs.map(x => x.done), Math.ceil(c.avg));
+      for (const x of [...c.subs].sort((p, q) => p.done - q.done)) {
+        let tag = null;
+        if (!x.done) tag = h('span.tag.zero', {}, 'ни разу');
+        else if (c.judge && x.done < c.avg - .34) tag = h('span.tag.low', {}, 'мало');
+        else if (c.judge && x.done > c.avg + .34) tag = h('span.tag.hi', {}, 'много');
+        col.append(h('div.an-row', { title: `Открыть «${x.sub.name}» · в очереди ${pIdeas(x.queue)}`, onclick: e => openSub(x, e) },
+          h('span.nm', {}, h('span', {}, x.sub.name), tag),
+          h('span.n', {}, x.done),
+          h('span.track', {}, h('i', { style: `width:${x.done / scale * 100}%;background:${x.color}` }),
+            c.subs.length > 1 ? h('span.avg', { style: `left:${Math.min(99, c.avg / scale * 100)}%` }) : null)));
+      }
+      cols.append(col);
+    }
+    // рекомендованная последовательность
+    // одинаковые подряд схлопываем: «Ваша жизнь ×3»
+    const groups = [];
+    for (const x of next) { const g = groups[groups.length - 1]; if (g && g.x === x) g.n++; else groups.push({ x, n: 1 }); }
+    groups.forEach(({ x, n }, i) => {
+      if (i) seq.append(h('span.arr', {}, '→'));
+      seq.append(h('button.step', { onclick: e => openSub(x, e) },
+        h('span.num', { style: `background:${x.color}` }, i + 1), x.sub.name, n > 1 ? h('b', {}, `×${n}`) : null,
+        h('small', {}, x.queue ? `· ${x.queue} в очереди` : '· идей нет')));
+    });
+  }
+  update();
+  return { el, update };
+}
+
+/* ===================================================================
    Экран категории (подтемы)
    =================================================================== */
 function CatView(catId) {
@@ -748,7 +909,7 @@ function CatView(catId) {
     onClick: (seg, e, path) => { const o = originFromEl(path); go({ level: 'sub', catId, subId: seg.key }, { dir: 'in', origin: o }); },
     onHover: (seg, e) => {
       const all = ideasIn(catId, seg.key), dn = all.filter(i => i.done).length;
-      showTip(`${seg.label} · ${seg.pct}%<small>${pIdeas(all.length)} · снято ${dn} · открыть →</small>`, e.clientX, e.clientY);
+      showTip(`${seg.label} · ${seg.pct}%<small>${all.length ? `${pIdeas(all.length)} · снято ${dn}` : 'пока пусто'} · открыть →</small>`, e.clientX, e.clientY);
     }
   });
   const center = h('div.center', {}, h('div', {}, h('div.big'), h('div.sub')));
@@ -757,7 +918,7 @@ function CatView(catId) {
   const chart = h('div.card.chart-card', {}, h('div.glow.' + (catId === 'personal' ? 'p' : 'e'), { style: 'opacity:.16' }),
     h('div.donut-wrap', {}, donut.el, center),
     h('div.add-row', {}, h('button.add-btn', { class: catId, style: 'min-width:0', onclick: e => openAddSheet(catId, null, e) }, h('span.plus', {}, '+'), `добавить в «${c.name}»`)),
-    h('p.hint', {}, 'Нажми на сегмент или строку справа — откроются идеи подтемы.'));
+    h('p.hint', {}, 'Нажми на сегмент или строку справа — откроются идеи подтемы. Бледные сегменты — свободные направления, туда пока ничего не добавлено.'));
   const side = h('div.card', {}, h('h3', {}, 'Подтемы'), list,
     h('div', { style: 'margin-top:12px' }, h('button.ghost-btn', { onclick: () => newSubtopicInline(list, c) }, '+ новая подтема')));
   el.append(
