@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Баланс контента · fuchiji.dance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0e1015; --surface:#161a22; --surface-2:#1d222c; --surface-3:#252b37;
+  --line:#2a303c; --line-2:#343b49;
+  --ink:#eef0f4; --ink-2:#aab1bf; --ink-3:#6f7889;
+  --personal:#E85D45; --expert:#3F86E6;
+  --good:#3fb47a; --warn:#e2a93b;
+  --radius:18px; --radius-s:12px;
+  --shadow:0 18px 50px rgba(0,0,0,.45);
+  --font:"Manrope",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){
+  :root{
+    --bg:#f4f5f8; --surface:#ffffff; --surface-2:#f2f4f8; --surface-3:#e8ebf1;
+    --line:#e3e6ec; --line-2:#d3d8e1;
+    --ink:#161a22; --ink-2:#4b5363; --ink-3:#8a92a3;
+    --shadow:0 18px 50px rgba(20,30,60,.14);
+    color-scheme:light;
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none;padding:0}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--expert);outline-offset:2px;border-radius:8px}
+::selection{background:rgba(63,134,230,.35)}
+
+.app{max-width:1560px;margin:0 auto;padding:20px 28px 28px}
+@media (max-width:860px){.app{padding:16px 16px 40px}}
+
+/* ---------- header ---------- */
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:14px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px}
+.brand .logo{width:38px;height:38px;border-radius:12px;background:conic-gradient(from -90deg,var(--personal) 0 50%,var(--expert) 50% 100%);position:relative;flex:none}
+.brand .logo::after{content:"";position:absolute;inset:11px;border-radius:50%;background:var(--bg)}
+.brand h1{font-size:18px;margin:0;font-weight:800;letter-spacing:-.01em}
+.brand small{display:block;color:var(--ink-3);font-weight:500;font-size:12px}
+.crumbs{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--ink-3);flex-wrap:wrap}
+.crumbs button{color:var(--ink-2);padding:6px 10px;border-radius:9px;font-weight:600;transition:background .2s,color .2s}
+.crumbs button:hover{background:var(--surface-2);color:var(--ink)}
+.crumbs .cur{color:var(--ink);font-weight:700;padding:6px 10px}
+.crumbs .sep{opacity:.6}
+.menu-wrap{position:relative}
+.icon-btn{width:38px;height:38px;border-radius:11px;display:inline-grid;place-items:center;background:var(--surface);border:1px solid var(--line);color:var(--ink-2);transition:background .2s,color .2s,transform .15s}
+.icon-btn:hover{background:var(--surface-2);color:var(--ink)}
+.icon-btn:active{transform:scale(.94)}
+.dropdown{position:absolute;right:0;top:46px;min-width:250px;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:6px;z-index:40;transform-origin:top right;animation:pop .22s cubic-bezier(.2,.8,.2,1) both}
+.dropdown button{display:flex;width:100%;text-align:left;padding:10px 12px;border-radius:9px;gap:10px;align-items:center;color:var(--ink);font-weight:500}
+.dropdown button:hover{background:var(--surface-2)}
+.dropdown button.danger{color:var(--personal)}
+.dropdown hr{border:0;border-top:1px solid var(--line);margin:6px 4px}
+.dropdown small{display:block;color:var(--ink-3);font-weight:400;font-size:12px}
+@media (max-width:700px){.top{gap:10px}.crumbs{order:3;flex-basis:100%;margin-top:-4px}.menu-wrap{margin-left:auto}}
+
+/* ---------- stage & zoom ---------- */
+.stage{position:relative;--ox:50%;--oy:50%}
+.view{transform-origin:var(--ox) var(--oy)}
+.view.enter-in,.view.enter-out,.view.leaving{will-change:transform,opacity}
+.view.leaving{position:absolute;inset:0;pointer-events:none;z-index:2}
+@keyframes zoomIntoNew{from{opacity:0;transform:scale(.5)}to{opacity:1;transform:none}}
+@keyframes zoomAwayOld{to{opacity:0;transform:scale(2.4)}}
+@keyframes zoomBackNew{from{opacity:0;transform:scale(1.7)}to{opacity:1;transform:none}}
+@keyframes zoomBackOld{to{opacity:0;transform:scale(.45)}}
+.view.enter-in{animation:zoomIntoNew .6s cubic-bezier(.16,.84,.24,1) both}
+.view.leave-in{animation:zoomAwayOld .55s cubic-bezier(.4,0,.8,.4) both}
+.view.enter-out{animation:zoomBackNew .55s cubic-bezier(.16,.84,.24,1) both}
+.view.leave-out{animation:zoomBackOld .5s cubic-bezier(.4,0,.8,.4) both}
+@media (prefers-reduced-motion:reduce){.view{animation-duration:.01s!important}}
+
+/* ---------- layout ---------- */
+.grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(300px,.85fr);gap:22px;align-items:start}
+@media (max-width:860px){.grid{grid-template-columns:1fr}}
+/* главный экран — во всю высоту окна */
+.home .grid{grid-template-columns:minmax(0,1.6fr) minmax(320px,.8fr);align-items:stretch}
+.home .side{display:flex;flex-direction:column;gap:16px}
+.home .side .card{flex:1;display:flex;flex-direction:column;justify-content:center;margin:0}
+.home .donut-wrap{width:min(100%,calc(100vh - 330px),720px);min-width:min(100%,280px)}
+@media (min-width:861px){
+  .home .chart-card{min-height:calc(100vh - 122px);justify-content:center;gap:24px;padding:30px 30px 24px}
+  .home .add-row{max-width:760px}
+  .home .center .big{font-size:52px}
+  .home .center .sub{font-size:14px;margin-top:8px}
+  .home .ring{width:120px;height:120px}
+  .home .ring .val{font-size:30px}
+  .home .ring .val small{font-size:12px}
+  .home .plan-info .line1{font-size:20px}
+  .home .plan-info .line2{font-size:14px}
+  .home .bal-nums .big{font-size:38px}
+  .home .legend,.home .tip{font-size:14px}
+  .home .card h3{font-size:13px}
+  .home .add-btn{padding:16px 20px;font-size:16px}
+}
+@media (max-width:860px){.home .grid{grid-template-columns:1fr}.home .side .card{flex:none}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px}
+.card + .card{margin-top:14px}
+.card h3{margin:0 0 4px;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-3);font-weight:700}
+.chart-card{padding:26px 22px 22px;display:flex;flex-direction:column;align-items:center;gap:14px;position:relative;overflow:hidden}
+.chart-card .glow{position:absolute;width:640px;height:640px;border-radius:50%;opacity:.14;pointer-events:none;transition:opacity .6s}
+.chart-card .glow.p{background:radial-gradient(closest-side,var(--personal),transparent);left:-220px;top:-200px}
+.chart-card .glow.e{background:radial-gradient(closest-side,var(--expert),transparent);right:-220px;bottom:-220px}
+.donut-wrap{position:relative;width:min(100%,400px);aspect-ratio:1}
+.donut{width:100%;height:100%;display:block;overflow:visible}
+.donut .seg{transition:transform .28s cubic-bezier(.2,.8,.2,1),opacity .3s;transform-box:view-box;transform-origin:center;cursor:pointer}
+.donut .seg.ghost{cursor:default}
+.donut .seg.hover{transform:translate(var(--dx),var(--dy))}
+.donut .seg.dim{opacity:.55}
+.donut .lab{pointer-events:none;fill:#fff;text-anchor:middle;font-family:var(--font)}
+.donut .lab .n{font-size:13px;font-weight:600;opacity:.92}
+.donut .lab .p{font-size:24px;font-weight:800;letter-spacing:-.02em}
+.donut .lab .c{font-size:11px;font-weight:500;opacity:.85}
+.donut .lab.sm .p{font-size:16px}
+.donut .lab.sm .n{font-size:11px}
+.donut .lab.ghost{fill:var(--ink-3)}
+.donut .lab.ghost .p{opacity:.8}
+.center{position:absolute;inset:0;display:grid;place-items:center;text-align:center;pointer-events:none}
+.center .big{font-size:38px;font-weight:800;letter-spacing:-.03em;line-height:1}
+.center .sub{color:var(--ink-3);font-size:13px;margin-top:6px;font-weight:600;letter-spacing:0}
+.center .sub b{color:var(--ink-2)}
+.add-row{display:flex;justify-content:space-between;gap:14px;width:100%;flex-wrap:wrap}
+.add-btn{flex:1;min-width:200px;display:flex;align-items:center;justify-content:center;gap:10px;padding:14px 18px;border-radius:14px;font-weight:700;font-size:15px;color:#fff;transition:transform .15s,filter .2s,box-shadow .2s;box-shadow:0 8px 24px -8px currentColor}
+.add-btn:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.add-btn:active{transform:scale(.97)}
+.add-btn .plus{width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.22);display:grid;place-items:center;font-size:18px;line-height:1}
+.add-btn.personal{background:var(--personal)}
+.add-btn.expert{background:var(--expert)}
+.hint{color:var(--ink-3);font-size:13px;margin:0;text-align:center}
+.hint b{color:var(--ink-2);font-weight:600}
+
+/* ---------- plan card ---------- */
+.plan-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.plan-body{display:flex;gap:18px;align-items:center;margin-top:10px}
+.ring{width:96px;height:96px;flex:none;position:relative}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:9;stroke-linecap:round}
+.ring .track{stroke:var(--surface-3)}
+.ring .bar{stroke:var(--good);transition:stroke-dashoffset .8s cubic-bezier(.2,.8,.2,1),stroke .4s}
+.ring .val{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:800;font-size:24px;letter-spacing:-.02em;line-height:1}
+.ring .val small{font-size:11px;color:var(--ink-3);font-weight:600;line-height:1;margin-top:4px;letter-spacing:0}
+.plan-info{flex:1;min-width:0}
+.plan-info .line1{font-size:17px;font-weight:700}
+.plan-info .line1 span{color:var(--ink-3);font-weight:600}
+.plan-info .line2{color:var(--ink-2);font-size:13px;margin-top:2px}
+.plan-info .status{margin-top:8px;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:99px;background:var(--surface-2)}
+.status.ok{color:var(--good)}.status.behind{color:var(--warn)}.status.done{color:var(--good)}
+.stepper{display:inline-flex;align-items:center;gap:2px;background:var(--surface-2);border-radius:10px;padding:3px}
+.stepper button{width:30px;height:30px;border-radius:8px;font-size:18px;font-weight:700;color:var(--ink-2);display:grid;place-items:center;transition:background .15s,color .15s}
+.stepper button:hover{background:var(--surface-3);color:var(--ink)}
+.stepper .num{min-width:34px;text-align:center;font-weight:800;font-size:16px}
+.plan-foot{margin-top:12px;font-size:12px;color:var(--ink-3);display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+
+/* ---------- done balance ---------- */
+.bal-nums{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-top:4px}
+.bal-nums .big{font-size:30px;font-weight:800;letter-spacing:-.03em}
+.bal-nums .big small{font-size:13px;color:var(--ink-3);font-weight:600;margin-left:6px;letter-spacing:0}
+.bar{display:flex;height:14px;border-radius:7px;overflow:hidden;background:var(--surface-3);margin-top:12px;gap:2px}
+.bar i{display:block;height:100%;transition:width .7s cubic-bezier(.2,.8,.2,1)}
+.bar i.p{background:var(--personal)}.bar i.e{background:var(--expert)}
+.legend{display:flex;justify-content:space-between;gap:10px;margin-top:10px;font-size:13px;flex-wrap:wrap}
+.legend .it{display:flex;align-items:center;gap:8px;color:var(--ink-2)}
+.legend .dot{width:9px;height:9px;border-radius:50%;flex:none}
+.legend b{color:var(--ink);font-weight:700}
+.tip{margin-top:12px;padding:10px 12px;border-radius:10px;background:var(--surface-2);font-size:13px;color:var(--ink-2);display:flex;gap:8px;align-items:flex-start}
+.tip .ic{flex:none;font-size:15px}
+.tip b{color:var(--ink);font-weight:700}
+
+/* ---------- inner views ---------- */
+.view-head{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.back{display:inline-flex;align-items:center;gap:6px;padding:8px 12px 8px 8px;border-radius:10px;background:var(--surface);border:1px solid var(--line);color:var(--ink-2);font-weight:600;font-size:13px;transition:background .2s,color .2s,transform .15s}
+.back:hover{background:var(--surface-2);color:var(--ink)}
+.back:active{transform:scale(.96)}
+.view-head h2{margin:0;font-size:26px;font-weight:800;letter-spacing:-.02em;display:flex;align-items:center;gap:10px;min-width:0}
+.view-head h2 .sw{width:14px;height:14px;border-radius:5px;flex:none}
+.view-head .meta{color:var(--ink-3);font-size:14px;font-weight:600}
+.view-head .spacer{flex:1}
+.ghost-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:10px;border:1px dashed var(--line-2);color:var(--ink-2);font-weight:600;font-size:13px;transition:background .2s,color .2s,border-color .2s}
+.ghost-btn:hover{background:var(--surface-2);color:var(--ink);border-color:var(--ink-3)}
+.ghost-btn.danger:hover{color:var(--personal);border-color:var(--personal)}
+
+.sub-list{display:flex;flex-direction:column;gap:6px}
+.sub-row{display:flex;align-items:center;gap:12px;padding:12px 12px;border-radius:12px;background:var(--surface-2);border:1px solid transparent;transition:border-color .2s,transform .15s,background .2s;cursor:pointer}
+.sub-row:hover{border-color:var(--line-2);background:var(--surface-3)}
+.sub-row:active{transform:scale(.99)}
+.sub-row .dot{width:12px;height:12px;border-radius:4px;flex:none}
+.sub-row .name{flex:1;font-weight:700;min-width:0;line-height:1.25}
+.sub-row .name small{display:block;font-weight:500;font-size:12px;color:var(--ink-3)}
+.sub-row .cnt{color:var(--ink-3);font-size:13px;font-weight:600;white-space:nowrap}
+.sub-row .cnt b{color:var(--ink-2)}
+.sub-row .mini{display:flex;gap:2px;height:6px;width:56px;border-radius:3px;overflow:hidden;background:var(--surface);flex:none}
+.sub-row .mini i{display:block;height:100%}
+.sub-row .plus{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;color:var(--ink-2);background:var(--surface);font-size:18px;font-weight:700;transition:background .15s,color .15s,transform .15s;flex:none}
+.sub-row .plus:hover{color:#fff;transform:scale(1.06)}
+.sub-row .arrow{color:var(--ink-3);flex:none}
+.empty{text-align:center;color:var(--ink-3);padding:26px 10px;font-size:14px}
+.empty b{color:var(--ink-2)}
+
+/* ---------- idea list ---------- */
+.add-form{display:flex;gap:10px;margin-bottom:14px}
+.add-form input{flex:1;min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:13px 14px;font-size:15px;transition:border-color .2s}
+.add-form input::placeholder{color:var(--ink-3)}
+.add-form input:focus{border-color:var(--accent,var(--expert));outline:none}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 18px;border-radius:12px;font-weight:700;background:var(--accent,var(--expert));color:#fff;transition:filter .2s,transform .15s;white-space:nowrap}
+.btn:hover{filter:brightness(1.08)}.btn:active{transform:scale(.97)}
+.btn.secondary{background:var(--surface-2);color:var(--ink-2)}
+.btn.secondary:hover{color:var(--ink);filter:none;background:var(--surface-3)}
+.btn:disabled{opacity:.5;cursor:not-allowed;filter:none;transform:none}
+.filters{display:flex;gap:4px;margin-bottom:12px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:4px;width:max-content;max-width:100%}
+.filters button{padding:7px 12px;border-radius:9px;font-size:13px;font-weight:600;color:var(--ink-3);transition:background .2s,color .2s}
+.filters button.on{background:var(--surface-3);color:var(--ink)}
+.filters button:hover:not(.on){color:var(--ink-2)}
+.ideas{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.idea{display:flex;gap:12px;align-items:flex-start;padding:14px 14px;border-radius:14px;background:var(--surface);border:1px solid var(--line);transition:border-color .2s,transform .3s,opacity .3s;animation:rowIn .35s cubic-bezier(.2,.8,.2,1) both}
+@keyframes rowIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.idea:hover{border-color:var(--line-2)}
+.idea.removing{opacity:0;transform:translateX(30px) scale(.98)}
+.check{width:26px;height:26px;border-radius:50%;border:2px solid var(--line-2);flex:none;display:grid;place-items:center;margin-top:1px;transition:background .25s,border-color .25s,transform .15s;color:#fff}
+.check svg{width:14px;height:14px;opacity:0;transform:scale(.5);transition:opacity .2s,transform .25s cubic-bezier(.2,.8,.2,1)}
+.check:hover{border-color:var(--accent);transform:scale(1.08)}
+.idea.done .check{background:var(--accent);border-color:var(--accent)}
+.idea.done .check svg{opacity:1;transform:none}
+.idea .body{flex:1;min-width:0}
+.idea .title{font-weight:600;font-size:15px;line-height:1.4;word-wrap:break-word;white-space:pre-wrap}
+.idea.done .title{color:var(--ink-3);text-decoration:line-through;text-decoration-color:var(--line-2)}
+.idea .note{color:var(--ink-2);font-size:13px;margin-top:4px;white-space:pre-wrap}
+.idea .meta{color:var(--ink-3);font-size:12px;margin-top:6px;display:flex;gap:10px;flex-wrap:wrap}
+.idea .meta .done-tag{color:var(--good);font-weight:600}
+.idea .acts{display:flex;gap:4px;flex:none;opacity:.55;transition:opacity .2s}
+.idea:hover .acts,.idea:focus-within .acts{opacity:1}
+.idea .acts button{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;color:var(--ink-2);transition:background .15s,color .15s}
+.idea .acts button:hover{background:var(--surface-2);color:var(--ink)}
+.idea .acts button.del:hover{color:var(--personal)}
+.edit-form{flex:1;display:flex;flex-direction:column;gap:8px}
+.edit-form textarea,.edit-form input,.edit-form select{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:14px;width:100%;resize:vertical}
+.edit-form textarea:focus,.edit-form input:focus,.edit-form select:focus{outline:none;border-color:var(--accent)}
+.edit-form .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.edit-form .row select{width:auto;flex:1;min-width:160px}
+.edit-form .row .btn{padding:9px 14px;font-size:13px}
+.sub-name-input{font-size:26px;font-weight:800;letter-spacing:-.02em;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:2px 10px;min-width:120px;max-width:100%}
+
+/* ---------- sheet / overlay ---------- */
+.overlay{position:fixed;inset:0;background:rgba(6,8,12,.66);display:grid;place-items:center;padding:16px;z-index:60;animation:fade .25s both}
+.overlay.closing{animation:fadeOut .22s both}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes fadeOut{to{opacity:0}}
+.sheet{width:min(520px,100%);background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:22px 22px 18px;box-shadow:var(--shadow);transform-origin:var(--ox,50%) var(--oy,50%);animation:pop .4s cubic-bezier(.16,.84,.24,1) both;max-height:calc(100vh - 32px);overflow:auto}
+.overlay.closing .sheet{animation:popOut .22s ease-in both}
+@keyframes pop{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
+@keyframes popOut{to{opacity:0;transform:scale(.8)}}
+.sheet h3{margin:0;font-size:20px;font-weight:800;letter-spacing:-.02em;display:flex;align-items:center;gap:10px}
+.sheet h3 .sw{width:12px;height:12px;border-radius:4px}
+.sheet .lbl{color:var(--ink-3);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin:18px 0 8px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:8px 13px;border-radius:99px;background:var(--surface-2);border:1px solid var(--line);font-weight:600;font-size:13px;color:var(--ink-2);transition:background .2s,color .2s,border-color .2s,transform .15s;display:inline-flex;align-items:center;gap:6px}
+.chip:hover{color:var(--ink);border-color:var(--line-2)}
+.chip:active{transform:scale(.96)}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.chip .n{opacity:.7;font-weight:600;font-size:12px}
+.chip.new{border-style:dashed;background:transparent}
+.chip-input{padding:7px 12px;border-radius:99px;background:var(--surface-2);border:1px solid var(--accent);font-size:13px;width:180px;outline:none}
+.sheet textarea{width:100%;min-height:96px;resize:vertical;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:15px;line-height:1.45}
+.sheet input.note{width:100%;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:11px 14px;font-size:14px;margin-top:8px}
+.sheet textarea:focus,.sheet input.note:focus{outline:none;border-color:var(--accent)}
+.sheet .foot{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+.sheet .err{color:var(--personal);font-size:13px;margin-top:8px;font-weight:600;min-height:18px}
+.sheet p.txt{color:var(--ink-2);margin:10px 0 0}
+
+/* ---------- toast ---------- */
+.toasts{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);display:flex;flex-direction:column;gap:8px;z-index:80;width:min(440px,calc(100% - 32px))}
+.toast{background:var(--ink);color:var(--bg);padding:12px 14px 12px 16px;border-radius:14px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow);animation:toastIn .35s cubic-bezier(.2,.8,.2,1) both;font-weight:600;font-size:14px}
+.toast.hide{animation:toastOut .25s ease-in both}
+@keyframes toastIn{from{opacity:0;transform:translateY(16px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes toastOut{to{opacity:0;transform:translateY(10px)}}
+.toast span{flex:1}
+.toast button{color:var(--expert);font-weight:800;padding:6px 10px;border-radius:8px;background:rgba(63,134,230,.12)}
+@media (prefers-color-scheme: light){.toast button{color:#9fc5ff;background:rgba(159,197,255,.15)}}
+
+/* ---------- tooltip ---------- */
+.tt{position:fixed;pointer-events:none;background:var(--ink);color:var(--bg);padding:8px 11px;border-radius:10px;font-size:12px;font-weight:600;z-index:70;opacity:0;transform:translate(-50%,calc(-100% - 12px)) scale(.96);transition:opacity .15s,transform .15s;white-space:nowrap;box-shadow:var(--shadow)}
+.tt.show{opacity:1;transform:translate(-50%,calc(-100% - 12px))}
+.tt small{display:block;opacity:.7;font-weight:500}
+.hidden-input{display:none}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <div class="logo"></div>
+      <div><h1>Баланс контента</h1><small>fuchiji.dance · личное ↔ экспертное</small></div>
+    </div>
+    <nav class="crumbs" id="crumbs"></nav>
+    <div class="menu-wrap">
+      <button class="icon-btn" id="menuBtn" title="Меню" aria-label="Меню">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="5" cy="12" r="1.2" fill="currentColor"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/><circle cx="19" cy="12" r="1.2" fill="currentColor"/></svg>
+      </button>
+      <div id="menu"></div>
+      <input type="file" id="importFile" class="hidden-input" accept="application/json">
+    </div>
+  </header>
+  <main class="stage" id="stage"></main>
+</div>
+<div class="toasts" id="toasts"></div>
+<div class="tt" id="tt"></div>
+
+<script>
+/* ===================================================================
+   Данные
+   =================================================================== */
+const KEY = 'fuchiji-content-balance-v1';
+const uid = () => Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-3);
+
+function defaultState() {
+  // структура один в один из рилса «Ваш блог»: личное / экспертное и пять секторов
+  const sub = (name, shade, hint) => ({ id: uid(), name, shade, hint });
+  return {
+    version: 2,
+    categories: [
+      { id: 'personal', name: 'Личное', color: '#E85D45',
+        subtopics: [sub('Ваши мысли', 0, 'разговорный рилс'), sub('Ваша жизнь', 1, 'сторис 3 р./нед.')] },
+      { id: 'expert', name: 'Экспертное', color: '#3F86E6',
+        subtopics: [sub('Польза', 0, 'карусели и рилс'), sub('Продукт', 1, 'закреп-пост и истории'), sub('Результаты клиентов', 2, 'закреплённые рилсы')] }
+    ],
+    ideas: [],
+    plans: {},
+    lastPlan: 8
+  };
+}
+
+let state = load();
+function load() {
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (raw) {
+      const s = JSON.parse(raw);
+      if (s && s.categories && s.ideas) {
+        if ((s.version || 1) < 2 && !s.ideas.length) return defaultState(); // старая пустая разметка → схема из рилса
+        s.version = 2; return s;
+      }
+    }
+  } catch (e) {}
+  return defaultState();
+}
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+
+/* --- селекторы --- */
+const cat = id => state.categories.find(c => c.id === id);
+const subOf = (catId, subId) => (cat(catId) || { subtopics: [] }).subtopics.find(s => s.id === subId);
+const ideasIn = (catId, subId) => state.ideas.filter(i => i.catId === catId && (!subId || i.subId === subId));
+const monthKey = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+const nowKey = () => monthKey(new Date());
+function planFor(key) {
+  if (key in state.plans) return state.plans[key];
+  return state.lastPlan ?? 8;
+}
+function doneInMonth(key) { return state.ideas.filter(i => i.done && i.doneAt && monthKey(new Date(i.doneAt)) === key); }
+
+/* --- цвета подтем: устойчивые оттенки базового цвета категории --- */
+const SHADES = [[0, 0], [-12, -15], [12, 13], [-22, 6], [18, -9], [-6, 20], [8, -20], [-28, 0], [26, 6]];
+function hexToHsl(hex) {
+  const n = parseInt(hex.slice(1), 16); let r = (n >> 16) / 255, g = (n >> 8 & 255) / 255, b = (n & 255) / 255;
+  const mx = Math.max(r, g, b), mn = Math.min(r, g, b); let h = 0, s = 0, l = (mx + mn) / 2;
+  if (mx !== mn) { const d = mx - mn; s = l > .5 ? d / (2 - mx - mn) : d / (mx + mn);
+    h = mx === r ? (g - b) / d + (g < b ? 6 : 0) : mx === g ? (b - r) / d + 2 : (r - g) / d + 4; h *= 60; }
+  return [h, s * 100, l * 100];
+}
+function subColor(c, sub) {
+  const [h, s, l] = hexToHsl(c.color);
+  const [dh, dl] = SHADES[(sub.shade ?? 0) % SHADES.length];
+  return `hsl(${(h + dh + 360) % 360} ${Math.min(95, s)}% ${Math.max(30, Math.min(70, l + dl))}%)`;
+}
+function nextShade(c) {
+  const used = new Set(c.subtopics.map(s => s.shade));
+  for (let i = 0; i < 50; i++) if (!used.has(i)) return i;
+  return c.subtopics.length;
+}
+
+/* --- словоформы --- */
+function plural(n, one, few, many) {
+  const a = Math.abs(n) % 100, b = a % 10;
+  if (a > 10 && a < 20) return many; if (b > 1 && b < 5) return few; if (b === 1) return one; return many;
+}
+const pIdeas = n => `${n} ${plural(n, 'идея', 'идеи', 'идей')}`;
+const pVideos = n => `${n} ${plural(n, 'ролик', 'ролика', 'роликов')}`;
+const pDays = n => `${n} ${plural(n, 'день', 'дня', 'дней')}`;
+const MONTHS_ACC = ['январь', 'февраль', 'март', 'апрель', 'май', 'июнь', 'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь'];
+const MONTHS_PREP = ['январе', 'феврале', 'марте', 'апреле', 'мае', 'июне', 'июле', 'августе', 'сентябре', 'октябре', 'ноябре', 'декабре'];
+const MONTHS_SHORT = ['янв', 'фев', 'мар', 'апр', 'мая', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
+const fmtDate = ts => { const d = new Date(ts); return `${d.getDate()} ${MONTHS_SHORT[d.getMonth()]}`; };
+/* доли в процентах; равные значения всегда дают равные проценты */
+function shares(values) {
+  const t = values.reduce((a, b) => a + b, 0);
+  if (!t) return values.map(() => 0);
+  return values.map(v => Math.round(v / t * 100));
+}
+
+/* ===================================================================
+   DOM-утилиты
+   =================================================================== */
+function h(tag, attrs = {}, ...kids) {
+  const [t, ...cls] = tag.split('.');
+  const el = document.createElement(t || 'div');
+  if (cls.length) el.className = cls.join(' ');
+  for (const [k, v] of Object.entries(attrs)) {
+    if (v == null || v === false) continue;
+    if (k === 'class') el.className += (el.className ? ' ' : '') + v;
+    else if (k === 'style') el.style.cssText = v;
+    else if (k.startsWith('on')) el.addEventListener(k.slice(2), v);
+    else if (k === 'html') el.innerHTML = v;
+    else if (k in el && k !== 'list') { try { el[k] = v; } catch (e) { el.setAttribute(k, v); } }
+    else el.setAttribute(k, v);
+  }
+  for (const k of kids.flat()) if (k != null && k !== false) el.append(k.nodeType ? k : document.createTextNode(k));
+  return el;
+}
+const svgNS = 'http://www.w3.org/2000/svg';
+function s(tag, attrs = {}, ...kids) {
+  const el = document.createElementNS(svgNS, tag);
+  for (const [k, v] of Object.entries(attrs)) if (v != null) el.setAttribute(k, v);
+  for (const k of kids.flat()) if (k != null) el.append(k.nodeType ? k : document.createTextNode(k));
+  return el;
+}
+const ICONS = {
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>',
+  edit: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg>',
+  trash: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>',
+  back: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>',
+  arrow: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>',
+};
+const icon = n => { const t = document.createElement('template'); t.innerHTML = ICONS[n]; return t.content.firstChild; };
+
+/* ===================================================================
+   Тосты и подсказки
+   =================================================================== */
+function toast(msg, opts = {}) {
+  const box = document.getElementById('toasts');
+  let done = false;
+  const el = h('div.toast', {}, h('span', {}, msg));
+  if (opts.action) el.append(h('button', { onclick: () => { if (done) return; done = true; opts.onAction && opts.onAction(); kill(); } }, opts.action));
+  box.append(el);
+  const kill = () => { el.classList.add('hide'); setTimeout(() => el.remove(), 260); };
+  setTimeout(() => { if (!done) { done = true; opts.onExpire && opts.onExpire(); kill(); } }, opts.ms || (opts.action ? 7000 : 4500));
+}
+const tt = document.getElementById('tt');
+function showTip(html, x, y) { tt.innerHTML = html; tt.style.left = x + 'px'; tt.style.top = y + 'px'; tt.classList.add('show'); }
+function hideTip() { tt.classList.remove('show'); }
+
+/* ===================================================================
+   Кольцевая диаграмма с анимацией
+   =================================================================== */
+function Donut({ size = 360, outer = 172, inner = 96, labelMin = .07, small = false, onClick, onHover } = {}) {
+  const svg = s('svg', { viewBox: `0 0 ${size} ${size}`, class: 'donut' });
+  const gSeg = s('g'), gLab = s('g');
+  svg.append(gSeg, gLab);
+  const cx = size / 2, cy = size / 2;
+  const nodes = new Map();   // key -> {path, lab, start, end, ...}
+  let raf = null;
+  const rad = a => a * Math.PI / 180;
+  const pt = (r, a) => `${(cx + r * Math.cos(rad(a))).toFixed(2)} ${(cy + r * Math.sin(rad(a))).toFixed(2)}`;
+  function arc(a0, a1) {
+    const sw = a1 - a0;
+    if (sw <= 0.05) return '';
+    if (sw >= 359.95) {
+      const m = a0 + 180, e = a0 + 359.99;
+      return `M${pt(outer, a0)}A${outer} ${outer} 0 1 1 ${pt(outer, m)}A${outer} ${outer} 0 1 1 ${pt(outer, e)}L${pt(inner, e)}A${inner} ${inner} 0 1 0 ${pt(inner, m)}A${inner} ${inner} 0 1 0 ${pt(inner, a0)}Z`;
+    }
+    const L = sw > 180 ? 1 : 0;
+    return `M${pt(outer, a0)}A${outer} ${outer} 0 ${L} 1 ${pt(outer, a1)}L${pt(inner, a1)}A${inner} ${inner} 0 ${L} 0 ${pt(inner, a0)}Z`;
+  }
+  function paint(n) {
+    n.path.setAttribute('d', arc(n.start, n.end));
+    const mid = (n.start + n.end) / 2, share = (n.end - n.start) / 360;
+    const dx = Math.cos(rad(mid)) * 7, dy = Math.sin(rad(mid)) * 7;
+    n.path.style.setProperty('--dx', dx.toFixed(1) + 'px');
+    n.path.style.setProperty('--dy', dy.toFixed(1) + 'px');
+    const show = share >= labelMin;
+    n.lab.style.opacity = show ? 1 : 0;
+    if (show) {
+      const r = (outer + inner) / 2;
+      n.lab.setAttribute('transform', `translate(${(cx + r * Math.cos(rad(mid))).toFixed(1)} ${(cy + r * Math.sin(rad(mid))).toFixed(1)})`);
+    }
+  }
+  function update(segments, { animate = true } = {}) {
+    const total = segments.reduce((a, x) => a + x.value, 0);
+    const ghost = total === 0;
+    const list = ghost ? segments.map(x => ({ ...x, value: 1 })) : segments.filter(x => x.value > 0);
+    const T = list.reduce((a, x) => a + x.value, 0);
+    const pct = shares(list.map(x => x.value));
+    let a = -90;
+    const targets = list.map((x, i) => { const sw = x.value / T * 360; const t = { ...x, tStart: a, tEnd: a + sw, pct: pct[i], ghost }; a += sw; return t; });
+    // удалить ушедшие
+    for (const [k, n] of nodes) if (!targets.find(t => t.key === k)) { n.path.remove(); n.lab.remove(); nodes.delete(k); }
+    // создать новые / обновить данные
+    targets.forEach((t, idx) => {
+      let n = nodes.get(t.key);
+      if (!n) {
+        const path = s('path', { class: 'seg', 'data-key': t.key });
+        path.style.stroke = 'var(--surface)'; path.style.strokeWidth = '2';
+        const lab = s('g', { class: 'lab' + (small ? ' sm' : '') });
+        const tn = s('text', { class: 'n', y: small ? -8 : -18 }), tp = s('text', { class: 'p', y: small ? 10 : 8 }), tc = s('text', { class: 'c', y: 24 });
+        lab.append(tn, tp, tc);
+        gSeg.append(path); gLab.append(lab);
+        n = { path, lab, tn, tp, tc, start: t.tStart, end: t.tStart };
+        nodes.set(t.key, n);
+      }
+      // порядок в DOM = порядок сегментов
+      gSeg.append(n.path); gLab.append(n.lab);
+      n.data = t;
+      n.path.setAttribute('fill', t.color);
+      n.path.classList.toggle('ghost', ghost);
+      n.path.style.opacity = ghost ? .28 : 1;
+      n.lab.classList.toggle('ghost', ghost);
+      n.tn.textContent = t.label;
+      n.tp.textContent = t.pct + '%';
+      n.path.style.strokeWidth = (!ghost && t.tEnd - t.tStart >= 359.9) ? '0' : '2';
+      n.tc.textContent = ghost || small ? '' : (t.sub || pIdeas(t.value));
+      n.fromStart = n.start; n.fromEnd = n.end;
+    });
+    if (raf) cancelAnimationFrame(raf);
+    if (!animate) { for (const n of nodes.values()) { n.start = n.data.tStart; n.end = n.data.tEnd; paint(n); } return; }
+    const t0 = performance.now(), D = 700;
+    const ease = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+    const step = now => {
+      const k = ease(Math.min(1, (now - t0) / D));
+      for (const n of nodes.values()) {
+        n.start = n.fromStart + (n.data.tStart - n.fromStart) * k;
+        n.end = n.fromEnd + (n.data.tEnd - n.fromEnd) * k;
+        paint(n);
+      }
+      if (k < 1) raf = requestAnimationFrame(step); else raf = null;
+    };
+    raf = requestAnimationFrame(step);
+  }
+  // hover / click через делегирование
+  let hoverKey = null;
+  svg.addEventListener('pointermove', e => {
+    const p = e.target.closest ? e.target.closest('.seg') : null;
+    const key = p && !p.classList.contains('ghost') ? p.dataset.key : null;
+    if (key !== hoverKey) {
+      hoverKey = key;
+      for (const [k, n] of nodes) { n.path.classList.toggle('hover', k === key); n.path.classList.toggle('dim', key && k !== key); }
+    }
+    if (key) { const n = nodes.get(key); onHover && onHover(n.data, e); } else hideTip();
+  });
+  svg.addEventListener('pointerleave', () => { hoverKey = null; for (const n of nodes.values()) { n.path.classList.remove('hover', 'dim'); } hideTip(); });
+  svg.addEventListener('click', e => {
+    const p = e.target.closest ? e.target.closest('.seg') : null;
+    if (!p || p.classList.contains('ghost')) return;
+    onClick && onClick(nodes.get(p.dataset.key).data, e, p);
+  });
+  const segEl = key => nodes.get(key)?.path;
+  return { el: svg, update, segEl };
+}
+
+/* ===================================================================
+   Навигация с зум-переходами (Prezi-style)
+   =================================================================== */
+const stage = document.getElementById('stage');
+let route = { level: 'home' };
+let currentView = null;
+
+function setOrigin(x, y) { stage.style.setProperty('--ox', x + 'px'); stage.style.setProperty('--oy', y + 'px'); }
+function originFromEl(el) {
+  if (!el) return null;
+  const r = el.getBoundingClientRect(), sr = stage.getBoundingClientRect();
+  return { x: r.left + r.width / 2 - sr.left, y: r.top + r.height / 2 - sr.top };
+}
+function go(next, { dir = 'in', origin } = {}) {
+  hideTip();
+  const old = currentView;
+  route = next;
+  const view = buildView(route);
+  currentView = view;
+  if (old) {
+    old.el.classList.add('leaving');
+    if (origin) setOrigin(origin.x, origin.y);
+    stage.append(view.el);
+    if (dir === 'out' && !origin) {
+      // при возврате — зум из того сегмента, откуда пришли
+      const key = old.route.level === 'sub' ? old.route.subId : old.route.catId;
+      const o = originFromEl(view.zoomTarget && view.zoomTarget(key));
+      if (o) setOrigin(o.x, o.y);
+    }
+    old.el.classList.add(dir === 'in' ? 'leave-in' : 'leave-out');
+    view.el.classList.add(dir === 'in' ? 'enter-in' : 'enter-out');
+    old.el.addEventListener('animationend', e => { if (e.target === old.el) old.el.remove(); });
+    setTimeout(() => old.el.remove(), 800);
+    const settle = () => view.el.classList.remove('enter-in', 'enter-out');
+    view.el.addEventListener('animationend', e => { if (e.target === view.el) settle(); });
+    setTimeout(settle, 800);
+  } else stage.append(view.el);
+  view.route = route;
+  renderCrumbs();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function buildView(r) {
+  if (r.level === 'cat') return CatView(r.catId);
+  if (r.level === 'sub') return SubView(r.catId, r.subId);
+  return HomeView();
+}
+function commit() { save(); currentView && currentView.update(); renderCrumbs(); }
+
+function renderCrumbs() {
+  const nav = document.getElementById('crumbs');
+  nav.innerHTML = '';
+  const c = cat(route.catId), sb = c && subOf(route.catId, route.subId);
+  if (route.level === 'home') { nav.append(h('span.cur', {}, 'Главная')); return; }
+  nav.append(h('button', { onclick: () => go({ level: 'home' }, { dir: 'out' }) }, 'Главная'), h('span.sep', {}, '›'));
+  if (route.level === 'cat') nav.append(h('span.cur', { style: `color:${c.color}` }, c.name));
+  else {
+    nav.append(h('button', { onclick: () => go({ level: 'cat', catId: c.id }, { dir: 'out' }) }, c.name), h('span.sep', {}, '›'));
+    nav.append(h('span.cur', {}, sb ? sb.name : '…'));
+  }
+}
+
+/* ===================================================================
+   Главный экран
+   =================================================================== */
+function HomeView() {
+  const el = h('div.view.home');
+  const [P, E] = state.categories;
+
+  const donut = Donut({
+    onClick: (seg, e, path) => { const o = originFromEl(path); if (o) setOrigin(o.x, o.y); go({ level: 'cat', catId: seg.key }, { dir: 'in', origin: o }); },
+    onHover: (seg, e) => {
+      const c = cat(seg.key), all = ideasIn(c.id), dn = all.filter(i => i.done).length;
+      showTip(`${c.name} · ${seg.pct}%<small>${pIdeas(all.length)} · снято ${dn} · открыть →</small>`, e.clientX, e.clientY);
+    }
+  });
+  const center = h('div.center', {}, h('div', {}, h('div.big', { id: 'cTotal' }), h('div.sub', { id: 'cSub' })));
+  const glowP = h('div.glow.p'), glowE = h('div.glow.e');
+  const chart = h('div.card.chart-card', {}, glowP, glowE,
+    h('div.donut-wrap', {}, donut.el, center),
+    h('div.add-row', {},
+      h('button.add-btn.personal', { onclick: e => openAddSheet(P.id, null, e) }, h('span.plus', {}, '+'), 'добавить личное'),
+      h('button.add-btn.expert', { onclick: e => openAddSheet(E.id, null, e) }, h('span.plus', {}, '+'), 'добавить экспертное')),
+    h('p.hint', {}, 'Нажми на сегмент, чтобы открыть подтемы. Размер сегмента — доля идей и роликов в этой линии.'));
+
+  /* --- план на месяц --- */
+  const ringBar = s('circle', { class: 'bar', cx: 48, cy: 48, r: 40 });
+  const ringVal = h('div.val');
+  const ring = h('div.ring', {}, s('svg', { viewBox: '0 0 96 96' }, s('circle', { class: 'track', cx: 48, cy: 48, r: 40 }), ringBar), ringVal);
+  const planLine1 = h('div.line1'), planLine2 = h('div.line2'), planStatus = h('div.status'), planFoot = h('div.plan-foot');
+  const stepNum = h('span.num');
+  const stepper = h('div.stepper', {},
+    h('button', { title: 'Меньше', onclick: () => setPlan(planFor(nowKey()) - 1) }, '−'), stepNum,
+    h('button', { title: 'Больше', onclick: () => setPlan(planFor(nowKey()) + 1) }, '+'));
+  const planTitle = h('h3');
+  const planCard = h('div.card', {},
+    h('div.plan-head', {}, planTitle, stepper),
+    h('div.plan-body', {}, ring, h('div.plan-info', {}, planLine1, planLine2, planStatus)),
+    planFoot);
+  function setPlan(v) { v = Math.max(0, Math.min(99, v)); state.plans[nowKey()] = v; state.lastPlan = v; commit(); }
+
+  /* --- баланс снятого --- */
+  const balBig = h('div.big'), balBar = h('div.bar'), balLegend = h('div.legend'), balTip = h('div.tip');
+  const balCard = h('div.card', {}, h('h3', {}, 'Снято · баланс реализованного'),
+    h('div.bal-nums', {}, balBig), balBar, balLegend, balTip);
+
+  el.append(h('div.grid', {}, chart, h('div.side', {}, planCard, balCard)));
+
+  function update() {
+    const ideasP = ideasIn(P.id), ideasE = ideasIn(E.id);
+    const total = ideasP.length + ideasE.length;
+    // по часовой от верха: сначала экспертное (правая половина), затем личное (левая) — как кнопки под кольцом
+    donut.update([
+      { key: E.id, label: E.name, value: ideasE.length, color: E.color },
+      { key: P.id, label: P.name, value: ideasP.length, color: P.color }
+    ]);
+    const dnAll = state.ideas.filter(i => i.done).length;
+    center.querySelector('#cTotal').textContent = total;
+    center.querySelector('#cSub').innerHTML = total ? `${plural(total, 'идея', 'идеи', 'идей')} · снято <b>${dnAll}</b>` : 'пока пусто';
+    const [sp, se] = shares([ideasP.length, ideasE.length]);
+    glowP.style.opacity = total ? .08 + .12 * sp / 100 : .1;
+    glowE.style.opacity = total ? .08 + .12 * se / 100 : .1;
+
+    // план
+    const now = new Date(), key = nowKey(), target = planFor(key);
+    const dim = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate(), day = now.getDate(), left = dim - day;
+    const done = doneInMonth(key).length;
+    planTitle.textContent = `План на ${MONTHS_ACC[now.getMonth()]}`;
+    stepNum.textContent = target;
+    const frac = target ? Math.min(1, done / target) : 0;
+    const C = 2 * Math.PI * 40;
+    ringBar.style.strokeDasharray = C; ringBar.style.strokeDashoffset = C * (1 - frac);
+    ringVal.innerHTML = target ? `${done}<small>из ${target}</small>` : `${done}<small>снято</small>`;
+    planStatus.className = 'status';
+    if (!target) {
+      planLine1.innerHTML = `План не задан`; planLine2.textContent = `Поставь цель — и будет видно, успеваешь ли.`;
+      planStatus.textContent = `Снято в ${MONTHS_PREP[now.getMonth()]}: ${done}`; ringBar.style.stroke = 'var(--ink-3)';
+    } else {
+      const rest = Math.max(0, target - done);
+      planLine1.innerHTML = `${done} из ${target} <span>${plural(target, 'ролика', 'роликов', 'роликов')}</span>`;
+      const perWeek = left > 0 ? Math.ceil(rest / (left / 7)) : rest;
+      planLine2.textContent = rest ? `Осталось ${pVideos(rest)} · ${pDays(left)} до конца месяца${left > 0 ? ` · ≈ ${perWeek} в неделю` : ''}` : `Цель месяца закрыта`;
+      const expected = target * day / dim;
+      if (done >= target) { planStatus.textContent = '🏆 План выполнен — поднимай планку'; planStatus.classList.add('done'); ringBar.style.stroke = 'var(--good)'; }
+      else if (done >= expected - 0.5) { planStatus.textContent = done > expected + 1 ? '🔥 Идёшь с опережением' : '✓ В графике'; planStatus.classList.add('ok'); ringBar.style.stroke = 'var(--good)'; }
+      else { planStatus.textContent = `⏱ Отстаёшь на ${pVideos(Math.ceil(expected - done))} — догоняй`; planStatus.classList.add('behind'); ringBar.style.stroke = 'var(--warn)'; }
+    }
+    const prev = new Date(now.getFullYear(), now.getMonth() - 1, 1), pk = monthKey(prev);
+    const prevDone = doneInMonth(pk).length, prevPlan = pk in state.plans ? state.plans[pk] : null;
+    const donePM = doneInMonth(key), pmP = donePM.filter(i => i.catId === P.id).length;
+    planFoot.innerHTML = '';
+    planFoot.append(h('span', {}, prevPlan != null || prevDone ? `${MONTHS_ACC[prev.getMonth()][0].toUpperCase() + MONTHS_ACC[prev.getMonth()].slice(1)}: ${prevDone}${prevPlan != null ? ' из ' + prevPlan : ''}` : 'Первый месяц учёта'),
+      h('span', {}, donePM.length ? `в этом месяце: личное ${pmP} · экспертное ${donePM.length - pmP}` : ''));
+
+    // баланс снятого
+    const dP = ideasP.filter(i => i.done).length, dE = ideasE.filter(i => i.done).length, dT = dP + dE;
+    const [bp, be] = shares([dP, dE]);
+    balBig.innerHTML = `${dT}<small>${plural(dT, 'ролик снят', 'ролика снято', 'роликов снято')} · в очереди ${total - dT}</small>`;
+    balBar.innerHTML = '';
+    if (dT) balBar.append(h('i.p', { style: `width:${bp}%` }), h('i.e', { style: `width:${be}%` }));
+    balLegend.innerHTML = '';
+    balLegend.append(
+      h('div.it', {}, h('span.dot', { style: `background:${P.color}` }), `${P.name} `, h('b', {}, dT ? `${dP} · ${bp}%` : '0')),
+      h('div.it', {}, h('span.dot', { style: `background:${E.color}` }), `${E.name} `, h('b', {}, dT ? `${dE} · ${be}%` : '0')));
+    // совет
+    let tip;
+    if (!total) tip = ['✨', 'Добавь первую идею — диаграмма оживёт. Начни с того, что снял бы уже завтра.'];
+    else if (!dT) tip = ['🎬', `Идей уже ${total}, снятых пока нет. Отметь галочкой первый снятый ролик — здесь появится баланс.`];
+    else if (dP === dE) tip = ['⚖️', h('span', {}, 'Снятое в идеальном балансе ', h('b', {}, '50/50'), '. Держи ритм.')];
+    else {
+      const lag = dP < dE ? P : E, diff = Math.abs(dP - dE), pool = ideasIn(lag.id).filter(i => !i.done).length;
+      tip = ['🎯', h('span', {}, 'Следующим снимай ', h('b', { style: `color:${lag.color}` }, lag.name.toLowerCase()), `: отстаёт на ${pVideos(diff)}. `, pool ? `В очереди ${pIdeas(pool)}.` : 'Идей в очереди нет — добавь.')];
+    }
+    balTip.innerHTML = ''; balTip.append(h('span.ic', {}, tip[0]), h('span', {}, tip[1]));
+  }
+  update();
+  return { el, update, zoomTarget: key => donut.segEl(key) };
+}
+
+/* ===================================================================
+   Экран категории (подтемы)
+   =================================================================== */
+function CatView(catId) {
+  const c = cat(catId);
+  const el = h('div.view.cat', { style: `--accent:${c.color}` });
+  const donut = Donut({
+    small: true, labelMin: .09, inner: 104,
+    onClick: (seg, e, path) => { const o = originFromEl(path); go({ level: 'sub', catId, subId: seg.key }, { dir: 'in', origin: o }); },
+    onHover: (seg, e) => {
+      const all = ideasIn(catId, seg.key), dn = all.filter(i => i.done).length;
+      showTip(`${seg.label} · ${seg.pct}%<small>${pIdeas(all.length)} · снято ${dn} · открыть →</small>`, e.clientX, e.clientY);
+    }
+  });
+  const center = h('div.center', {}, h('div', {}, h('div.big'), h('div.sub')));
+  const meta = h('span.meta');
+  const list = h('div.sub-list');
+  const chart = h('div.card.chart-card', {}, h('div.glow.' + (catId === 'personal' ? 'p' : 'e'), { style: 'opacity:.16' }),
+    h('div.donut-wrap', {}, donut.el, center),
+    h('div.add-row', {}, h('button.add-btn', { class: catId, style: 'min-width:0', onclick: e => openAddSheet(catId, null, e) }, h('span.plus', {}, '+'), `добавить в «${c.name}»`)),
+    h('p.hint', {}, 'Нажми на сегмент или строку справа — откроются идеи подтемы.'));
+  const side = h('div.card', {}, h('h3', {}, 'Подтемы'), list,
+    h('div', { style: 'margin-top:12px' }, h('button.ghost-btn', { onclick: () => newSubtopicInline(list, c) }, '+ новая подтема')));
+  el.append(
+    h('div.view-head', {},
+      h('button.back', { onclick: () => go({ level: 'home' }, { dir: 'out' }) }, icon('back'), 'Главная'),
+      h('h2', {}, h('span.sw', { style: `background:${c.color}` }), c.name), meta),
+    h('div.grid', {}, chart, side));
+
+  function update() {
+    const all = ideasIn(catId), total = state.ideas.length;
+    const [share] = shares([all.length, total - all.length]);
+    meta.textContent = `${pIdeas(all.length)} · ${total ? share + '% всего контента' : 'контента пока нет'}`;
+    donut.update(c.subtopics.map(sb => ({ key: sb.id, label: sb.name, value: ideasIn(catId, sb.id).length, color: subColor(c, sb) })));
+    center.querySelector('.big').textContent = all.length;
+    center.querySelector('.sub').innerHTML = `${plural(all.length, 'идея', 'идеи', 'идей')} · снято <b>${all.filter(i => i.done).length}</b>`;
+    list.innerHTML = '';
+    if (!c.subtopics.length) list.append(h('div.empty', {}, 'Подтем нет. Создай первую — например, ', h('b', {}, '«Польза»'), '.'));
+    for (const sb of c.subtopics) {
+      const ideas = ideasIn(catId, sb.id), dn = ideas.filter(i => i.done).length, col = subColor(c, sb);
+      const row = h('div.sub-row', { 'data-key': sb.id, onclick: e => { if (e.target.closest('.plus')) return; go({ level: 'sub', catId, subId: sb.id }, { dir: 'in', origin: originFromEl(row) }); } },
+        h('span.dot', { style: `background:${col}` }),
+        h('span.name', {}, sb.name, sb.hint ? h('small', {}, sb.hint) : null),
+        h('span.cnt', {}, ideas.length ? h('span', {}, h('b', {}, ideas.length), ` · снято ${dn}`) : 'пусто'),
+        h('span.mini', { title: `снято ${dn} из ${ideas.length}` }, h('i', { style: `width:${ideas.length ? dn / ideas.length * 100 : 0}%;background:${col}` })),
+        h('button.plus', { title: `Добавить в «${sb.name}»`, onmouseenter: e => e.currentTarget.style.background = col, onmouseleave: e => e.currentTarget.style.background = '', onclick: e => openAddSheet(catId, sb.id, e) }, '+'),
+        h('span.arrow', {}, icon('arrow')));
+      list.append(row);
+    }
+  }
+  update();
+  return { el, update, zoomTarget: key => donut.segEl(key) || list.querySelector(`[data-key="${key}"]`) };
+}
+function newSubtopicInline(list, c) {
+  if (list.querySelector('.inline-new')) return;
+  const inp = h('input.chip-input', { placeholder: 'Название подтемы', style: 'width:100%;border-radius:12px;padding:12px 14px' });
+  const wrap = h('div.inline-new', { style: 'margin-top:6px' }, inp);
+  list.append(wrap); inp.focus();
+  let fired = false;
+  const finish = () => {
+    if (fired) return; fired = true;
+    const name = inp.value.trim(); wrap.remove();
+    if (!name) return;
+    c.subtopics.push({ id: uid(), name, shade: nextShade(c) });
+    commit(); toast(`Подтема «${name}» создана`);
+  };
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter') finish(); if (e.key === 'Escape') { inp.value = ''; finish(); } });
+  inp.addEventListener('blur', finish);
+}
+
+/* ===================================================================
+   Экран подтемы (идеи)
+   =================================================================== */
+function SubView(catId, subId) {
+  const c = cat(catId);
+  const el = h('div.view.sub', { style: `--accent:${c.color}` });
+  let filter = 'all', editingId = null;
+  const title = h('h2', {}, h('span.sw', { style: `background:${subColor(c, subOf(catId, subId) || {})}` }), h('span.tname'));
+  const meta = h('span.meta');
+  const renameBtn = h('button.ghost-btn', { onclick: startRename }, icon('edit'), 'Переименовать');
+  const delBtn = h('button.ghost-btn.danger', { onclick: deleteSub }, icon('trash'), 'Удалить подтему');
+  const input = h('input', { placeholder: 'Новая идея, хук или сценарий… (Enter — добавить)', maxlength: 400 });
+  const form = h('form.add-form', { onsubmit: e => { e.preventDefault(); const v = input.value.trim(); if (!v) { input.focus(); return; } addIdea(catId, subId, v, ''); input.value = ''; input.focus(); } },
+    input, h('button.btn', { type: 'submit' }, '+ Добавить'));
+  const filters = h('div.filters');
+  const ul = h('ul.ideas');
+  el.append(
+    h('div.view-head', {},
+      h('button.back', { onclick: () => go({ level: 'cat', catId }, { dir: 'out' }) }, icon('back'), c.name),
+      title, meta, h('span.spacer'), renameBtn, delBtn),
+    form, filters, ul);
+
+  function startRename() {
+    const sb = subOf(catId, subId); if (!sb) return;
+    const inp = h('input.sub-name-input', { value: sb.name, maxlength: 60 });
+    title.replaceWith(inp); inp.focus(); inp.select();
+    let fired = false;
+    const finish = () => {
+      if (fired) return; fired = true;
+      const v = inp.value.trim(); inp.replaceWith(title);
+      if (v && v !== sb.name) { sb.name = v; commit(); toast('Подтема переименована'); }
+    };
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') finish(); if (e.key === 'Escape') { inp.value = sb.name; finish(); } });
+    inp.addEventListener('blur', finish);
+  }
+  function deleteSub() {
+    const sb = subOf(catId, subId), ideas = ideasIn(catId, subId);
+    if (ideas.length) { toast(`В подтеме ${pIdeas(ideas.length)} — сначала перенеси или удали их`); return; }
+    const idx = c.subtopics.indexOf(sb); c.subtopics.splice(idx, 1);
+    save(); go({ level: 'cat', catId }, { dir: 'out' });
+    toast(`Подтема «${sb.name}» удалена`, { action: 'Отменить', onAction: () => { c.subtopics.splice(idx, 0, sb); commit(); } });
+  }
+  function ideaRow(i) {
+    const li = h('li.idea', { class: i.done ? 'done' : '', 'data-id': i.id });
+    if (editingId === i.id) {
+      const ta = h('textarea', { value: i.title, rows: 2 }), note = h('input', { value: i.note || '', placeholder: 'Заметка: формат, локация, что показать…' });
+      const sel = h('select');
+      for (const cc of state.categories) { const og = h('optgroup', { label: cc.name }); for (const sb of cc.subtopics) og.append(h('option', { value: cc.id + '|' + sb.id, selected: cc.id === i.catId && sb.id === i.subId }, sb.name)); sel.append(og); }
+      const saveIt = () => {
+        const v = ta.value.trim(); if (!v) { ta.focus(); return; }
+        const [nc, ns] = sel.value.split('|'); const moved = nc !== i.catId || ns !== i.subId;
+        Object.assign(i, { title: v, note: note.value.trim(), catId: nc, subId: ns }); editingId = null; commit();
+        if (moved) toast(`Перенесено в «${cat(nc).name} › ${subOf(nc, ns).name}»`, { action: 'Открыть', onAction: () => go({ level: 'sub', catId: nc, subId: ns }, { dir: 'in' }) });
+      };
+      ta.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); saveIt(); } if (e.key === 'Escape') { editingId = null; update(); } });
+      li.append(h('div.edit-form', {}, ta, note, h('div.row', {}, sel, h('button.btn', { onclick: saveIt }, 'Сохранить'), h('button.btn.secondary', { onclick: () => { editingId = null; update(); } }, 'Отмена'))));
+      setTimeout(() => ta.focus(), 30);
+      return li;
+    }
+    const chk = h('button.check', { title: i.done ? 'Вернуть в очередь' : 'Отметить снятым', 'aria-pressed': String(!!i.done), onclick: () => toggleDone(i) }, icon('check'));
+    const metaRow = h('div.meta', {}, h('span', {}, `добавлено ${fmtDate(i.createdAt)}`), i.done && i.doneAt ? h('span.done-tag', {}, `✓ снято ${fmtDate(i.doneAt)}`) : null);
+    li.append(chk,
+      h('div.body', {}, h('div.title', {}, i.title), i.note ? h('div.note', {}, i.note) : null, metaRow),
+      h('div.acts', {},
+        h('button', { title: 'Редактировать', onclick: () => { editingId = i.id; update(); } }, icon('edit')),
+        h('button.del', { title: 'Удалить', onclick: () => removeIdea(i, li) }, icon('trash'))));
+    return li;
+  }
+  function update() {
+    const sb = subOf(catId, subId);
+    if (!sb) { go({ level: 'cat', catId }, { dir: 'out' }); return; }
+    title.querySelector('.tname').textContent = sb.name;
+    const all = ideasIn(catId, subId), dn = all.filter(i => i.done);
+    meta.textContent = `${pIdeas(all.length)} · снято ${dn.length}${sb.hint ? ' · формат: ' + sb.hint : ''}`;
+    delBtn.style.display = all.length ? 'none' : '';
+    filters.innerHTML = '';
+    for (const [k, lbl, n] of [['all', 'Все', all.length], ['todo', 'В очереди', all.length - dn.length], ['done', 'Снято', dn.length]])
+      filters.append(h('button', { class: filter === k ? 'on' : '', onclick: () => { filter = k; update(); } }, `${lbl} ${n}`));
+    const shown = all.filter(i => filter === 'all' || (filter === 'done') === !!i.done)
+      .sort((a, b) => (a.done - b.done) || (b.createdAt - a.createdAt));
+    ul.innerHTML = '';
+    if (!shown.length) ul.append(h('div.empty', {}, all.length ? 'В этом фильтре пусто.' : h('span', {}, 'Идей пока нет. Впиши первую — хук, сценарий или просто мысль ', h('b', {}, '«снять про…»'), '.')));
+    for (const i of shown) ul.append(ideaRow(i));
+  }
+  update();
+  setTimeout(() => { if (!ideasIn(catId, subId).length) input.focus({ preventScroll: true }); }, 650);
+  return { el, update, zoomTarget: () => null };
+}
+
+/* ===================================================================
+   Операции с идеями
+   =================================================================== */
+function addIdea(catId, subId, title, note) {
+  const idea = { id: uid(), catId, subId, title, note: note || '', createdAt: Date.now(), done: false, doneAt: null };
+  state.ideas.push(idea); commit();
+  return idea;
+}
+function toggleDone(i) {
+  i.done = !i.done; i.doneAt = i.done ? Date.now() : null; commit();
+  if (i.done) {
+    const key = nowKey(), n = doneInMonth(key).length, t = planFor(key);
+    toast(t && n === t ? `🏆 ${n} из ${t} — план месяца выполнен!` : t ? `✓ Снято ${n} из ${t} в этом месяце` : `✓ Снято: ${n} в этом месяце`);
+  }
+}
+function removeIdea(i, li) {
+  const idx = state.ideas.indexOf(i);
+  if (li) li.classList.add('removing');
+  setTimeout(() => { state.ideas.splice(state.ideas.indexOf(i), 1); commit(); }, li ? 260 : 0);
+  toast('Идея удалена', { action: 'Отменить', onAction: () => { if (!state.ideas.includes(i)) state.ideas.splice(Math.min(idx, state.ideas.length), 0, i); commit(); } });
+}
+
+/* ===================================================================
+   Окно добавления (с главного экрана / из категории)
+   =================================================================== */
+let sheetOpen = false;
+function openSheet(build, e) {
+  if (sheetOpen) return; sheetOpen = true;
+  const ov = h('div.overlay');
+  const sheet = h('div.sheet');
+  if (e && e.clientX) { sheet.style.setProperty('--ox', (e.clientX - (window.innerWidth - Math.min(520, window.innerWidth - 32)) / 2) + 'px'); sheet.style.setProperty('--oy', (e.clientY - window.innerHeight * .2) + 'px'); }
+  const close = () => { if (!sheetOpen) return; sheetOpen = false; ov.classList.add('closing'); setTimeout(() => ov.remove(), 230); document.removeEventListener('keydown', esc); };
+  const esc = ev => { if (ev.key === 'Escape') close(); };
+  document.addEventListener('keydown', esc);
+  ov.addEventListener('mousedown', ev => { if (ev.target === ov) close(); });
+  build(sheet, close);
+  ov.append(sheet); document.body.append(ov);
+  return close;
+}
+function openAddSheet(catId, presetSub, e) {
+  const c = cat(catId);
+  openSheet((sheet, close) => {
+    sheet.style.setProperty('--accent', c.color);
+    let selected = presetSub || (c.subtopics.length === 1 ? c.subtopics[0].id : null);
+    const chips = h('div.chips'), err = h('div.err'), ta = h('textarea', { placeholder: 'Хук или идея ролика. Например: «Проверь на себе: встань на одну ногу на 5 секунд»' });
+    const note = h('input.note', { placeholder: 'Заметка (необязательно): формат, где снимать, что показать' });
+    function drawChips() {
+      chips.innerHTML = '';
+      for (const sb of c.subtopics) {
+        const n = ideasIn(catId, sb.id).length;
+        chips.append(h('button.chip', { type: 'button', class: selected === sb.id ? 'on' : '', title: sb.hint || '', onclick: () => { selected = sb.id; err.textContent = ''; drawChips(); ta.focus(); } }, sb.name, n ? h('span.n', {}, n) : null));
+      }
+      const newChip = h('button.chip.new', { type: 'button' }, '+ подтема');
+      newChip.onclick = () => {
+        const inp = h('input.chip-input', { placeholder: 'Название подтемы' });
+        newChip.replaceWith(inp); inp.focus();
+        let fired = false;
+        const fin = () => { if (fired) return; fired = true; const v = inp.value.trim(); if (v) { const sb = { id: uid(), name: v, shade: nextShade(c) }; c.subtopics.push(sb); selected = sb.id; save(); currentView && currentView.update(); } drawChips(); if (v) ta.focus(); };
+        inp.addEventListener('keydown', ev => { if (ev.key === 'Enter') { ev.preventDefault(); fin(); } if (ev.key === 'Escape') { inp.value = ''; fin(); } });
+        inp.addEventListener('blur', fin);
+      };
+      chips.append(newChip);
+    }
+    drawChips();
+    const submit = () => {
+      const v = ta.value.trim();
+      if (!selected) { err.textContent = 'Выбери подтему — в какую «матрёшку» положить идею.'; return; }
+      if (!v) { err.textContent = 'Напиши саму идею.'; ta.focus(); return; }
+      addIdea(catId, selected, v, note.value.trim());
+      const sb = subOf(catId, selected);
+      close();
+      toast(`Добавлено: ${c.name} › ${sb.name}`, { action: 'Открыть', onAction: () => go({ level: 'sub', catId, subId: selected }, { dir: 'in' }) });
+    };
+    ta.addEventListener('keydown', ev => { if ((ev.ctrlKey || ev.metaKey) && ev.key === 'Enter') submit(); });
+    sheet.append(
+      h('h3', {}, h('span.sw', { style: `background:${c.color}` }), `Новая идея · ${c.name}`),
+      h('div.lbl', {}, 'Подтема'), chips,
+      h('div.lbl', {}, 'Идея'), ta, note, err,
+      h('div.foot', {}, h('button.btn.secondary', { onclick: close }, 'Отмена'), h('button.btn', { onclick: submit }, 'Добавить')));
+    setTimeout(() => (selected ? ta : chips.querySelector('.chip'))?.focus(), 80);
+  }, e);
+}
+
+/* ===================================================================
+   Меню: экспорт / импорт / хуки / очистка
+   =================================================================== */
+const menuBtn = document.getElementById('menuBtn'), menuBox = document.getElementById('menu'), importFile = document.getElementById('importFile');
+let menuOpen = false;
+function closeMenu() { menuOpen = false; menuBox.innerHTML = ''; }
+menuBtn.addEventListener('click', e => {
+  e.stopPropagation();
+  if (menuOpen) return closeMenu();
+  menuOpen = true;
+  const dd = h('div.dropdown', {},
+    h('button', { onclick: () => { closeMenu(); exportJSON(); } }, h('span', {}, 'Экспорт в JSON', h('small', {}, 'резервная копия всех идей и планов'))),
+    h('button', { onclick: () => { closeMenu(); importFile.click(); } }, h('span', {}, 'Импорт из JSON', h('small', {}, 'восстановить из копии'))),
+    h('hr'),
+    h('button', { onclick: () => { closeMenu(); loadHooks(); } }, h('span', {}, 'Загрузить 20 хуков из документа', h('small', {}, 'сценарии из «Хуки — 20 сценариев» по подтемам'))),
+    h('hr'),
+    h('button.danger', { onclick: () => { closeMenu(); confirmClear(); } }, 'Очистить всё…'));
+  menuBox.innerHTML = ''; menuBox.append(dd);
+});
+document.addEventListener('click', e => { if (menuOpen && !e.target.closest('.menu-wrap')) closeMenu(); });
+
+function exportJSON() {
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+  const a = h('a', { href: URL.createObjectURL(blob), download: `content-balance-${new Date().toISOString().slice(0, 10)}.json` });
+  document.body.append(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  toast('Файл резервной копии скачан');
+}
+importFile.addEventListener('change', () => {
+  const f = importFile.files[0]; if (!f) return;
+  const rd = new FileReader();
+  rd.onload = () => {
+    try {
+      const s = JSON.parse(rd.result);
+      if (!s || !Array.isArray(s.categories) || !Array.isArray(s.ideas)) throw 0;
+      const prev = state; state = s; save(); go({ level: 'home' }, { dir: 'out' });
+      toast(`Импортировано: ${pIdeas(s.ideas.length)}`, { action: 'Отменить', onAction: () => { state = prev; save(); go({ level: 'home' }, { dir: 'out' }); } });
+    } catch (e) { toast('Не получилось прочитать файл — это не копия приложения'); }
+    importFile.value = '';
+  };
+  rd.readAsText(f);
+});
+function confirmClear() {
+  openSheet((sheet, close) => {
+    sheet.append(h('h3', {}, 'Очистить всё?'),
+      h('p.txt', {}, `Удалятся ${pIdeas(state.ideas.length)}, планы и подтемы. Перед этим стоит сделать экспорт.`),
+      h('div.foot', {}, h('button.btn.secondary', { onclick: close }, 'Отмена'),
+        h('button.btn', { style: '--accent:var(--personal)', onclick: () => { const prev = state; state = defaultState(); save(); close(); go({ level: 'home' }, { dir: 'out' }); toast('Всё очищено', { action: 'Отменить', onAction: () => { state = prev; save(); go({ level: 'home' }, { dir: 'out' }); } }); } }, 'Очистить')));
+  });
+}
+
+/* 20 хуков из документа + один сценарий из «рельсов», разложенные по подтемам */
+const HOOKS = [
+  ['expert', 'Польза', 'Я вообще не думал, что такое возможно, пока сам не увидел, как… двигается бедро, если его не двигать', 'Хук №1. Финал: «Встань у стены, вес на правую. Увидел? Напиши “увидел”»'],
+  ['personal', 'Ваши мысли', 'Меня это, честно, выбесило, когда я узнал, что… самый частый вопрос в директ — «мне не поздно?»', 'Хук №2. Вставить реальное число сообщений'],
+  ['expert', 'Польза', 'Если бы мне кто-то сказал это раньше, я бы сэкономил года три: новичку не нужны фигуры', 'Хук №3. Первые 3–4 занятия — стопа и перенос веса'],
+  ['expert', 'Польза', 'Я долго молчал, но расскажу, что происходит, когда взрослый приходит на первое занятие', 'Хук №4. Страшно 20 минут, дальше отпускает'],
+  ['expert', 'Результаты клиентов', 'Вы не поверите, что мне вчера написал человек, который… (реальное сообщение из директа)', 'Хук №5. Только когда случится — на реальном сообщении'],
+  ['personal', 'Ваша жизнь', 'Смотрите, что произошло, когда я приехал в Ереван искать зал', 'Хук №6. Идти по улице, рассказывать на ходу, в конце — дверь зала'],
+  ['personal', 'Ваши мысли', 'Расскажу историю, после которой я навсегда перестал говорить ученикам «ну как ты не понимаешь»', 'Хук №7. Только на реальном случае'],
+  ['personal', 'Ваши мысли', 'Я десять лет думал одно, а здесь понял другое: взрослые учатся быстрее детей', 'Хук №8 / рельсы №1. Когда увижу на своей взрослой группе'],
+  ['personal', 'Ваша жизнь', 'У меня случилось такое, чего за десять лет не было ни разу: 7 девушек в группе и 0 парней', 'Хук №9. Цифры — реальные из группы'],
+  ['expert', 'Польза', 'Никогда не делайте вот это, когда собираетесь на первое занятие: туфли, растяжка, сто видео', 'Хук №10 / рельсы №4'],
+  ['expert', 'Польза', 'Самая дорогая ошибка после тридцати — не туфли и не абонемент. Ждать', 'Хук №11. Год ожидания = 52 занятия, которых не было'],
+  ['expert', 'Продукт', 'Три вещи, за которые вы переплачиваете на танцах: туфли, индивидуалки с первого дня, абонемент на полгода', 'Хук №12. Финал — мои цены открыто: группа / индивидуально'],
+  ['expert', 'Польза', 'Так, стоп. Если вы собираетесь на танцы «когда похудеете» — сначала вот это', 'Хук №13. Порядок обратный: сначала танцы'],
+  ['personal', 'Ваши мысли', 'Есть одна вещь, о которой вам не скажет ни один тренер: талант есть не у всех', 'Хук №14. Через год это меняет — ничего'],
+  ['expert', 'Польза', 'Знаете, почему на самом деле не получается попасть в ритм? «Не считай, чувствуй» — худший совет', 'Хук №15 / рельсы №2. Счёт вслух → про себя → тело считает само'],
+  ['expert', 'Польза', 'Очень неудобная правда про то, почему бросают на третьей неделе', 'Хук №16. Раз в неделю — тело забывает за 6 дней. Решение: два раза или 10 минут дома'],
+  ['expert', 'Результаты клиентов', 'Угадайте, что общего у всех, кто бросил танцы', 'Хук №17. Между «получилось» и «бросил» — две недели. Назвать без имён, кто остался и прорвался'],
+  ['expert', 'Польза', 'Проверь прямо сейчас: встань на одну ногу на пять секунд. Качает?', 'Хук №18. Значит, опоры в стопе нет'],
+  ['personal', 'Ваша жизнь', 'Мне до сих пор неловко за то, как я приехал в Ереван. А именно…', 'Хук №19. Только реальный факт из первых дней'],
+  ['expert', 'Продукт', 'Это должен знать каждый, кто хоть раз стоял у стены на вечеринке: нужно три вещи, не пятьдесят фигур', 'Хук №20. Это два месяца, не два года. Финал: «Отпуск когда? Напиши дату — посчитаем»'],
+  ['personal', 'Ваша жизнь', 'Вот такая ситуация сложилась у меня — смотрите, я набрал группу', 'Рельсы №3'],
+];
+function loadHooks() {
+  let added = 0;
+  for (const [catId, subName, title, note] of HOOKS) {
+    const c = cat(catId); if (!c) continue;
+    let sb = c.subtopics.find(x => x.name.toLowerCase() === subName.toLowerCase());
+    if (!sb) { sb = { id: uid(), name: subName, shade: nextShade(c) }; c.subtopics.push(sb); }
+    if (state.ideas.some(i => i.title === title)) continue;
+    state.ideas.push({ id: uid(), catId, subId: sb.id, title, note, createdAt: Date.now() - added * 1000, done: false, doneAt: null });
+    added++;
+  }
+  commit();
+  toast(added ? `Загружено ${pIdeas(added)} из документа` : 'Все хуки уже загружены');
+}
+
+/* ===================================================================
+   Старт
+   =================================================================== */
+go({ level: 'home' });
+</script>
+</body>
+</html>

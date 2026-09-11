@@ -1,0 +1,6 @@
+# В репозиторий идёт только приложение. Личные материалы остаются локально.
+*
+!.gitignore
+!README.md
+!index.html
+!content-balance.html
