@@ -122,9 +122,12 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .donut .lab .c{font-size:11px;font-weight:500;opacity:.85}
 .donut .lab.sm .p{font-size:16px}
 .donut .lab.sm .n{font-size:11px}
-.donut .lab.empty{fill:var(--ink-2)}
-.donut .lab.empty .n{font-size:11px;opacity:.8}
-.donut .lab.empty .p{font-size:11px;font-weight:600;opacity:.7;letter-spacing:0}
+/* пустой сегмент: название — крупно и читаемо, «пусто» — мелкой подписью под ним */
+.donut .lab.empty{fill:var(--ink)}
+.donut .lab.empty .n{font-size:16px;font-weight:700;opacity:.9;letter-spacing:-.01em}
+.donut .lab.empty .p{font-size:11px;font-weight:600;opacity:.55;letter-spacing:.04em;text-transform:uppercase}
+.donut .lab.sm.empty .n{font-size:13px}
+.donut .lab.sm.empty .p{font-size:10px}
 .center{position:absolute;inset:0;display:grid;place-items:center;text-align:center;pointer-events:none}
 .center .big{font-size:38px;font-weight:800;letter-spacing:-.03em;line-height:1}
 .center .sub{color:var(--ink-3);font-size:13px;margin-top:6px;font-weight:600;letter-spacing:0}
@@ -566,6 +569,9 @@ function Donut({ size = 360, outer = 172, inner = 96, labelMin = .07, emptySlot 
       n.path.setAttribute('fill', t.color);
       n.path.classList.toggle('empty', t.empty);
       n.lab.classList.toggle('empty', t.empty);
+      // у пустого сегмента две строки стоят плотнее и центрированы по кольцу
+      n.tn.setAttribute('y', t.empty ? (small ? -3 : -4) : (small ? -8 : -18));
+      n.tp.setAttribute('y', t.empty ? (small ? 12 : 14) : (small ? 10 : 8));
       n.tn.textContent = t.label;
       n.tp.textContent = t.empty ? 'пусто' : t.pct + '%';
       n.path.style.strokeWidth = t.tEnd - t.tStart >= 359.9 ? '0' : '2';
