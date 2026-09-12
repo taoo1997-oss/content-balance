@@ -3,7 +3,7 @@
    приезжали сразу; кэш — только запасной вариант без связи.
    Иконки и шрифты — из кэша сразу. Запросы к API не трогаем. */
 
-const CACHE = 'cb-1';
+const CACHE = 'cb-2';
 const SHELL = ['./', './content-balance.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png'];
 
 self.addEventListener('install', e => {
