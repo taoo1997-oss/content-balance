@@ -4,3 +4,7 @@
 !README.md
 !index.html
 !content-balance.html
+!manifest.webmanifest
+!sw.js
+!icons/
+!icons/*.png

@@ -4,6 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Баланс контента · fuchiji.dance</title>
+<meta name="theme-color" content="#0e1015">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Баланс">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -79,16 +87,17 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 /* ---------- layout ---------- */
 .grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(300px,.85fr);gap:22px;align-items:start}
 @media (max-width:860px){.grid{grid-template-columns:1fr}}
-/* главный экран — во всю высоту окна */
-.home .grid{grid-template-columns:minmax(0,1.6fr) minmax(320px,.8fr);align-items:stretch}
+/* главный экран и экран категории — во всю высоту окна, кольцо одного размера на обоих */
+:is(.home,.cat) .grid{grid-template-columns:minmax(0,1.6fr) minmax(320px,.8fr);align-items:stretch}
 .home .side{display:flex;flex-direction:column;gap:16px}
 .home .side .card{flex:1;display:flex;flex-direction:column;justify-content:center;margin:0}
-.home .donut-wrap{width:min(100%,calc(100vh - 330px),720px);min-width:min(100%,280px)}
+:is(.home,.cat) .donut-wrap{width:min(100%,calc(100vh - 330px),720px);min-width:min(100%,280px)}
 @media (min-width:861px){
-  .home .chart-card{min-height:calc(100vh - 122px);justify-content:center;gap:24px;padding:30px 30px 24px}
-  .home .add-row{max-width:760px}
-  .home .center .big{font-size:52px}
-  .home .center .sub{font-size:14px;margin-top:8px}
+  :is(.home,.cat) .chart-card{min-height:calc(100vh - 122px);justify-content:center;gap:24px;padding:30px 30px 24px}
+  .cat .chart-card{min-height:calc(100vh - 190px)}
+  :is(.home,.cat) .add-row{max-width:760px}
+  :is(.home,.cat) .center .big{font-size:52px}
+  :is(.home,.cat) .center .sub{font-size:14px;margin-top:8px}
   .home .ring{width:120px;height:120px}
   .home .ring .val{font-size:30px}
   .home .ring .val small{font-size:12px}
@@ -97,9 +106,9 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
   .home .bal-nums .big{font-size:38px}
   .home .legend,.home .tip{font-size:14px}
   .home .card h3{font-size:13px}
-  .home .add-btn{padding:16px 20px;font-size:16px}
+  :is(.home,.cat) .add-btn{padding:16px 20px;font-size:16px}
 }
-@media (max-width:860px){.home .grid{grid-template-columns:1fr}.home .side .card{flex:none}}
+@media (max-width:860px){:is(.home,.cat) .grid{grid-template-columns:1fr}.home .side .card{flex:none}}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px}
 .card + .card{margin-top:14px}
 .card h3{margin:0 0 4px;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-3);font-weight:700}
@@ -120,14 +129,13 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .donut .lab .n{font-size:13px;font-weight:600;opacity:.92}
 .donut .lab .p{font-size:24px;font-weight:800;letter-spacing:-.02em}
 .donut .lab .c{font-size:11px;font-weight:500;opacity:.85}
-.donut .lab.sm .p{font-size:16px}
-.donut .lab.sm .n{font-size:11px}
+/* формат съёмки — в скобках сразу под названием сегмента */
+.donut .lab .f{font-size:10.5px;font-weight:600;opacity:.8;letter-spacing:.01em}
 /* пустой сегмент: название — крупно и читаемо, «пусто» — мелкой подписью под ним */
 .donut .lab.empty{fill:var(--ink)}
 .donut .lab.empty .n{font-size:16px;font-weight:700;opacity:.9;letter-spacing:-.01em}
+.donut .lab.empty .f{opacity:.65}
 .donut .lab.empty .p{font-size:11px;font-weight:600;opacity:.55;letter-spacing:.04em;text-transform:uppercase}
-.donut .lab.sm.empty .n{font-size:13px}
-.donut .lab.sm.empty .p{font-size:10px}
 .center{position:absolute;inset:0;display:grid;place-items:center;text-align:center;pointer-events:none}
 .center .big{font-size:38px;font-weight:800;letter-spacing:-.03em;line-height:1}
 .center .sub{color:var(--ink-3);font-size:13px;margin-top:6px;font-weight:600;letter-spacing:0}
@@ -227,6 +235,8 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .back:active{transform:scale(.96)}
 .view-head h2{margin:0;font-size:26px;font-weight:800;letter-spacing:-.02em;display:flex;align-items:center;gap:10px;min-width:0}
 .view-head h2 .sw{width:14px;height:14px;border-radius:5px;flex:none}
+.view-head h2 .fmt{font-size:16px;font-weight:600;color:var(--ink-3);letter-spacing:0;white-space:nowrap}
+.view-head h2 .fmt:empty{display:none}
 .view-head .meta{color:var(--ink-3);font-size:14px;font-weight:600}
 .view-head .spacer{flex:1}
 .ghost-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:10px;border:1px dashed var(--line-2);color:var(--ink-2);font-weight:600;font-size:13px;transition:background .2s,color .2s,border-color .2s}
@@ -335,6 +345,40 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .tt.show{opacity:1;transform:translate(-50%,calc(-100% - 12px))}
 .tt small{display:block;opacity:.7;font-weight:500}
 .hidden-input{display:none}
+
+/* ---------- аккаунт и синхронизация ---------- */
+.app.locked{display:none}
+.sync{display:inline-flex;align-items:center;gap:7px;height:38px;padding:0 12px;border-radius:11px;background:var(--surface);border:1px solid var(--line);color:var(--ink-3);font-size:12px;font-weight:600;white-space:nowrap;transition:color .2s}
+.sync .d{width:8px;height:8px;border-radius:50%;background:var(--ink-3);flex:none;transition:background .3s}
+.sync.ok .d{background:var(--good)}
+.sync.saving .d{background:var(--expert);animation:blink 1s infinite}
+.sync.offline .d{background:var(--warn)}
+.sync.error .d{background:var(--personal)}
+.sync.error{color:var(--personal)}
+@keyframes blink{50%{opacity:.3}}
+@media (max-width:700px){.sync span{display:none}.sync{padding:0 12px}}
+.menu-wrap{display:flex;align-items:center;gap:8px}
+.dropdown .acct{padding:10px 12px 8px;display:flex;flex-direction:column;gap:2px}
+.dropdown .acct b{font-weight:700}
+.dropdown .acct small{font-size:12px}
+.auth{min-height:100vh;display:grid;place-items:center;padding:24px 16px;background:radial-gradient(900px 500px at 15% 0%,rgba(232,93,69,.16),transparent 60%),radial-gradient(900px 500px at 90% 100%,rgba(63,134,230,.18),transparent 60%),var(--bg)}
+.auth-card{width:min(420px,100%);background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:26px 24px 22px;box-shadow:var(--shadow);animation:pop .45s cubic-bezier(.16,.84,.24,1) both}
+.auth-card .brand{margin-bottom:18px}
+.auth-card .brand h1{font-size:20px}
+.auth-tabs{display:flex;gap:4px;background:var(--surface-2);border-radius:12px;padding:4px;margin-bottom:16px}
+.auth-tabs button{flex:1;padding:9px 10px;border-radius:9px;font-weight:700;font-size:14px;color:var(--ink-3);transition:background .2s,color .2s}
+.auth-tabs button.on{background:var(--surface);color:var(--ink);box-shadow:0 2px 8px rgba(0,0,0,.18)}
+.auth-form{display:flex;flex-direction:column;gap:10px}
+.auth-form label{font-size:12px;font-weight:700;color:var(--ink-3);text-transform:uppercase;letter-spacing:.06em;display:flex;flex-direction:column;gap:6px}
+.auth-form input{width:100%;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:15px;text-transform:none;letter-spacing:0;font-weight:500}
+.auth-form input:focus{outline:none;border-color:var(--expert)}
+.auth-form .pw{position:relative}
+.auth-form .pw input{padding-right:64px}
+.auth-form .pw button{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:12px;font-weight:700;color:var(--ink-3);padding:6px 8px;border-radius:8px;text-transform:none;letter-spacing:0}
+.auth-form .pw button:hover{color:var(--ink);background:var(--surface-3)}
+.auth-form .btn{margin-top:6px;padding:14px 18px;font-size:15px;background:linear-gradient(90deg,var(--personal),var(--expert))}
+.auth-form .err{color:var(--personal);font-size:13px;font-weight:600;min-height:18px}
+.auth-card .note{color:var(--ink-3);font-size:12px;margin:14px 0 0;text-align:center;line-height:1.5}
 </style>
 </head>
 <body>
@@ -346,6 +390,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
     </div>
     <nav class="crumbs" id="crumbs"></nav>
     <div class="menu-wrap">
+      <button class="sync" id="syncPill" title="Состояние синхронизации · нажми, чтобы обновить"><i class="d"></i><span>…</span></button>
       <button class="icon-btn" id="menuBtn" title="Меню" aria-label="Меню">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="5" cy="12" r="1.2" fill="currentColor"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/><circle cx="19" cy="12" r="1.2" fill="currentColor"/></svg>
       </button>
@@ -365,38 +410,58 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 const KEY = 'fuchiji-content-balance-v1';
 const uid = () => Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-3);
 
+/* Форматы съёмки по подтемам — из того же рилса «Ваш блог»:
+   мысли → разговорный рилс, жизнь → сторис 3 р./нед., польза → посты, карусели и рилс,
+   продукт → пост и истории, результаты клиентов → рилс. */
+const FORMATS = {
+  'ваши мысли': 'разговорный рилс', 'ваша жизнь': 'сторис 3 р./нед.',
+  'польза': 'посты, карусели и рилс', 'продукт': 'пост и истории', 'результаты клиентов': 'рилс'
+};
 function defaultState() {
   // структура один в один из рилса «Ваш блог»: личное / экспертное и пять секторов
-  const sub = (name, shade, hint) => ({ id: uid(), name, shade, hint });
+  const sub = (name, shade) => ({ id: uid(), name, shade, hint: FORMATS[name.toLowerCase()], updatedAt: 0 });
   return {
-    version: 2,
+    version: 3,
     categories: [
-      { id: 'personal', name: 'Личное', color: '#E85D45',
-        subtopics: [sub('Ваши мысли', 0, 'разговорный рилс'), sub('Ваша жизнь', 1, 'сторис 3 р./нед.')] },
-      { id: 'expert', name: 'Экспертное', color: '#3F86E6',
-        subtopics: [sub('Польза', 0, 'карусели и рилс'), sub('Продукт', 1, 'закреп-пост и истории'), sub('Результаты клиентов', 2, 'закреплённые рилсы')] }
+      { id: 'personal', name: 'Личное', color: '#E85D45', subtopics: [sub('Ваши мысли', 0), sub('Ваша жизнь', 1)] },
+      { id: 'expert', name: 'Экспертное', color: '#3F86E6', subtopics: [sub('Польза', 0), sub('Продукт', 1), sub('Результаты клиентов', 2)] }
     ],
     ideas: [],
     plans: {},
-    lastPlan: 8
+    lastPlan: 8,
+    tombstones: {},   // id удалённой идеи/подтемы → когда удалили; нужно для слияния между устройствами
+    updatedAt: 0
   };
+}
+function normalizeState(s) {
+  if (!s || !Array.isArray(s.categories) || !Array.isArray(s.ideas)) return null;
+  if ((s.version || 1) < 2 && !s.ideas.length) return defaultState(); // старая пустая разметка → схема из рилса
+  if ((s.version || 1) < 3) {
+    // v2 → v3: форматы без слова «закреплённый», как просили; свои подтемы не трогаем
+    for (const c of s.categories) for (const sb of c.subtopics) {
+      const f = FORMATS[(sb.name || '').toLowerCase()];
+      if (f && (!sb.hint || /закреп/i.test(sb.hint) || sb.hint === 'карусели и рилс')) sb.hint = f;
+    }
+  }
+  s.version = 3;
+  s.plans = s.plans || {}; s.tombstones = s.tombstones || {}; s.updatedAt = s.updatedAt || 0;
+  return s;
 }
 
 let state = load();
 function load() {
-  try {
-    const raw = localStorage.getItem(KEY);
-    if (raw) {
-      const s = JSON.parse(raw);
-      if (s && s.categories && s.ideas) {
-        if ((s.version || 1) < 2 && !s.ideas.length) return defaultState(); // старая пустая разметка → схема из рилса
-        s.version = 2; return s;
-      }
-    }
-  } catch (e) {}
+  try { const s = normalizeState(JSON.parse(localStorage.getItem(KEY))); if (s) return s; } catch (e) {}
   return defaultState();
 }
 function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+/* любое изменение данных: метка версии, локальное сохранение, отправка на сервер */
+function persist() {
+  state.updatedAt = Date.now();
+  const old = Date.now() - 120 * 864e5;
+  for (const k in state.tombstones) if (state.tombstones[k] < old) delete state.tombstones[k];
+  save(); Sync.schedulePush();
+}
+function tombstone(id) { state.tombstones[id] = Date.now(); }
 
 /* --- селекторы --- */
 const cat = id => state.categories.find(c => c.id === id);
@@ -503,7 +568,7 @@ function hideTip() { tt.classList.remove('show'); }
 /* ===================================================================
    Кольцевая диаграмма с анимацией
    =================================================================== */
-function Donut({ size = 360, outer = 172, inner = 96, labelMin = .07, emptySlot = .07, small = false, onClick, onHover } = {}) {
+function Donut({ size = 360, outer = 172, inner = 96, labelMin = .07, emptySlot = .07, onClick, onHover } = {}) {
   const svg = s('svg', { viewBox: `0 0 ${size} ${size}`, class: 'donut' });
   const gSeg = s('g'), gLab = s('g');
   svg.append(gSeg, gLab);
@@ -556,11 +621,11 @@ function Donut({ size = 360, outer = 172, inner = 96, labelMin = .07, emptySlot 
       if (!n) {
         const path = s('path', { class: 'seg', 'data-key': t.key });
         path.style.stroke = 'var(--surface)'; path.style.strokeWidth = '2';
-        const lab = s('g', { class: 'lab' + (small ? ' sm' : '') });
-        const tn = s('text', { class: 'n', y: small ? -8 : -18 }), tp = s('text', { class: 'p', y: small ? 10 : 8 }), tc = s('text', { class: 'c', y: 24 });
-        lab.append(tn, tp, tc);
+        const lab = s('g', { class: 'lab' });
+        const tn = s('text', { class: 'n' }), tf = s('text', { class: 'f' }), tp = s('text', { class: 'p' }), tc = s('text', { class: 'c' });
+        lab.append(tn, tf, tp, tc);
         gSeg.append(path); gLab.append(lab);
-        n = { path, lab, tn, tp, tc, start: t.tStart, end: t.tStart };
+        n = { path, lab, tn, tf, tp, tc, start: t.tStart, end: t.tStart };
         nodes.set(t.key, n);
       }
       // порядок в DOM = порядок сегментов
@@ -569,13 +634,21 @@ function Donut({ size = 360, outer = 172, inner = 96, labelMin = .07, emptySlot 
       n.path.setAttribute('fill', t.color);
       n.path.classList.toggle('empty', t.empty);
       n.lab.classList.toggle('empty', t.empty);
-      // у пустого сегмента две строки стоят плотнее и центрированы по кольцу
-      n.tn.setAttribute('y', t.empty ? (small ? -3 : -4) : (small ? -8 : -18));
-      n.tp.setAttribute('y', t.empty ? (small ? 12 : 14) : (small ? 10 : 8));
+      // строки подписи: название · (формат съёмки, если задан) · доля/«пусто» · счётчик.
+      // У пустого сегмента строки стоят плотнее и центрированы по кольцу.
+      const fmt = t.fmt ? `(${t.fmt})` : '';
+      const rows = t.empty
+        ? (fmt ? [-12, 3, 19] : [-4, null, 14])
+        : (fmt ? [-24, -10, 16, 32] : [-18, null, 8, 24]);
+      n.tn.setAttribute('y', rows[0]);
+      n.tf.setAttribute('y', rows[1] ?? 0);
+      n.tp.setAttribute('y', rows[2]);
+      n.tc.setAttribute('y', rows[3] ?? 0);
       n.tn.textContent = t.label;
+      n.tf.textContent = fmt;
       n.tp.textContent = t.empty ? 'пусто' : t.pct + '%';
       n.path.style.strokeWidth = t.tEnd - t.tStart >= 359.9 ? '0' : '2';
-      n.tc.textContent = t.empty || small ? '' : (t.sub || pIdeas(t.value));
+      n.tc.textContent = t.empty ? '' : (t.sub || pIdeas(t.value));
       n.fromStart = n.start; n.fromEnd = n.end;
     });
     if (raf) cancelAnimationFrame(raf);
@@ -660,7 +733,18 @@ function buildView(r) {
   if (r.level === 'sub') return SubView(r.catId, r.subId);
   return HomeView();
 }
-function commit() { save(); currentView && currentView.update(); renderCrumbs(); }
+function commit() { persist(); currentView && currentView.update(); renderCrumbs(); }
+/* перестроить текущий экран без анимации — после того как приехали данные с другого устройства */
+function rerender() {
+  if (!currentView) return;
+  const c = cat(route.catId);
+  if (route.level === 'sub' && !(c && subOf(route.catId, route.subId))) route = { level: 'cat', catId: route.catId };
+  if (route.level === 'cat' && !c) route = { level: 'home' };
+  const view = buildView(route);
+  currentView.el.replaceWith(view.el);
+  currentView = view; view.route = route;
+  renderCrumbs();
+}
 
 function renderCrumbs() {
   const nav = document.getElementById('crumbs');
@@ -910,12 +994,12 @@ function AnalysisCard() {
 function CatView(catId) {
   const c = cat(catId);
   const el = h('div.view.cat', { style: `--accent:${c.color}` });
+  // кольцо того же размера и с теми же подписями, что на главной
   const donut = Donut({
-    small: true, labelMin: .09, inner: 104,
     onClick: (seg, e, path) => { const o = originFromEl(path); go({ level: 'sub', catId, subId: seg.key }, { dir: 'in', origin: o }); },
     onHover: (seg, e) => {
       const all = ideasIn(catId, seg.key), dn = all.filter(i => i.done).length;
-      showTip(`${seg.label} · ${seg.pct}%<small>${all.length ? `${pIdeas(all.length)} · снято ${dn}` : 'пока пусто'} · открыть →</small>`, e.clientX, e.clientY);
+      showTip(`${seg.label}${seg.fmt ? ` (${seg.fmt})` : ''} · ${seg.pct}%<small>${all.length ? `${pIdeas(all.length)} · снято ${dn}` : 'пока пусто'} · открыть →</small>`, e.clientX, e.clientY);
     }
   });
   const center = h('div.center', {}, h('div', {}, h('div.big'), h('div.sub')));
@@ -937,7 +1021,7 @@ function CatView(catId) {
     const all = ideasIn(catId), total = state.ideas.length;
     const [share] = shares([all.length, total - all.length]);
     meta.textContent = `${pIdeas(all.length)} · ${total ? share + '% всего контента' : 'контента пока нет'}`;
-    donut.update(c.subtopics.map(sb => ({ key: sb.id, label: sb.name, value: ideasIn(catId, sb.id).length, color: subColor(c, sb) })));
+    donut.update(c.subtopics.map(sb => ({ key: sb.id, label: sb.name, fmt: sb.hint || '', value: ideasIn(catId, sb.id).length, color: subColor(c, sb) })));
     center.querySelector('.big').textContent = all.length;
     center.querySelector('.sub').innerHTML = `${plural(all.length, 'идея', 'идеи', 'идей')} · снято <b>${all.filter(i => i.done).length}</b>`;
     list.innerHTML = '';
@@ -946,7 +1030,7 @@ function CatView(catId) {
       const ideas = ideasIn(catId, sb.id), dn = ideas.filter(i => i.done).length, col = subColor(c, sb);
       const row = h('div.sub-row', { 'data-key': sb.id, onclick: e => { if (e.target.closest('.plus')) return; go({ level: 'sub', catId, subId: sb.id }, { dir: 'in', origin: originFromEl(row) }); } },
         h('span.dot', { style: `background:${col}` }),
-        h('span.name', {}, sb.name, sb.hint ? h('small', {}, sb.hint) : null),
+        h('span.name', {}, sb.name, sb.hint ? h('small', {}, `(${sb.hint})`) : null),
         h('span.cnt', {}, ideas.length ? h('span', {}, h('b', {}, ideas.length), ` · снято ${dn}`) : 'пусто'),
         h('span.mini', { title: `снято ${dn} из ${ideas.length}` }, h('i', { style: `width:${ideas.length ? dn / ideas.length * 100 : 0}%;background:${col}` })),
         h('button.plus', { title: `Добавить в «${sb.name}»`, onmouseenter: e => e.currentTarget.style.background = col, onmouseleave: e => e.currentTarget.style.background = '', onclick: e => openAddSheet(catId, sb.id, e) }, '+'),
@@ -967,7 +1051,7 @@ function newSubtopicInline(list, c) {
     if (fired) return; fired = true;
     const name = inp.value.trim(); wrap.remove();
     if (!name) return;
-    c.subtopics.push({ id: uid(), name, shade: nextShade(c) });
+    c.subtopics.push({ id: uid(), name, shade: nextShade(c), updatedAt: Date.now() });
     commit(); toast(`Подтема «${name}» создана`);
   };
   inp.addEventListener('keydown', e => { if (e.key === 'Enter') finish(); if (e.key === 'Escape') { inp.value = ''; finish(); } });
@@ -981,7 +1065,7 @@ function SubView(catId, subId) {
   const c = cat(catId);
   const el = h('div.view.sub', { style: `--accent:${c.color}` });
   let filter = 'all', editingId = null;
-  const title = h('h2', {}, h('span.sw', { style: `background:${subColor(c, subOf(catId, subId) || {})}` }), h('span.tname'));
+  const title = h('h2', {}, h('span.sw', { style: `background:${subColor(c, subOf(catId, subId) || {})}` }), h('span.tname'), h('span.fmt'));
   const meta = h('span.meta');
   const renameBtn = h('button.ghost-btn', { onclick: startRename }, icon('edit'), 'Переименовать');
   const delBtn = h('button.ghost-btn.danger', { onclick: deleteSub }, icon('trash'), 'Удалить подтему');
@@ -1004,7 +1088,7 @@ function SubView(catId, subId) {
     const finish = () => {
       if (fired) return; fired = true;
       const v = inp.value.trim(); inp.replaceWith(title);
-      if (v && v !== sb.name) { sb.name = v; commit(); toast('Подтема переименована'); }
+      if (v && v !== sb.name) { sb.name = v; sb.updatedAt = Date.now(); commit(); toast('Подтема переименована'); }
     };
     inp.addEventListener('keydown', e => { if (e.key === 'Enter') finish(); if (e.key === 'Escape') { inp.value = sb.name; finish(); } });
     inp.addEventListener('blur', finish);
@@ -1012,9 +1096,9 @@ function SubView(catId, subId) {
   function deleteSub() {
     const sb = subOf(catId, subId), ideas = ideasIn(catId, subId);
     if (ideas.length) { toast(`В подтеме ${pIdeas(ideas.length)} — сначала перенеси или удали их`); return; }
-    const idx = c.subtopics.indexOf(sb); c.subtopics.splice(idx, 1);
-    save(); go({ level: 'cat', catId }, { dir: 'out' });
-    toast(`Подтема «${sb.name}» удалена`, { action: 'Отменить', onAction: () => { c.subtopics.splice(idx, 0, sb); commit(); } });
+    const idx = c.subtopics.indexOf(sb); c.subtopics.splice(idx, 1); tombstone(sb.id);
+    persist(); go({ level: 'cat', catId }, { dir: 'out' });
+    toast(`Подтема «${sb.name}» удалена`, { action: 'Отменить', onAction: () => { delete state.tombstones[sb.id]; sb.updatedAt = Date.now(); c.subtopics.splice(idx, 0, sb); commit(); } });
   }
   function ideaRow(i) {
     const li = h('li.idea', { class: i.done ? 'done' : '', 'data-id': i.id });
@@ -1025,7 +1109,7 @@ function SubView(catId, subId) {
       const saveIt = () => {
         const v = ta.value.trim(); if (!v) { ta.focus(); return; }
         const [nc, ns] = sel.value.split('|'); const moved = nc !== i.catId || ns !== i.subId;
-        Object.assign(i, { title: v, note: note.value.trim(), catId: nc, subId: ns }); editingId = null; commit();
+        Object.assign(i, { title: v, note: note.value.trim(), catId: nc, subId: ns, updatedAt: Date.now() }); editingId = null; commit();
         if (moved) toast(`Перенесено в «${cat(nc).name} › ${subOf(nc, ns).name}»`, { action: 'Открыть', onAction: () => go({ level: 'sub', catId: nc, subId: ns }, { dir: 'in' }) });
       };
       ta.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); saveIt(); } if (e.key === 'Escape') { editingId = null; update(); } });
@@ -1046,8 +1130,9 @@ function SubView(catId, subId) {
     const sb = subOf(catId, subId);
     if (!sb) { go({ level: 'cat', catId }, { dir: 'out' }); return; }
     title.querySelector('.tname').textContent = sb.name;
+    title.querySelector('.fmt').textContent = sb.hint ? `(${sb.hint})` : '';
     const all = ideasIn(catId, subId), dn = all.filter(i => i.done);
-    meta.textContent = `${pIdeas(all.length)} · снято ${dn.length}${sb.hint ? ' · формат: ' + sb.hint : ''}`;
+    meta.textContent = `${pIdeas(all.length)} · снято ${dn.length}`;
     delBtn.style.display = all.length ? 'none' : '';
     filters.innerHTML = '';
     for (const [k, lbl, n] of [['all', 'Все', all.length], ['todo', 'В очереди', all.length - dn.length], ['done', 'Снято', dn.length]])
@@ -1067,12 +1152,12 @@ function SubView(catId, subId) {
    Операции с идеями
    =================================================================== */
 function addIdea(catId, subId, title, note) {
-  const idea = { id: uid(), catId, subId, title, note: note || '', createdAt: Date.now(), done: false, doneAt: null };
+  const idea = { id: uid(), catId, subId, title, note: note || '', createdAt: Date.now(), updatedAt: Date.now(), done: false, doneAt: null };
   state.ideas.push(idea); commit();
   return idea;
 }
 function toggleDone(i) {
-  i.done = !i.done; i.doneAt = i.done ? Date.now() : null; commit();
+  i.done = !i.done; i.doneAt = i.done ? Date.now() : null; i.updatedAt = Date.now(); commit();
   if (i.done) {
     const key = nowKey(), n = doneInMonth(key).length, t = planFor(key);
     toast(t && n === t ? `🏆 ${n} из ${t} — план месяца выполнен!` : t ? `✓ Снято ${n} из ${t} в этом месяце` : `✓ Снято: ${n} в этом месяце`);
@@ -1081,8 +1166,8 @@ function toggleDone(i) {
 function removeIdea(i, li) {
   const idx = state.ideas.indexOf(i);
   if (li) li.classList.add('removing');
-  setTimeout(() => { state.ideas.splice(state.ideas.indexOf(i), 1); commit(); }, li ? 260 : 0);
-  toast('Идея удалена', { action: 'Отменить', onAction: () => { if (!state.ideas.includes(i)) state.ideas.splice(Math.min(idx, state.ideas.length), 0, i); commit(); } });
+  setTimeout(() => { const k = state.ideas.indexOf(i); if (k >= 0) { state.ideas.splice(k, 1); tombstone(i.id); commit(); } }, li ? 260 : 0);
+  toast('Идея удалена', { action: 'Отменить', onAction: () => { delete state.tombstones[i.id]; i.updatedAt = Date.now(); if (!state.ideas.includes(i)) state.ideas.splice(Math.min(idx, state.ideas.length), 0, i); commit(); } });
 }
 
 /* ===================================================================
@@ -1120,7 +1205,7 @@ function openAddSheet(catId, presetSub, e) {
         const inp = h('input.chip-input', { placeholder: 'Название подтемы' });
         newChip.replaceWith(inp); inp.focus();
         let fired = false;
-        const fin = () => { if (fired) return; fired = true; const v = inp.value.trim(); if (v) { const sb = { id: uid(), name: v, shade: nextShade(c) }; c.subtopics.push(sb); selected = sb.id; save(); currentView && currentView.update(); } drawChips(); if (v) ta.focus(); };
+        const fin = () => { if (fired) return; fired = true; const v = inp.value.trim(); if (v) { const sb = { id: uid(), name: v, shade: nextShade(c), updatedAt: Date.now() }; c.subtopics.push(sb); selected = sb.id; persist(); currentView && currentView.update(); } drawChips(); if (v) ta.focus(); };
         inp.addEventListener('keydown', ev => { if (ev.key === 'Enter') { ev.preventDefault(); fin(); } if (ev.key === 'Escape') { inp.value = ''; fin(); } });
         inp.addEventListener('blur', fin);
       };
@@ -1156,13 +1241,20 @@ menuBtn.addEventListener('click', e => {
   e.stopPropagation();
   if (menuOpen) return closeMenu();
   menuOpen = true;
+  const u = Auth.user();
   const dd = h('div.dropdown', {},
+    u ? h('div.acct', {}, h('b', {}, u.name), h('small', {}, u.login)) : null,
+    u ? h('button', { onclick: () => { closeMenu(); Sync.syncNow(); } }, h('span', {}, 'Синхронизировать сейчас', h('small', {}, 'обычно это происходит само'))) : null,
+    Install.available() ? h('button', { onclick: () => { closeMenu(); Install.prompt(); } }, h('span', {}, 'Установить на телефон', h('small', {}, 'как обычное приложение, с иконкой'))) : null,
+    Install.iosHint() ? h('button', { onclick: () => { closeMenu(); Install.showIosHint(); } }, h('span', {}, 'Установить на iPhone', h('small', {}, 'как добавить на экран «Домой»'))) : null,
+    h('hr'),
     h('button', { onclick: () => { closeMenu(); exportJSON(); } }, h('span', {}, 'Экспорт в JSON', h('small', {}, 'резервная копия всех идей и планов'))),
     h('button', { onclick: () => { closeMenu(); importFile.click(); } }, h('span', {}, 'Импорт из JSON', h('small', {}, 'восстановить из копии'))),
     h('hr'),
     h('button', { onclick: () => { closeMenu(); loadHooks(); } }, h('span', {}, 'Загрузить 20 хуков из документа', h('small', {}, 'сценарии из «Хуки — 20 сценариев» по подтемам'))),
     h('hr'),
-    h('button.danger', { onclick: () => { closeMenu(); confirmClear(); } }, 'Очистить всё…'));
+    h('button.danger', { onclick: () => { closeMenu(); confirmClear(); } }, 'Очистить всё…'),
+    u ? h('button', { onclick: () => { closeMenu(); Auth.logout(); } }, h('span', {}, 'Выйти из аккаунта', h('small', {}, 'данные останутся в аккаунте'))) : null);
   menuBox.innerHTML = ''; menuBox.append(dd);
 });
 document.addEventListener('click', e => { if (menuOpen && !e.target.closest('.menu-wrap')) closeMenu(); });
@@ -1180,8 +1272,8 @@ importFile.addEventListener('change', () => {
     try {
       const s = JSON.parse(rd.result);
       if (!s || !Array.isArray(s.categories) || !Array.isArray(s.ideas)) throw 0;
-      const prev = state; state = s; save(); go({ level: 'home' }, { dir: 'out' });
-      toast(`Импортировано: ${pIdeas(s.ideas.length)}`, { action: 'Отменить', onAction: () => { state = prev; save(); go({ level: 'home' }, { dir: 'out' }); } });
+      const prev = state; state = normalizeState(s); persist(); go({ level: 'home' }, { dir: 'out' });
+      toast(`Импортировано: ${pIdeas(s.ideas.length)}`, { action: 'Отменить', onAction: () => { state = prev; persist(); go({ level: 'home' }, { dir: 'out' }); } });
     } catch (e) { toast('Не получилось прочитать файл — это не копия приложения'); }
     importFile.value = '';
   };
@@ -1192,7 +1284,7 @@ function confirmClear() {
     sheet.append(h('h3', {}, 'Очистить всё?'),
       h('p.txt', {}, `Удалятся ${pIdeas(state.ideas.length)}, планы и подтемы. Перед этим стоит сделать экспорт.`),
       h('div.foot', {}, h('button.btn.secondary', { onclick: close }, 'Отмена'),
-        h('button.btn', { style: '--accent:var(--personal)', onclick: () => { const prev = state; state = defaultState(); save(); close(); go({ level: 'home' }, { dir: 'out' }); toast('Всё очищено', { action: 'Отменить', onAction: () => { state = prev; save(); go({ level: 'home' }, { dir: 'out' }); } }); } }, 'Очистить')));
+        h('button.btn', { style: '--accent:var(--personal)', onclick: () => { const prev = state; state = defaultState(); for (const i of prev.ideas) tombstone(i.id); for (const c of prev.categories) for (const sb of c.subtopics) tombstone(sb.id); persist(); close(); go({ level: 'home' }, { dir: 'out' }); toast('Всё очищено', { action: 'Отменить', onAction: () => { state = prev; persist(); go({ level: 'home' }, { dir: 'out' }); } }); } }, 'Очистить')));
   });
 }
 
@@ -1225,9 +1317,9 @@ function loadHooks() {
   for (const [catId, subName, title, note] of HOOKS) {
     const c = cat(catId); if (!c) continue;
     let sb = c.subtopics.find(x => x.name.toLowerCase() === subName.toLowerCase());
-    if (!sb) { sb = { id: uid(), name: subName, shade: nextShade(c) }; c.subtopics.push(sb); }
+    if (!sb) { sb = { id: uid(), name: subName, shade: nextShade(c), updatedAt: Date.now() }; c.subtopics.push(sb); }
     if (state.ideas.some(i => i.title === title)) continue;
-    state.ideas.push({ id: uid(), catId, subId: sb.id, title, note, createdAt: Date.now() - added * 1000, done: false, doneAt: null });
+    state.ideas.push({ id: uid(), catId, subId: sb.id, title, note, createdAt: Date.now() - added * 1000, updatedAt: Date.now(), done: false, doneAt: null });
     added++;
   }
   commit();
@@ -1235,9 +1327,271 @@ function loadHooks() {
 }
 
 /* ===================================================================
+   Аккаунт: регистрация и вход (Cloudflare Worker + D1)
+   =================================================================== */
+const API_BASE = 'https://content-balance-backend.taoo1997.workers.dev';
+const AUTH_KEY = 'fuchiji-cb-auth', SYNC_KEY = 'fuchiji-cb-sync';
+
+async function api(method, path, body, { auth = true, keepalive = false } = {}) {
+  const opts = { method, headers: {}, keepalive };
+  if (body !== undefined) { opts.headers['Content-Type'] = 'application/json'; opts.body = JSON.stringify(body); }
+  if (auth) {
+    const a = Auth.get();
+    if (!a) return { ok: false, status: 401, error: 'Не авторизовано' };
+    opts.headers.Authorization = 'Bearer ' + a.token;
+  }
+  let res;
+  try { res = await fetch(API_BASE + path, opts); }
+  catch (e) { return { ok: false, status: 0, networkError: true, error: 'Нет связи с сервером' }; }
+  let data = null;
+  try { data = await res.json(); } catch (e) {}
+  if (!res.ok) return { ok: false, status: res.status, error: (data && data.error) || `Ошибка ${res.status}`, data };
+  return { ok: true, status: res.status, data };
+}
+
+const Auth = {
+  _a: undefined,
+  get() {
+    if (this._a === undefined) { try { this._a = JSON.parse(localStorage.getItem(AUTH_KEY)) || null; } catch (e) { this._a = null; } }
+    return this._a;
+  },
+  user() { const a = this.get(); return a ? a.user : null; },
+  set(a) { this._a = a; try { a ? localStorage.setItem(AUTH_KEY, JSON.stringify(a)) : localStorage.removeItem(AUTH_KEY); } catch (e) {} },
+  async register(name, login, password) {
+    const r = await api('POST', '/api/register', { name, login, password }, { auth: false });
+    if (r.ok) this.set({ token: r.data.token, user: r.data.user });
+    return r;
+  },
+  async login(login, password) {
+    const r = await api('POST', '/api/login', { login, password }, { auth: false });
+    if (r.ok) this.set({ token: r.data.token, user: r.data.user });
+    return r;
+  },
+  async logout() {
+    if (Sync.dirty) {
+      Sync.setStatus('saving');
+      const r = await Sync.push();
+      if (!r) { toast('Не удалось отправить последние изменения — выйти можно, когда появится связь'); return; }
+    }
+    api('POST', '/api/logout', {}).catch(() => {});
+    this.set(null);
+    // локальная копия принадлежит аккаунту — на устройстве не оставляем
+    state = defaultState(); save(); Sync.reset();
+    document.body.querySelectorAll('.overlay').forEach(o => o.remove()); sheetOpen = false;
+    showAuthScreen();
+  },
+  /* сессия отозвана или протухла: выходим, но локальные данные оставляем — они уйдут на сервер после входа */
+  expired() { this.set(null); Sync.reset(); showAuthScreen('Сессия закончилась — войди ещё раз'); }
+};
+
+/* экран входа / регистрации */
+let authEl = null;
+function showAuthScreen(message) {
+  document.querySelector('.app').classList.add('locked');
+  if (authEl) authEl.remove();
+  let mode = 'login', busy = false;
+  const err = h('div.err', {}, message || '');
+  const name = h('input', { placeholder: 'Как тебя зовут', autocomplete: 'name', maxlength: 80 });
+  const login = h('input', { placeholder: 'email или телефон', autocomplete: 'username', inputmode: 'email' });
+  const pass = h('input', { type: 'password', placeholder: 'минимум 6 символов', autocomplete: 'current-password' });
+  const eye = h('button', { type: 'button', onclick: () => { pass.type = pass.type === 'password' ? 'text' : 'password'; eye.textContent = pass.type === 'password' ? 'показать' : 'скрыть'; } }, 'показать');
+  const nameLbl = h('label', {}, 'Имя', name);
+  const submit = h('button.btn', { type: 'submit' }, 'Войти');
+  const tabs = h('div.auth-tabs');
+  const form = h('form.auth-form', { onsubmit: async e => {
+    e.preventDefault(); if (busy) return;
+    err.textContent = '';
+    const l = login.value.trim(), p = pass.value;
+    if (!l) { err.textContent = 'Введи email или телефон'; login.focus(); return; }
+    if (mode === 'register' && !name.value.trim()) { err.textContent = 'Введи имя'; name.focus(); return; }
+    if (p.length < 6) { err.textContent = 'Пароль — минимум 6 символов'; pass.focus(); return; }
+    busy = true; submit.disabled = true; submit.textContent = mode === 'login' ? 'Входим…' : 'Создаём…';
+    const r = mode === 'login' ? await Auth.login(l, p) : await Auth.register(name.value.trim(), l, p);
+    busy = false; submit.disabled = false; setMode(mode);
+    if (!r.ok) { err.textContent = r.error; return; }
+    enterApp(true);
+  } }, nameLbl, h('label', {}, 'Логин', login), h('label', {}, 'Пароль', h('div.pw', {}, pass, eye)), err, submit);
+  function setMode(m) {
+    mode = m;
+    tabs.innerHTML = '';
+    tabs.append(h('button', { type: 'button', class: m === 'login' ? 'on' : '', onclick: () => setMode('login') }, 'Войти'),
+      h('button', { type: 'button', class: m === 'register' ? 'on' : '', onclick: () => setMode('register') }, 'Создать аккаунт'));
+    nameLbl.style.display = m === 'register' ? '' : 'none';
+    pass.autocomplete = m === 'register' ? 'new-password' : 'current-password';
+    submit.textContent = m === 'login' ? 'Войти' : 'Создать аккаунт';
+  }
+  setMode('login');
+  authEl = h('div.auth', {}, h('div.auth-card', {},
+    h('div.brand', {}, h('div.logo'), h('div', {}, h('h1', {}, 'Баланс контента'), h('small', {}, 'fuchiji.dance · личное ↔ экспертное'))),
+    tabs, form,
+    h('p.note', {}, 'Идеи и планы хранятся в аккаунте и одинаковы на всех устройствах, где ты вошёл.')));
+  document.body.append(authEl);
+  setTimeout(() => login.focus(), 80);
+}
+function enterApp(justLoggedIn) {
+  if (authEl) { authEl.remove(); authEl = null; }
+  document.querySelector('.app').classList.remove('locked');
+  if (!currentView) go({ level: 'home' }); else rerender();
+  Sync.start(justLoggedIn);
+}
+
+/* ===================================================================
+   Синхронизация между устройствами
+   -------------------------------------------------------------------
+   На сервере лежит один JSON со всеми данными и метка версии updatedAt.
+   Клиент помнит base — версию сервера, от которой отсчитаны его правки.
+   PUT с устаревшим base сервер отклоняет (409) и отдаёт свою версию —
+   тогда клиент сливает обе (по идеям и подтемам, с учётом удалений)
+   и отправляет результат. Так правки с двух устройств не затирают друг друга.
+   =================================================================== */
+const Sync = {
+  base: 0, dirty: false, pushing: null, timer: null, pollTimer: null, status: 'idle', rerenderPending: false,
+  load() { try { const s = JSON.parse(localStorage.getItem(SYNC_KEY)); if (s) { this.base = s.base || 0; this.dirty = !!s.dirty; } } catch (e) {} },
+  saveMeta() { try { localStorage.setItem(SYNC_KEY, JSON.stringify({ base: this.base, dirty: this.dirty })); } catch (e) {} },
+  reset() { this.base = 0; this.dirty = false; clearTimeout(this.timer); clearInterval(this.pollTimer); this.pollTimer = null; this.saveMeta(); this.setStatus('idle'); },
+  setStatus(s, text) {
+    this.status = s;
+    const pill = document.getElementById('syncPill');
+    pill.className = 'sync ' + s;
+    pill.querySelector('span').textContent = text || { idle: '…', ok: 'синхронизировано', saving: 'сохраняю…', offline: 'офлайн · сохранено на устройстве', error: 'ошибка синхронизации' }[s];
+  },
+  start(justLoggedIn) {
+    this.load();
+    if (justLoggedIn) this.firstSync(); else this.pull();
+    if (!this.pollTimer) this.pollTimer = setInterval(() => { if (document.visibilityState === 'visible' && navigator.onLine) this.pull(); }, 45000);
+  },
+  /* сразу после входа: на устройстве могли быть идеи без аккаунта — не теряем их */
+  async firstSync() {
+    this.setStatus('saving');
+    const r = await api('GET', '/api/data');
+    const localHas = state.ideas.length > 0 || Object.keys(state.plans).length > 0;
+    if (r.ok) {
+      const merged = localHas ? mergeStates(state, r.data.state) : normalizeState(r.data.state);
+      const changed = localHas;
+      state = merged; this.base = r.data.updatedAt; this.dirty = changed; save(); this.saveMeta();
+      this.requestRerender();
+      if (changed) await this.push(); else this.setStatus('ok');
+      if (localHas) toast('Идеи с этого устройства объединены с аккаунтом');
+    } else if (r.status === 404) { this.dirty = true; this.saveMeta(); await this.push(); }
+    else this.fail(r);
+  },
+  schedulePush() {
+    if (!Auth.get()) return;
+    this.dirty = true; this.saveMeta(); this.setStatus('saving');
+    clearTimeout(this.timer);
+    this.timer = setTimeout(() => this.push(), 900);
+  },
+  async push(opts = {}) {
+    if (!Auth.get()) return false;
+    if (this.pushing) { await this.pushing; if (!this.dirty) return true; }
+    clearTimeout(this.timer);
+    this.pushing = this._push(opts);
+    try { return await this.pushing; } finally { this.pushing = null; }
+  },
+  async _push({ keepalive = false, retried = false } = {}) {
+    this.setStatus('saving');
+    const sentAt = state.updatedAt;
+    const r = await api('PUT', '/api/data', { updatedAt: state.updatedAt, baseUpdatedAt: this.base, state }, { keepalive });
+    if (r.ok) {
+      this.base = r.data.updatedAt;
+      if (state.updatedAt === sentAt) this.dirty = false;   // пока летело — могли поправить ещё
+      this.saveMeta(); this.setStatus('ok');
+      if (this.dirty) return this._push();
+      return true;
+    }
+    if (r.status === 409 && r.data && r.data.state && !retried) {
+      // на сервере уже другая версия — сливаем и отправляем результат
+      state = mergeStates(state, r.data.state); this.base = r.data.updatedAt; save(); this.saveMeta();
+      this.requestRerender();
+      return this._push({ retried: true });
+    }
+    return this.fail(r);
+  },
+  async pull() {
+    if (!Auth.get() || this.pushing) return;
+    const r = await api('GET', '/api/data');
+    if (r.ok) {
+      if (r.data.updatedAt === this.base) { if (this.dirty) this.push(); else this.setStatus('ok'); return; }
+      if (this.dirty) { state = mergeStates(state, r.data.state); this.base = r.data.updatedAt; save(); this.saveMeta(); this.requestRerender(); this.push(); return; }
+      state = normalizeState(r.data.state) || state; this.base = r.data.updatedAt; save(); this.saveMeta();
+      this.requestRerender(); this.setStatus('ok');
+    } else if (r.status === 404) { if (state.ideas.length || this.dirty) { this.dirty = true; this.push(); } else this.setStatus('ok'); }
+    else this.fail(r);
+  },
+  fail(r) {
+    if (r.status === 401) { Auth.expired(); return false; }
+    if (r.networkError) this.setStatus('offline'); else { this.setStatus('error'); toast(r.error || 'Ошибка синхронизации'); }
+    return false;
+  },
+  async syncNow() { this.setStatus('saving'); if (this.dirty) await this.push(); await this.pull(); if (this.status === 'ok') toast('Синхронизировано'); },
+  /* не дёргаем экран, пока человек печатает — перестроим, когда уйдёт фокус */
+  requestRerender() {
+    const a = document.activeElement, typing = a && (a.tagName === 'INPUT' || a.tagName === 'TEXTAREA') && a.closest('#stage, .overlay');
+    if (!typing) { rerender(); return; }
+    if (this.rerenderPending) return;
+    this.rerenderPending = true;
+    const done = () => { this.rerenderPending = false; if (!sheetOpen) rerender(); };
+    a.addEventListener('blur', done, { once: true });
+    setTimeout(() => { if (this.rerenderPending) done(); }, 30000);
+  }
+};
+
+/* слияние двух версий: по идеям и подтемам берём более свежую запись, удаления учитываем через tombstones */
+function mergeStates(a, b) {
+  a = normalizeState(a) || defaultState(); b = normalizeState(b) || defaultState();
+  const newer = (a.updatedAt || 0) >= (b.updatedAt || 0) ? a : b, older = newer === a ? b : a;
+  const tomb = { ...older.tombstones };
+  for (const [k, v] of Object.entries(newer.tombstones)) tomb[k] = Math.max(v, tomb[k] || 0);
+  const ts = x => x.updatedAt || x.doneAt || x.createdAt || 0;
+  const ideas = new Map();
+  for (const i of [...older.ideas, ...newer.ideas]) { const cur = ideas.get(i.id); if (!cur || ts(i) >= ts(cur)) ideas.set(i.id, i); }
+  const alive = [...ideas.values()].filter(i => !(tomb[i.id] > ts(i))).sort((x, y) => (x.createdAt || 0) - (y.createdAt || 0));
+  const categories = newer.categories.map(c => {
+    const oc = older.categories.find(x => x.id === c.id);
+    const subs = c.subtopics.map(sb => { const o = oc && oc.subtopics.find(x => x.id === sb.id); return o && (o.updatedAt || 0) > (sb.updatedAt || 0) ? o : sb; });
+    if (oc) for (const sb of oc.subtopics) if (!subs.find(x => x.id === sb.id)) subs.push(sb);
+    const used = new Set(alive.filter(i => i.catId === c.id).map(i => i.subId));
+    return { ...c, subtopics: subs.filter(sb => used.has(sb.id) || !(tomb[sb.id] > (sb.updatedAt || 0))) };
+  });
+  for (const c of older.categories) if (!categories.find(x => x.id === c.id)) categories.push(c);
+  return { version: 3, categories, ideas: alive, plans: { ...older.plans, ...newer.plans }, lastPlan: newer.lastPlan ?? older.lastPlan ?? 8, tombstones: tomb, updatedAt: Date.now() };
+}
+
+/* ===================================================================
+   Установка как приложения (PWA)
+   =================================================================== */
+const Install = {
+  deferred: null,
+  available() { return !!this.deferred && !this.standalone(); },
+  standalone() { return matchMedia('(display-mode: standalone)').matches || navigator.standalone === true; },
+  iosHint() { return /iphone|ipad|ipod/i.test(navigator.userAgent) && !this.standalone(); },
+  async prompt() { if (!this.deferred) return; this.deferred.prompt(); const { outcome } = await this.deferred.userChoice; if (outcome === 'accepted') { this.deferred = null; toast('Приложение установлено'); } },
+  showIosHint() {
+    openSheet((sheet, close) => {
+      sheet.append(h('h3', {}, 'Установить на iPhone'),
+        h('p.txt', {}, '1. Открой эту страницу в Safari.', h('br'), '2. Нажми «Поделиться» (квадрат со стрелкой вверх).', h('br'), '3. Выбери «На экран „Домой“» → «Добавить».', h('br'), h('br'), 'Появится иконка, приложение откроется без адресной строки.'),
+        h('div.foot', {}, h('button.btn', { onclick: close }, 'Понятно')));
+    });
+  }
+};
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); Install.deferred = e; });
+window.addEventListener('appinstalled', () => { Install.deferred = null; });
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+  navigator.serviceWorker.register('./sw.js').catch(() => {});
+}
+
+/* ===================================================================
    Старт
    =================================================================== */
-go({ level: 'home' });
+document.getElementById('syncPill').addEventListener('click', () => { if (Auth.get()) Sync.syncNow(); });
+window.addEventListener('online', () => Auth.get() && Sync.syncNow());
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && Auth.get()) Sync.pull(); });
+window.addEventListener('focus', () => Auth.get() && Sync.pull());
+// при уходе со страницы досылаем несохранённое, не дожидаясь таймера
+window.addEventListener('pagehide', () => { if (Auth.get() && Sync.dirty && !Sync.pushing) Sync.push({ keepalive: true }); });
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden' && Auth.get() && Sync.dirty && !Sync.pushing) Sync.push({ keepalive: true }); });
+
+if (Auth.get()) enterApp(false); else showAuthScreen();
 </script>
 </body>
 </html>
