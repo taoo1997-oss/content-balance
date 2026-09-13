@@ -149,13 +149,13 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .donut .seg.empty.hover{opacity:.55}
 .donut .lab{pointer-events:none;fill:#fff;text-anchor:middle;font-family:var(--font)}
 .donut .lab .n{font-size:13px;font-weight:600;opacity:.92}
-.donut .lab .p{font-size:24px;font-weight:800;letter-spacing:-.02em}
+.donut .lab .p{font-size:24px;font-weight:800;letter-spacing:-.02em;line-height:1}
 .donut .lab .c{font-size:11px;font-weight:500;opacity:.85}
 /* формат съёмки — в скобках сразу под названием сегмента */
 .donut .lab .f{font-size:10.5px;font-weight:600;opacity:.8;letter-spacing:.01em}
 /* пустой сегмент: название — крупно и читаемо, «пусто» — мелкой подписью под ним */
 .donut .lab.empty{fill:var(--ink)}
-.donut .lab.empty .n{font-size:15px;font-weight:700;opacity:.9;letter-spacing:-.01em}
+.donut .lab.empty .n{font-size:14px;font-weight:700;opacity:.9;letter-spacing:-.01em}
 .donut .lab.empty .f{opacity:.65}
 .donut .lab.empty .p{font-size:11px;font-weight:600;opacity:.55;letter-spacing:.04em;text-transform:uppercase}
 .center{position:absolute;inset:0;display:grid;place-items:center;text-align:center;pointer-events:none}
@@ -582,16 +582,25 @@ function plural(n, one, few, many) {
   const a = Math.abs(n) % 100, b = a % 10;
   if (a > 10 && a < 20) return many; if (b > 1 && b < 5) return few; if (b === 1) return one; return many;
 }
-/* перенос подписи на кольце: жадно по словам, не длиннее max символов в строке */
+/* перенос подписи на кольце: по словам, не длиннее max символов в строке;
+   строки стараемся сделать одинаковой длины («(посты, карусели» / «и рилс)»), а не жадно */
 function wrapLabel(text, max) {
-  const lines = []; let cur = '';
-  for (const w of String(text).split(/\s+/).filter(Boolean)) {
-    if (!cur) cur = w;
-    else if ((cur + ' ' + w).length <= max) cur += ' ' + w;
-    else { lines.push(cur); cur = w; }
-  }
-  if (cur) lines.push(cur);
-  return lines.length ? lines : [''];
+  const words = String(text).split(/ +/).filter(Boolean);   // неразрывный пробел не рвём
+  const greedy = lim => {
+    const lines = []; let cur = '';
+    for (const w of words) {
+      if (!cur) cur = w;
+      else if ((cur + ' ' + w).length <= lim) cur += ' ' + w;
+      else { lines.push(cur); cur = w; }
+    }
+    if (cur) lines.push(cur);
+    return lines;
+  };
+  const best = greedy(max), n = best.length;
+  if (n <= 1) return best.length ? best : [''];
+  const total = words.join(' ').length;
+  for (let lim = Math.ceil(total / n); lim < max; lim++) { const l = greedy(lim); if (l.length === n) return l; }
+  return best;
 }
 const pIdeas = n => `${n} ${plural(n, 'идея', 'идеи', 'идей')}`;
 const pVideos = n => `${n} ${plural(n, 'ролик', 'ролика', 'роликов')}`;
@@ -669,7 +678,7 @@ function hideTip() { tt.classList.remove('show'); }
 /* ===================================================================
    Кольцевая диаграмма с анимацией
    =================================================================== */
-function Donut({ size = 360, outer = 174, inner = 90, labelMin = .07, emptySlot = .07, onClick, onHover } = {}) {
+function Donut({ size = 360, outer = 174, inner = 84, labelMin = .07, emptySlot = .1, onClick, onHover } = {}) {
   const svg = s('svg', { viewBox: `0 0 ${size} ${size}`, class: 'donut' });
   const gSeg = s('g'), gLab = s('g');
   svg.append(gSeg, gLab);
@@ -766,34 +775,38 @@ function Donut({ size = 360, outer = 174, inner = 90, labelMin = .07, emptySlot 
       // строки подписи: название · (формат съёмки, если задан) · доля/«пусто» · счётчик.
       // Длинные название и формат переносятся на несколько строк, чтобы не вылезать из кольца;
       // строки раскладываются по вертикали по их числу и центрируются.
-      const fmt = t.fmt ? `(${t.fmt})` : '';
-      const nameLines = wrapLabel(t.label, 11), fmtLines = fmt ? wrapLabel(fmt, 15) : [];
-      const nameFs = t.empty ? 15 : 13, fmtFs = 10.5, pctFs = t.empty ? 11 : 24, cntFs = 11;
-      const nameLh = nameFs * 1.1, fmtLh = fmtFs * 1.15;
+      // число держим вместе со следующим словом: «(сторис / 3 р./нед.)», а не «(сторис 3 / р./нед.)»
+      const fmt = t.fmt ? `(${t.fmt.replace(/(\d) /g, '$1 ')})` : '';
+      const nameLines = wrapLabel(t.label, 11), fmtLines = fmt ? wrapLabel(fmt, 16) : [];
+      const nameFs = t.empty ? 14 : 13, fmtFs = 10.5, pctFs = t.empty ? 11 : 24, cntFs = 11;
+      // Строки: название и формат — одно целое (плотно), затем отступ, доля, и счётчик под ней.
+      // Раскладка по реальным метрикам шрифта (верх заглавной ≈ .72em, низ ≈ .2em), а не по line-height,
+      // иначе крупная доля даёт неровные зазоры сверху и снизу.
       const rows = [
-        { el: n.tn, lines: nameLines, lh: nameLh },
-        { el: n.tf, lines: fmtLines, lh: fmtLh },
-        { el: n.tp, lines: [t.empty ? 'пусто' : t.pct + '%'], lh: t.empty ? 14 : 24 },
-        { el: n.tc, lines: t.empty ? [] : [t.sub || pIdeas(t.value)], lh: 12 }
-      ];
-      const gap = t.empty ? 3 : 4;
-      const total = rows.reduce((a, r) => a + r.lines.length * r.lh, 0) + gap * (rows.filter(r => r.lines.length).length - 1);
-      const fsOf = [nameFs, fmtFs, pctFs, cntFs], kOf = [.68, .6, .62, .6];
+        { el: n.tn, lines: nameLines, fs: nameFs, k: .68, lead: 2, after: fmtLines.length ? 3 : (t.empty ? 6 : 8) },
+        { el: n.tf, lines: fmtLines, fs: fmtFs, k: .6, lead: 2, after: t.empty ? 6 : 8 },
+        { el: n.tp, lines: [t.empty ? 'пусто' : t.pct + '%'], fs: pctFs, k: .62, lead: 0, after: 5 },
+        { el: n.tc, lines: t.empty ? [] : [t.sub || pIdeas(t.value)], fs: cntFs, k: .6, lead: 0, after: 0 }
+      ].filter(r => r.lines.length);
+      const asc = fs => fs * .72, desc = fs => fs * .2;
+      const total = rows.reduce((a, r, i) => a + r.lines.length * (asc(r.fs) + desc(r.fs)) + (r.lines.length - 1) * r.lead + (i < rows.length - 1 ? r.after : 0), 0);
       let y = -total / 2;
       n.rows = [];
-      rows.forEach((r, ri) => {
+      for (const [ri, r] of rows.entries()) {
         r.el.textContent = '';
         r.el.setAttribute('y', 0);
-        if (!r.lines.length) return;
         r.lines.forEach((line, i) => {
-          const by = +(y + r.lh * (i + .8)).toFixed(1);
+          const by = +(y + asc(r.fs)).toFixed(1);
           const ts = s('tspan', { x: 0, y: by }, line);
           r.el.append(ts);
           // ширина — оценка по символам, пока подпись не в DOM; в paint уточняется через getBBox
-          n.rows.push({ el: ts, y: by, fs: fsOf[ri], w: line.length * fsOf[ri] * kOf[ri] });
+          n.rows.push({ el: ts, y: by, fs: r.fs, w: line.length * r.fs * r.k });
+          y += asc(r.fs) + desc(r.fs) + (i < r.lines.length - 1 ? r.lead : 0);
         });
-        y += r.lines.length * r.lh + gap;
-      });
+        if (ri < rows.length - 1) y += r.after;
+      }
+      // у пустого сегмента строки формата и «пусто» не создаются — очищаем оставшиеся
+      for (const el of [n.tn, n.tf, n.tp, n.tc]) if (!rows.find(r => r.el === el)) el.textContent = '';
       n.path.style.strokeWidth = t.tEnd - t.tStart >= 359.9 ? '0' : '2';
       n.fromStart = n.start; n.fromEnd = n.end;
     });
