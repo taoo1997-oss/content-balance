@@ -50,6 +50,13 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
   .add-btn:active{transform:scale(.96)}
 }
 ::selection{background:rgba(63,134,230,.35)}
+/* полосы прокрутки — тонкие, в стиле приложения, не доходят до скруглённых углов */
+*{scrollbar-width:thin;scrollbar-color:var(--line-2) transparent}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent;margin:10px 0}
+::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--ink-3)}
+::-webkit-scrollbar-corner{background:transparent}
 
 .app{max-width:1560px;margin:0 auto;padding:20px 28px 28px}
 @media (max-width:860px){.app{padding:16px 16px 40px}}
@@ -79,7 +86,8 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 @media (max-width:700px){.top{gap:10px}.crumbs{order:3;flex-basis:100%;margin-top:-4px}.menu-wrap{margin-left:auto}}
 
 /* ---------- stage & zoom ---------- */
-.stage{position:relative;--ox:50%;--oy:50%;overflow:hidden;overflow:clip}
+/* по горизонтали режем (иначе зум-анимация даёт боковую прокрутку), по вертикали — нет, чтобы уходящий экран не обрезался */
+.stage{position:relative;--ox:50%;--oy:50%;overflow:clip visible}
 .view{transform-origin:var(--ox) var(--oy)}
 .view.enter-in,.view.enter-out,.view.leaving{will-change:transform,opacity}
 .view.leaving{position:absolute;inset:0;pointer-events:none;z-index:2}
@@ -147,7 +155,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .donut .lab .f{font-size:10.5px;font-weight:600;opacity:.8;letter-spacing:.01em}
 /* пустой сегмент: название — крупно и читаемо, «пусто» — мелкой подписью под ним */
 .donut .lab.empty{fill:var(--ink)}
-.donut .lab.empty .n{font-size:16px;font-weight:700;opacity:.9;letter-spacing:-.01em}
+.donut .lab.empty .n{font-size:15px;font-weight:700;opacity:.9;letter-spacing:-.01em}
 .donut .lab.empty .f{opacity:.65}
 .donut .lab.empty .p{font-size:11px;font-weight:600;opacity:.55;letter-spacing:.04em;text-transform:uppercase}
 .center{position:absolute;inset:0;display:grid;place-items:center;text-align:center;pointer-events:none}
@@ -321,12 +329,33 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .edit-form textarea{min-height:170px;max-height:min(60vh,560px);line-height:1.5;resize:none;overflow:auto}
 .edit-form textarea:focus,.edit-form input:focus,.edit-form select:focus{outline:none;border-color:var(--accent)}
 .edit-form .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.edit-form .row select{width:auto;flex:1;min-width:160px}
+.edit-form .row .pick{width:auto;flex:1;min-width:160px}
+/* выбор подтемы — своя кнопка вместо системного select */
+.pick{display:flex;align-items:center;gap:10px;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:11px 12px 11px 14px;font-size:15px;font-weight:600;color:var(--ink);text-align:left;transition:border-color .2s,background .2s}
+.pick:hover{border-color:var(--line-2)}
+.pick .dot{width:10px;height:10px;border-radius:3px;flex:none}
+.pick .txt{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pick .txt small{color:var(--ink-3);font-weight:500;margin-left:6px}
+.pick .chev{flex:none;color:var(--ink-3);display:grid}
+.pick-group{margin-top:14px}
+.pick-group .lbl{margin:0 0 8px;display:flex;align-items:center;gap:8px}
+.pick-group .lbl .sw{width:10px;height:10px;border-radius:3px}
+.pick-list{display:flex;flex-direction:column;gap:6px}
+.pick-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;background:var(--surface-2);border:1px solid transparent;text-align:left;font-weight:600;width:100%;transition:background .2s,border-color .2s,transform .15s}
+.pick-item:hover{border-color:var(--line-2);background:var(--surface-3)}
+.pick-item .dot{width:12px;height:12px;border-radius:4px;flex:none}
+.pick-item .nm{flex:1;min-width:0;line-height:1.25}
+.pick-item .nm small{display:block;font-weight:500;font-size:12px;color:var(--ink-3)}
+.pick-item .tick{width:22px;height:22px;border-radius:50%;border:2px solid var(--line-2);flex:none;display:grid;place-items:center;color:#fff;transition:background .2s,border-color .2s}
+.pick-item .tick svg{width:12px;height:12px;opacity:0}
+.pick-item.on{border-color:var(--pc);background:color-mix(in srgb,var(--pc) 12%,var(--surface-2))}
+.pick-item.on .tick{background:var(--pc);border-color:var(--pc)}
+.pick-item.on .tick svg{opacity:1}
 .edit-form .row .btn{padding:10px 16px;font-size:14px}
 @media (max-width:700px){
   .idea.editing{padding:12px}
   .edit-form textarea{min-height:220px;max-height:50vh}
-  .edit-form .row select{flex-basis:100%}
+  .edit-form .row .pick{flex-basis:100%}
   .edit-form .row .btn{flex:1;padding:13px 16px}
 }
 .sub-name-input{font-size:26px;font-weight:800;letter-spacing:-.02em;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:2px 10px;min-width:120px;max-width:100%}
@@ -457,16 +486,19 @@ const uid = () => Math.random().toString(36).slice(2, 9) + Date.now().toString(3
    мысли → разговорный рилс, жизнь → сторис 3 р./нед., польза → посты, карусели и рилс,
    продукт → пост и истории, результаты клиентов → рилс. */
 const FORMATS = {
-  'ваши мысли': 'разговорный рилс', 'ваша жизнь': 'сторис 3 р./нед.',
+  'ваши мысли': 'разговорный рилс', 'ваша жизнь': 'сторис 3 р./нед.', 'другое': 'танцы и прочее',
   'польза': 'посты, карусели и рилс', 'продукт': 'пост и истории', 'результаты клиентов': 'рилс'
 };
+/* «Другое» в личном — свои танцы и всё, что не мысли и не жизнь. Фиксированный id, чтобы
+   миграция на разных устройствах не плодила дубли при слиянии */
+const OTHER_ID = 'personal-other';
 function defaultState() {
   // структура один в один из рилса «Ваш блог»: личное / экспертное и пять секторов
   const sub = (name, shade) => ({ id: uid(), name, shade, hint: FORMATS[name.toLowerCase()], updatedAt: 0 });
   return {
-    version: 3,
+    version: 4,
     categories: [
-      { id: 'personal', name: 'Личное', color: '#E85D45', subtopics: [sub('Ваши мысли', 0), sub('Ваша жизнь', 1)] },
+      { id: 'personal', name: 'Личное', color: '#E85D45', subtopics: [sub('Ваши мысли', 0), sub('Ваша жизнь', 1), { ...sub('Другое', 2), id: OTHER_ID }] },
       { id: 'expert', name: 'Экспертное', color: '#3F86E6', subtopics: [sub('Польза', 0), sub('Продукт', 1), sub('Результаты клиентов', 2)] }
     ],
     ideas: [],
@@ -486,8 +518,14 @@ function normalizeState(s) {
       if (f && (!sb.hint || /закреп/i.test(sb.hint) || sb.hint === 'карусели и рилс')) sb.hint = f;
     }
   }
-  s.version = 3;
   s.plans = s.plans || {}; s.tombstones = s.tombstones || {}; s.updatedAt = s.updatedAt || 0;
+  if ((s.version || 1) < 4) {
+    // v3 → v4: подтема «Другое» в личном (если её не удаляли и нет своей с таким именем)
+    const p = s.categories.find(c => c.id === 'personal');
+    if (p && !s.tombstones[OTHER_ID] && !p.subtopics.some(sb => sb.id === OTHER_ID || (sb.name || '').trim().toLowerCase() === 'другое'))
+      p.subtopics.push({ id: OTHER_ID, name: 'Другое', shade: nextShade(p), hint: FORMATS['другое'], updatedAt: Date.now() });
+  }
+  s.version = 4;
   return s;
 }
 
@@ -542,6 +580,17 @@ function nextShade(c) {
 function plural(n, one, few, many) {
   const a = Math.abs(n) % 100, b = a % 10;
   if (a > 10 && a < 20) return many; if (b > 1 && b < 5) return few; if (b === 1) return one; return many;
+}
+/* перенос подписи на кольце: жадно по словам, не длиннее max символов в строке */
+function wrapLabel(text, max) {
+  const lines = []; let cur = '';
+  for (const w of String(text).split(/\s+/).filter(Boolean)) {
+    if (!cur) cur = w;
+    else if ((cur + ' ' + w).length <= max) cur += ' ' + w;
+    else { lines.push(cur); cur = w; }
+  }
+  if (cur) lines.push(cur);
+  return lines.length ? lines : [''];
 }
 const pIdeas = n => `${n} ${plural(n, 'идея', 'идеи', 'идей')}`;
 const pVideos = n => `${n} ${plural(n, 'ролик', 'ролика', 'роликов')}`;
@@ -648,7 +697,11 @@ function Donut({ size = 360, outer = 172, inner = 96, labelMin = .07, emptySlot 
     n.lab.style.opacity = show ? 1 : 0;
     if (show) {
       const r = (outer + inner) / 2;
-      n.lab.setAttribute('transform', `translate(${(cx + r * Math.cos(rad(mid))).toFixed(1)} ${(cy + r * Math.sin(rad(mid))).toFixed(1)})`);
+      // подпись не должна вылезать за края кольца/карточки: по X сдвигаем внутрь, оставаясь в толще кольца
+      const half = (n.labW || 0) / 2 + 4, pad = 2;
+      let x = cx + r * Math.cos(rad(mid));
+      x = Math.max(pad + half, Math.min(size - pad - half, x));
+      n.lab.setAttribute('transform', `translate(${x.toFixed(1)} ${(cy + r * Math.sin(rad(mid))).toFixed(1)})`);
     }
   }
   function update(segments, { animate = true } = {}) {
@@ -686,20 +739,35 @@ function Donut({ size = 360, outer = 172, inner = 96, labelMin = .07, emptySlot 
       n.path.classList.toggle('empty', t.empty);
       n.lab.classList.toggle('empty', t.empty);
       // строки подписи: название · (формат съёмки, если задан) · доля/«пусто» · счётчик.
-      // У пустого сегмента строки стоят плотнее и центрированы по кольцу.
+      // Длинные название и формат переносятся на несколько строк, чтобы не вылезать из кольца;
+      // строки раскладываются по вертикали по их числу и центрируются.
       const fmt = t.fmt ? `(${t.fmt})` : '';
-      const rows = t.empty
-        ? (fmt ? [-12, 3, 19] : [-4, null, 14])
-        : (fmt ? [-24, -10, 16, 32] : [-18, null, 8, 24]);
-      n.tn.setAttribute('y', rows[0]);
-      n.tf.setAttribute('y', rows[1] ?? 0);
-      n.tp.setAttribute('y', rows[2]);
-      n.tc.setAttribute('y', rows[3] ?? 0);
-      n.tn.textContent = t.label;
-      n.tf.textContent = fmt;
-      n.tp.textContent = t.empty ? 'пусто' : t.pct + '%';
+      const nameLines = wrapLabel(t.label, 11), fmtLines = fmt ? wrapLabel(fmt, 15) : [];
+      const nameFs = t.empty ? 15 : 13, fmtFs = 10.5, pctFs = t.empty ? 11 : 24, cntFs = 11;
+      const nameLh = nameFs * 1.1, fmtLh = fmtFs * 1.15;
+      const rows = [
+        { el: n.tn, lines: nameLines, lh: nameLh },
+        { el: n.tf, lines: fmtLines, lh: fmtLh },
+        { el: n.tp, lines: [t.empty ? 'пусто' : t.pct + '%'], lh: t.empty ? 14 : 24 },
+        { el: n.tc, lines: t.empty ? [] : [t.sub || pIdeas(t.value)], lh: 12 }
+      ];
+      const gap = t.empty ? 3 : 4;
+      const total = rows.reduce((a, r) => a + r.lines.length * r.lh, 0) + gap * (rows.filter(r => r.lines.length).length - 1);
+      let y = -total / 2;
+      for (const r of rows) {
+        r.el.textContent = '';
+        r.el.setAttribute('y', 0);
+        if (!r.lines.length) continue;
+        r.lines.forEach((line, i) => {
+          const ts = s('tspan', { x: 0, y: (y + r.lh * (i + .8)).toFixed(1) }, line);
+          r.el.append(ts);
+        });
+        y += r.lines.length * r.lh + gap;
+      }
+      // ширина подписи — оценка по символам (элемент может быть ещё не в DOM, getBBox не сработает)
+      const est = (lines, fs, k) => Math.max(0, ...lines.map(l => l.length * fs * k));
+      n.labW = Math.max(est(nameLines, nameFs, .6), est(fmtLines, fmtFs, .55), est(rows[2].lines, pctFs, .62), est(rows[3].lines, cntFs, .55));
       n.path.style.strokeWidth = t.tEnd - t.tStart >= 359.9 ? '0' : '2';
-      n.tc.textContent = t.empty ? '' : (t.sub || pIdeas(t.value));
       n.fromStart = n.start; n.fromEnd = n.end;
     });
     if (raf) cancelAnimationFrame(raf);
@@ -1178,17 +1246,16 @@ function SubView(catId, subId) {
     if (editingId === i.id) {
       li.classList.add('editing');
       const ta = autosize(h('textarea', { value: i.title, placeholder: 'Текст идеи или сценария' })), note = h('input', { value: i.note || '', placeholder: 'Заметка: формат, локация, что показать…' });
-      const sel = h('select');
-      for (const cc of state.categories) { const og = h('optgroup', { label: cc.name }); for (const sb of cc.subtopics) og.append(h('option', { value: cc.id + '|' + sb.id, selected: cc.id === i.catId && sb.id === i.subId }, sb.name)); sel.append(og); }
+      const sel = SubtopicPicker({ catId: i.catId, subId: i.subId });
       const saveIt = () => {
         const v = ta.value.trim(); if (!v) { ta.focus(); return; }
-        const [nc, ns] = sel.value.split('|'); const moved = nc !== i.catId || ns !== i.subId;
+        const { catId: nc, subId: ns } = sel.value; const moved = nc !== i.catId || ns !== i.subId;
         Object.assign(i, { title: v, note: note.value.trim(), catId: nc, subId: ns, updatedAt: Date.now() }); editingId = null; commit();
         if (moved) toast(`Перенесено в «${cat(nc).name} › ${subOf(nc, ns).name}»`, { action: 'Открыть', onAction: () => go({ level: 'sub', catId: nc, subId: ns }, { dir: 'in' }) });
       };
       // Enter — новая строка (сценарии многострочные), Ctrl/⌘+Enter — сохранить
       ta.addEventListener('keydown', e => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); saveIt(); } if (e.key === 'Escape') { editingId = null; update(); } });
-      li.append(h('div.edit-form', {}, ta, note, h('div.row', {}, sel, h('button.btn', { onclick: saveIt }, 'Сохранить'), h('button.btn.secondary', { onclick: () => { editingId = null; update(); } }, 'Отмена'))));
+      li.append(h('div.edit-form', {}, ta, note, h('div.row', {}, sel.el, h('button.btn', { onclick: saveIt }, 'Сохранить'), h('button.btn.secondary', { onclick: () => { editingId = null; update(); } }, 'Отмена'))));
       setTimeout(() => ta.focus(), 30);
       return li;
     }
@@ -1221,6 +1288,40 @@ function SubView(catId, subId) {
   update();
   setTimeout(() => { if (!ideasIn(catId, subId).length) input.focus({ preventScroll: true }); }, 650);
   return { el, update, zoomTarget: () => null };
+}
+
+/* ===================================================================
+   Выбор подтемы — своя кнопка и окно вместо системного <select>
+   =================================================================== */
+function SubtopicPicker(initial) {
+  let cur = { ...initial };
+  const dot = h('span.dot'), txt = h('span.txt');
+  const btn = h('button.pick', { type: 'button', title: 'Перенести в другую подтему', onclick: open }, dot, txt,
+    h('span.chev', { html: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>' }));
+  function draw() {
+    const c = cat(cur.catId), sb = c && subOf(cur.catId, cur.subId);
+    dot.style.background = c && sb ? subColor(c, sb) : 'var(--line-2)';
+    txt.innerHTML = ''; txt.append(sb ? sb.name : '—', h('small', {}, c ? `· ${c.name.toLowerCase()}` : ''));
+  }
+  function open(e) {
+    openSheet((sheet, close) => {
+      sheet.append(h('h3', {}, 'Куда положить идею'));
+      for (const c of state.categories) {
+        const list = h('div.pick-list');
+        for (const sb of c.subtopics) {
+          const col = subColor(c, sb), on = c.id === cur.catId && sb.id === cur.subId;
+          list.append(h('button.pick-item', { type: 'button', class: on ? 'on' : '', style: `--pc:${col}`, onclick: () => { cur = { catId: c.id, subId: sb.id }; draw(); close(); } },
+            h('span.dot', { style: `background:${col}` }),
+            h('span.nm', {}, sb.name, sb.hint ? h('small', {}, `(${sb.hint})`) : null),
+            h('span.tick', {}, icon('check'))));
+        }
+        sheet.append(h('div.pick-group', {}, h('div.lbl', {}, h('span.sw', { style: `background:${c.color}` }), c.name), list));
+      }
+      sheet.append(h('div.foot', {}, h('button.btn.secondary', { onclick: close }, 'Отмена')));
+    }, e);
+  }
+  draw();
+  return { el: btn, get value() { return cur; } };
 }
 
 /* ===================================================================
@@ -1592,7 +1693,7 @@ function mergeStates(a, b) {
     return { ...c, subtopics: subs.filter(sb => used.has(sb.id) || !(tomb[sb.id] > (sb.updatedAt || 0))) };
   });
   for (const c of older.categories) if (!categories.find(x => x.id === c.id)) categories.push(c);
-  return { version: 3, categories, ideas: alive, plans: { ...older.plans, ...newer.plans }, lastPlan: newer.lastPlan ?? older.lastPlan ?? 8, tombstones: tomb, updatedAt: Date.now() };
+  return { version: 4, categories, ideas: alive, plans: { ...older.plans, ...newer.plans }, lastPlan: newer.lastPlan ?? older.lastPlan ?? 8, tombstones: tomb, updatedAt: Date.now() };
 }
 
 /* ===================================================================
