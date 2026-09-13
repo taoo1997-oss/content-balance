@@ -326,7 +326,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .edit-form{flex:1;display:flex;flex-direction:column;gap:10px;min-width:0}
 .edit-form textarea,.edit-form input,.edit-form select{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:15px;width:100%;resize:vertical}
 /* текст сценария: поле растёт под содержимое (см. autosize), минимум — как абзац, максимум — пол-экрана, дальше прокрутка внутри */
-.edit-form textarea{min-height:170px;max-height:min(60vh,560px);line-height:1.5;resize:none;overflow:auto}
+.edit-form textarea{min-height:170px;line-height:1.5;resize:none;overflow:hidden}
 .edit-form textarea:focus,.edit-form input:focus,.edit-form select:focus{outline:none;border-color:var(--accent)}
 .edit-form .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .edit-form .row .pick{width:auto;flex:1;min-width:160px}
@@ -354,7 +354,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .edit-form .row .btn{padding:10px 16px;font-size:14px}
 @media (max-width:700px){
   .idea.editing{padding:12px}
-  .edit-form textarea{min-height:220px;max-height:50vh}
+  .edit-form textarea{min-height:220px}
   .edit-form .row .pick{flex-basis:100%}
   .edit-form .row .btn{flex:1;padding:13px 16px}
 }
@@ -369,6 +369,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .overlay.closing .sheet{animation:popOut .22s ease-in both}
 @keyframes pop{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
 @keyframes popOut{to{opacity:0;transform:scale(.8)}}
+.sheet::-webkit-scrollbar-track{margin:24px 0}
 .sheet h3{margin:0;font-size:20px;font-weight:800;letter-spacing:-.02em;display:flex;align-items:center;gap:10px}
 .sheet h3 .sw{width:12px;height:12px;border-radius:4px}
 .sheet .lbl{color:var(--ink-3);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin:18px 0 8px}
@@ -381,7 +382,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .chip.new{border-style:dashed;background:transparent}
 .chip-input{padding:7px 12px;border-radius:99px;background:var(--surface-2);border:1px solid var(--accent);font-size:13px;width:180px;outline:none}
 /* поле идеи/сценария: без лимита по длине, растёт под текст (autosize), потом прокрутка внутри */
-.sheet textarea{width:100%;min-height:150px;max-height:min(55vh,520px);resize:none;overflow:auto;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:15px;line-height:1.5}
+.sheet textarea{width:100%;min-height:150px;resize:none;overflow:hidden;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:15px;line-height:1.5}
 .sheet input.note{width:100%;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:11px 14px;font-size:14px;margin-top:8px}
 .sheet textarea:focus,.sheet input.note:focus{outline:none;border-color:var(--accent)}
 .sheet .foot{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
@@ -396,7 +397,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
   .sheet .foot{margin-top:14px;flex:none}
   .sheet .foot .btn{flex:1;padding:14px 18px;font-size:15px}
   .sheet .foot .btn.secondary{flex:0 0 auto}
-  .sheet textarea{min-height:190px;max-height:50vh;font-size:16px}
+  .sheet textarea{min-height:190px;font-size:16px}
   .sheet input.note{font-size:16px}
 }
 @keyframes sheetUp{from{opacity:0;transform:translateY(60%)}to{opacity:1;transform:none}}
@@ -640,7 +641,7 @@ const ICONS = {
   arrow: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>',
 };
 const icon = n => { const t = document.createElement('template'); t.innerHTML = ICONS[n]; return t.content.firstChild; };
-/* textarea растёт под текст до своего max-height из CSS, дальше — прокрутка внутри */
+/* textarea растёт под весь текст — внутри поля прокрутки нет (полоса выглядела чужеродно) */
 function autosize(ta) {
   const fit = () => { ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 2 + 'px'; };
   ta.addEventListener('input', fit);
@@ -668,7 +669,7 @@ function hideTip() { tt.classList.remove('show'); }
 /* ===================================================================
    Кольцевая диаграмма с анимацией
    =================================================================== */
-function Donut({ size = 360, outer = 172, inner = 96, labelMin = .07, emptySlot = .07, onClick, onHover } = {}) {
+function Donut({ size = 360, outer = 174, inner = 90, labelMin = .07, emptySlot = .07, onClick, onHover } = {}) {
   const svg = s('svg', { viewBox: `0 0 ${size} ${size}`, class: 'donut' });
   const gSeg = s('g'), gLab = s('g');
   svg.append(gSeg, gLab);
@@ -697,11 +698,35 @@ function Donut({ size = 360, outer = 172, inner = 96, labelMin = .07, emptySlot 
     n.lab.style.opacity = show ? 1 : 0;
     if (show) {
       const r = (outer + inner) / 2;
-      // подпись не должна вылезать за края кольца/карточки: по X сдвигаем внутрь, оставаясь в толще кольца
-      const half = (n.labW || 0) / 2 + 4, pad = 2;
-      let x = cx + r * Math.cos(rad(mid));
-      x = Math.max(pad + half, Math.min(size - pad - half, x));
-      n.lab.setAttribute('transform', `translate(${x.toFixed(1)} ${(cy + r * Math.sin(rad(mid))).toFixed(1)})`);
+      const px = r * Math.cos(rad(mid)), py = r * Math.sin(rad(mid));
+      // Подпись должна целиком лежать в толще кольца — белый текст на светлом центре не виден.
+      // Считаем построчно: у каждой строки своя высота и ширина; на её высотах смотрим, докуда
+      // доходит внутренний круг (мешает ближе к центру) и внешний (ограничивает снаружи).
+      const rows = n.rows || [];
+      const connected = n.lab.isConnected;
+      let lo = -Infinity, hi = Infinity, lim = Infinity, kMin = 1, anyInner = false;
+      for (const row of rows) {
+        if (connected) { try { const b = row.el.getBBox(); if (b.width) row.w = b.width; } catch (e) {} }
+        const w = row.w + 10;   // запас по 5 с каждой стороны
+        const yT = py + row.y - row.fs * .75, yB = py + row.y + row.fs * .22;
+        const yLo = yT <= 0 && yB >= 0 ? 0 : Math.min(Math.abs(yT), Math.abs(yB)), yHi = Math.max(Math.abs(yT), Math.abs(yB));
+        const innerX = yLo < inner ? Math.sqrt(inner * inner - yLo * yLo) : 0;
+        const outerX = yHi < outer ? Math.sqrt(outer * outer - yHi * yHi) : 0;
+        if (innerX > 0) { anyInner = true; lo = Math.max(lo, innerX + w / 2); hi = Math.min(hi, outerX - w / 2); kMin = Math.min(kMin, (outerX - innerX) / w); }
+        else { lim = Math.min(lim, outerX - w / 2); kMin = Math.min(kMin, (2 * outerX) / w); }
+      }
+      const side = px < 0 ? -1 : 1;
+      let x = px, k = 1;
+      if (!rows.length) x = px;
+      else if (anyInner) {
+        hi = Math.min(hi, lim);   // строки над/под центром тоже не должны выйти за внешний край
+        if (lo <= hi) x = side * Math.max(lo, Math.min(hi, Math.abs(px)));
+        else { k = Math.max(.7, kMin); x = side * (lo + hi) / 2; }
+      } else {
+        if (lim >= 0) x = Math.max(-lim, Math.min(lim, px));
+        else { k = Math.max(.7, kMin); x = 0; }
+      }
+      n.lab.setAttribute('transform', `translate(${(cx + x).toFixed(1)} ${(cy + py).toFixed(1)})${k < 1 ? ` scale(${k.toFixed(3)})` : ''}`);
     }
   }
   function update(segments, { animate = true } = {}) {
@@ -753,20 +778,22 @@ function Donut({ size = 360, outer = 172, inner = 96, labelMin = .07, emptySlot 
       ];
       const gap = t.empty ? 3 : 4;
       const total = rows.reduce((a, r) => a + r.lines.length * r.lh, 0) + gap * (rows.filter(r => r.lines.length).length - 1);
+      const fsOf = [nameFs, fmtFs, pctFs, cntFs], kOf = [.68, .6, .62, .6];
       let y = -total / 2;
-      for (const r of rows) {
+      n.rows = [];
+      rows.forEach((r, ri) => {
         r.el.textContent = '';
         r.el.setAttribute('y', 0);
-        if (!r.lines.length) continue;
+        if (!r.lines.length) return;
         r.lines.forEach((line, i) => {
-          const ts = s('tspan', { x: 0, y: (y + r.lh * (i + .8)).toFixed(1) }, line);
+          const by = +(y + r.lh * (i + .8)).toFixed(1);
+          const ts = s('tspan', { x: 0, y: by }, line);
           r.el.append(ts);
+          // ширина — оценка по символам, пока подпись не в DOM; в paint уточняется через getBBox
+          n.rows.push({ el: ts, y: by, fs: fsOf[ri], w: line.length * fsOf[ri] * kOf[ri] });
         });
         y += r.lines.length * r.lh + gap;
-      }
-      // ширина подписи — оценка по символам (элемент может быть ещё не в DOM, getBBox не сработает)
-      const est = (lines, fs, k) => Math.max(0, ...lines.map(l => l.length * fs * k));
-      n.labW = Math.max(est(nameLines, nameFs, .6), est(fmtLines, fmtFs, .55), est(rows[2].lines, pctFs, .62), est(rows[3].lines, cntFs, .55));
+      });
       n.path.style.strokeWidth = t.tEnd - t.tStart >= 359.9 ? '0' : '2';
       n.fromStart = n.start; n.fromEnd = n.end;
     });
@@ -836,8 +863,44 @@ function originFromEl(el) {
   const r = el.getBoundingClientRect(), sr = stage.getBoundingClientRect();
   return { x: r.left + r.width / 2 - sr.left, y: r.top + r.height / 2 - sr.top };
 }
-function go(next, { dir = 'in', origin } = {}) {
+/* История браузера повторяет навигацию приложения: системная кнопка «назад» на Android
+   закрывает окно или возвращает на предыдущий экран, а не сворачивает приложение.
+   Глубина записи = уровень экрана (0 главная, 1 категория, 2 подтема). */
+const Nav = {
+  level: r => r.level === 'home' ? 0 : r.level === 'cat' ? 1 : 2,
+  silent: 0,        // сколько popstate мы вызвали сами (history.back / go) и должны пропустить
+  after: null,      // что записать, когда наш собственный back отработает
+  init() {
+    history.replaceState({ route: { level: 'home' }, app: 1 }, '');
+    window.addEventListener('popstate', e => this.onPop(e.state));
+  },
+  record(next, dir) {
+    if (this.silent) { this.after = () => this.record(next, dir); return; }
+    const cur = history.state && history.state.app ? history.state : { route: { level: 'home' } };
+    if (cur.sheet) return;
+    const to = this.level(next), from = this.level(cur.route);
+    if (dir === 'out' && to < from) { this.silent++; history.go(to - from); return; }
+    if (to > from) {
+      if (to === 2 && from === 0) history.pushState({ route: { level: 'cat', catId: next.catId }, app: 1 }, '');
+      history.pushState({ route: next, app: 1 }, '');
+    } else history.replaceState({ route: next, app: 1 }, '');
+  },
+  openSheet() { history.pushState({ ...(history.state || { route: { level: 'home' }, app: 1 }), sheet: 1 }, ''); },
+  closeSheet() { if (history.state && history.state.sheet) { this.silent++; history.back(); } },
+  onPop(st) {
+    if (this.silent) { this.silent--; const f = this.after; this.after = null; f && f(); return; }
+    if (sheetClose) { sheetClose(true); return; }
+    if (st && st.sheet) { history.back(); return; }   // запись окна без окна — перешагиваем
+    let r = (st && st.app && st.route) || { level: 'home' };
+    if (r.level !== 'home' && !cat(r.catId)) r = { level: 'home' };
+    if (r.level === 'sub' && !subOf(r.catId, r.subId)) r = { level: 'cat', catId: r.catId };
+    if (r.level === route.level && r.catId === route.catId && r.subId === route.subId) return;
+    go(r, { dir: this.level(r) < this.level(route) ? 'out' : 'in', fromHistory: true });
+  }
+};
+function go(next, { dir = 'in', origin, fromHistory = false } = {}) {
   hideTip();
+  if (!fromHistory) Nav.record(next, dir);
   const old = currentView;
   route = next;
   const view = buildView(route);
@@ -1349,13 +1412,19 @@ function removeIdea(i, li) {
 /* ===================================================================
    Окно добавления (с главного экрана / из категории)
    =================================================================== */
-let sheetOpen = false;
+let sheetOpen = false, sheetClose = null;
 function openSheet(build, e) {
   if (sheetOpen) return; sheetOpen = true;
+  Nav.openSheet();
   const ov = h('div.overlay');
   const sheet = h('div.sheet');
   if (e && e.clientX) { sheet.style.setProperty('--ox', (e.clientX - (window.innerWidth - Math.min(520, window.innerWidth - 32)) / 2) + 'px'); sheet.style.setProperty('--oy', (e.clientY - window.innerHeight * .2) + 'px'); }
-  const close = () => { if (!sheetOpen) return; sheetOpen = false; ov.classList.add('closing'); setTimeout(() => ov.remove(), 230); document.removeEventListener('keydown', esc); };
+  const close = (viaHistory) => {
+    if (!sheetOpen) return; sheetOpen = false; sheetClose = null;
+    ov.classList.add('closing'); setTimeout(() => ov.remove(), 230); document.removeEventListener('keydown', esc);
+    if (viaHistory !== true) Nav.closeSheet();
+  };
+  sheetClose = close;
   const esc = ev => { if (ev.key === 'Escape') close(); };
   document.addEventListener('keydown', esc);
   ov.addEventListener('mousedown', ev => { if (ev.target === ov) close(); });
@@ -1516,7 +1585,7 @@ const Auth = {
     this.set(null);
     // локальная копия принадлежит аккаунту — на устройстве не оставляем
     state = defaultState(); save(); Sync.reset();
-    document.body.querySelectorAll('.overlay').forEach(o => o.remove()); sheetOpen = false;
+    document.body.querySelectorAll('.overlay').forEach(o => o.remove()); sheetOpen = false; sheetClose = null;
     showAuthScreen();
   },
   /* сессия отозвана или протухла: выходим, но локальные данные оставляем — они уйдут на сервер после входа */
@@ -1730,6 +1799,7 @@ window.addEventListener('focus', () => Auth.get() && Sync.pull());
 window.addEventListener('pagehide', () => { if (Auth.get() && Sync.dirty && !Sync.pushing) Sync.push({ keepalive: true }); });
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden' && Auth.get() && Sync.dirty && !Sync.pushing) Sync.push({ keepalive: true }); });
 
+Nav.init();
 if (Auth.get()) enterApp(false); else showAuthScreen();
 </script>
 </body>
