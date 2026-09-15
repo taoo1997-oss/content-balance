@@ -44,7 +44,7 @@ button{cursor:pointer;border:0;background:none;padding:0;touch-action:manipulati
 button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--expert);outline-offset:2px;border-radius:8px}
 /* на тач-экранах нажатие — это «вдавливание» элемента, а не синяя рамка */
 @media (hover:none){
-  .pressable:active,.btn:active,.add-btn:active,.back:active,.ghost-btn:active,.icon-btn:active,.chip:active,.filters button:active,.sub-row:active,.an-row:active,.an-seq .step:active,.stepper button:active,.crumbs button:active,.idea .acts button:active,.check:active,.dropdown button:active{transform:scale(.96);transition-duration:.08s}
+  .pressable:active,.btn:active,.add-btn:active,.back:active,.ghost-btn:active,.icon-btn:active,.chip:active,.filters button:active,.sub-row:active,.an-row:active,.an-seq .step:active,.stepper button:active,.crumbs button:active,.idea .acts button:active,.st-btn:active,.st-link:active,.top-row:active,.pub-btn:active,.dropdown button:active{transform:scale(.96);transition-duration:.08s}
   .add-btn:hover,.btn:hover{filter:none}
   .add-btn:hover{transform:none}
   .add-btn:active{transform:scale(.96)}
@@ -303,21 +303,34 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .filters button.on{background:var(--surface-3);color:var(--ink)}
 .filters button:hover:not(.on){color:var(--ink-2)}
 .ideas{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
-.idea{display:flex;gap:12px;align-items:flex-start;padding:14px 14px;border-radius:14px;background:var(--surface);border:1px solid var(--line);transition:border-color .2s,transform .3s,opacity .3s;animation:rowIn .35s cubic-bezier(.2,.8,.2,1) both}
+.idea{display:flex;flex-direction:column;gap:10px;padding:14px 14px 12px;border-radius:14px;background:var(--surface);border:1px solid var(--line);transition:border-color .2s,transform .3s,opacity .3s;animation:rowIn .35s cubic-bezier(.2,.8,.2,1) both}
 @keyframes rowIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 .idea:hover{border-color:var(--line-2)}
 .idea.removing{opacity:0;transform:translateX(30px) scale(.98)}
-.check{width:26px;height:26px;border-radius:50%;border:2px solid var(--line-2);flex:none;display:grid;place-items:center;margin-top:1px;transition:background .25s,border-color .25s,transform .15s;color:#fff}
-.check svg{width:14px;height:14px;opacity:0;transform:scale(.5);transition:opacity .2s,transform .25s cubic-bezier(.2,.8,.2,1)}
-.check:hover{border-color:var(--accent);transform:scale(1.08)}
-.idea.done .check{background:var(--accent);border-color:var(--accent)}
-.idea.done .check svg{opacity:1;transform:none}
+.idea .main{display:flex;gap:12px;align-items:flex-start}
 .idea .body{flex:1;min-width:0}
+.idea .place{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--ink-3);margin-bottom:6px}
+.idea .place .dot{width:8px;height:8px;border-radius:3px;flex:none}
 .idea .title{font-weight:600;font-size:15px;line-height:1.4;word-wrap:break-word;white-space:pre-wrap}
-.idea.done .title{color:var(--ink-3);text-decoration:line-through;text-decoration-color:var(--line-2)}
 .idea .note{color:var(--ink-2);font-size:13px;margin-top:4px;white-space:pre-wrap}
-.idea .meta{color:var(--ink-3);font-size:12px;margin-top:6px;display:flex;gap:10px;flex-wrap:wrap}
-.idea .meta .done-tag{color:var(--good);font-weight:600}
+/* низ карточки: кнопка перевода в следующий статус (в очереди → снято → опубликовано),
+   у опубликованных — чипы со статистикой, справа — даты */
+.idea-foot{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding-top:10px;border-top:1px solid var(--line)}
+.idea-foot .meta{color:var(--ink-3);font-size:12px;margin-left:auto;display:flex;gap:10px;flex-wrap:wrap}
+.idea-foot .meta .done-tag{color:var(--good);font-weight:600}
+.st-btn{display:inline-flex;align-items:center;gap:7px;padding:9px 14px;border-radius:10px;font-weight:700;font-size:13px;background:var(--accent,var(--expert));color:#fff;transition:filter .2s,transform .15s;white-space:nowrap}
+.st-btn:hover{filter:brightness(1.08)}.st-btn:active{transform:scale(.97)}
+.st-btn svg{width:15px;height:15px}
+.st-btn.pub{background:var(--good)}
+.st-btn.secondary{background:var(--surface-2);color:var(--ink-2)}
+.st-btn.secondary:hover{color:var(--ink);filter:none;background:var(--surface-3)}
+.st-link{font-size:12px;font-weight:600;color:var(--ink-3);padding:6px 8px;border-radius:8px;white-space:nowrap}
+.st-link:hover{color:var(--ink);background:var(--surface-2)}
+.stat-chips{display:flex;gap:5px;flex-wrap:wrap;flex-basis:100%}
+.stat-chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;padding:4px 8px;border-radius:8px;background:var(--surface-2);color:var(--ink-2);font-variant-numeric:tabular-nums}
+.stat-chip small{font-weight:600;color:var(--ink-3)}
+.stat-note{font-size:12px;color:var(--ink-3);font-weight:600}
+@media (max-width:700px){.idea .acts{opacity:1}.idea-foot .meta{flex-basis:100%;margin-left:0}}
 .idea .acts{display:flex;gap:4px;flex:none;opacity:.55;transition:opacity .2s}
 .idea:hover .acts,.idea:focus-within .acts{opacity:1}
 .idea .acts button{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;color:var(--ink-2);transition:background .15s,color .15s}
@@ -359,6 +372,60 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
   .edit-form .row .btn{flex:1;padding:13px 16px}
 }
 .sub-name-input{font-size:26px;font-weight:800;letter-spacing:-.02em;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:2px 10px;min-width:120px;max-width:100%}
+
+/* ---------- статистика опубликованного ---------- */
+.stats-sum{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-top:6px}
+.stats-sum .big{font-size:34px;font-weight:800;letter-spacing:-.03em;line-height:1}
+.stats-sum .big small{font-size:13px;color:var(--ink-3);font-weight:600;margin-left:6px;letter-spacing:0}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-top:12px}
+.stat-tile{padding:10px 12px;border-radius:12px;background:var(--surface-2);min-width:0}
+.stat-tile .k{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stat-tile .v{font-size:22px;font-weight:800;letter-spacing:-.02em;margin-top:3px;font-variant-numeric:tabular-nums}
+.stat-tile .a{font-size:12px;color:var(--ink-3);font-weight:600;margin-top:2px}
+.stat-tile.er{background:color-mix(in srgb,var(--good) 14%,var(--surface-2))}
+.stats-note{margin-top:10px;font-size:12px;color:var(--ink-3)}
+.seg-stats{margin-bottom:14px}
+.seg-stats .card{margin:0}
+.stats-form{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stats-form label{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:700;color:var(--ink-3)}
+.stats-form input,.sheet input.date{width:100%;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:11px 12px;font-size:16px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums}
+.stats-form input:focus,.sheet input.date:focus{outline:none;border-color:var(--accent)}
+.stats-form input::-webkit-outer-spin-button,.stats-form input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.stats-form input[type=number]{-moz-appearance:textfield;appearance:textfield}
+
+/* ---------- экран «Опубликованные» ---------- */
+.pub-btn{display:inline-flex;align-items:center;gap:7px;height:38px;padding:0 12px;border-radius:11px;background:var(--surface);border:1px solid var(--line);color:var(--ink-2);font-size:13px;font-weight:700;white-space:nowrap;transition:background .2s,color .2s,border-color .2s}
+.pub-btn:hover,.pub-btn.on{background:var(--surface-2);color:var(--ink)}
+.pub-btn.on{border-color:var(--good)}
+.pub-btn b{min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:var(--good);color:#fff;font-size:11px;display:grid;place-items:center}
+.pub-btn b:empty{display:none}
+@media (max-width:700px){.pub-btn span{display:none}}
+.pubv .view-head .filters{margin:0}
+.pub-top{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr);gap:14px;align-items:start;margin-top:14px}
+@media (max-width:860px){.pub-top{grid-template-columns:minmax(0,1fr)}}
+.pub-top .card{margin:0}
+.tbl-wrap{overflow-x:auto;margin-top:10px}
+.tbl{width:100%;border-collapse:collapse;font-size:13px;white-space:nowrap}
+.tbl th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3);font-weight:700;text-align:right;padding:6px 8px;border-bottom:1px solid var(--line)}
+.tbl th:first-child,.tbl td:first-child{text-align:left}
+.tbl td{padding:8px;border-bottom:1px solid var(--line);text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
+.tbl .nm{display:inline-flex;align-items:center;gap:8px;font-weight:700}
+.tbl .nm .dot{width:9px;height:9px;border-radius:3px;flex:none}
+.tbl .nm small{color:var(--ink-3);font-weight:600}
+.tbl tr.tot td{font-weight:800;border-top:2px solid var(--line-2);border-bottom:0}
+.tbl tr.click{cursor:pointer}.tbl tr.click:hover td{background:var(--surface-2)}
+.top-list{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.top-row{display:flex;gap:10px;align-items:center;padding:9px 10px;border-radius:10px;background:var(--surface-2);cursor:pointer;border:1px solid transparent;transition:border-color .2s;width:100%;text-align:left}
+.top-row:hover{border-color:var(--line-2)}
+.top-row .num{width:22px;height:22px;border-radius:7px;display:grid;place-items:center;color:#fff;font-size:12px;font-weight:800;flex:none}
+.top-row .t{flex:1;min-width:0;font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.top-row .t small{display:block;color:var(--ink-3);font-weight:600;font-size:11px}
+.top-row .v{font-weight:800;font-size:14px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.top-row .v small{color:var(--ink-3);font-weight:600;font-size:11px;margin-left:4px}
+.pub-list-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:20px 0 10px}
+.pub-list-head h3{margin:0;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-3);font-weight:700}
+.pub-list-head .spacer{flex:1}
+.pub-list-head .meta{color:var(--ink-3);font-size:13px;font-weight:600}
 
 /* ---------- sheet / overlay ---------- */
 .overlay{position:fixed;inset:0;background:rgba(6,8,12,.66);display:grid;place-items:center;padding:16px;z-index:60;animation:fade .25s both}
@@ -463,6 +530,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
     </div>
     <nav class="crumbs" id="crumbs"></nav>
     <div class="menu-wrap">
+      <button class="pub-btn" id="pubBtn" title="Все опубликованные ролики и статистика"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/></svg><span>Опубликованные</span><b id="pubCount"></b></button>
       <button class="sync" id="syncPill" title="Состояние синхронизации · нажми, чтобы обновить"><i class="d"></i><span>…</span></button>
       <button class="icon-btn" id="menuBtn" title="Меню" aria-label="Меню">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="5" cy="12" r="1.2" fill="currentColor"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/><circle cx="19" cy="12" r="1.2" fill="currentColor"/></svg>
@@ -497,7 +565,7 @@ function defaultState() {
   // структура один в один из рилса «Ваш блог»: личное / экспертное и пять секторов
   const sub = (name, shade) => ({ id: uid(), name, shade, hint: FORMATS[name.toLowerCase()], updatedAt: 0 });
   return {
-    version: 4,
+    version: 5,
     categories: [
       { id: 'personal', name: 'Личное', color: '#E85D45', subtopics: [sub('Ваши мысли', 0), sub('Ваша жизнь', 1), { ...sub('Другое', 2), id: OTHER_ID }] },
       { id: 'expert', name: 'Экспертное', color: '#3F86E6', subtopics: [sub('Польза', 0), sub('Продукт', 1), sub('Результаты клиентов', 2)] }
@@ -526,7 +594,11 @@ function normalizeState(s) {
     if (p && !s.tombstones[OTHER_ID] && !p.subtopics.some(sb => sb.id === OTHER_ID || (sb.name || '').trim().toLowerCase() === 'другое'))
       p.subtopics.push({ id: OTHER_ID, name: 'Другое', shade: nextShade(p), hint: FORMATS['другое'], updatedAt: Date.now() });
   }
-  s.version = 4;
+  if ((s.version || 1) < 5) {
+    // v4 → v5: статус «опубликовано» и статистика; опубликованный ролик всегда считается и снятым
+    for (const i of s.ideas) if (i.published && !i.done) { i.done = true; i.doneAt = i.doneAt || i.publishedAt || Date.now(); }
+  }
+  s.version = 5;
   return s;
 }
 
@@ -556,6 +628,36 @@ function planFor(key) {
   return state.lastPlan ?? 8;
 }
 function doneInMonth(key) { return state.ideas.filter(i => i.done && i.doneAt && monthKey(new Date(i.doneAt)) === key); }
+
+/* --- статусы и статистика ---
+   Ролик проходит три состояния: в очереди → снято (done) → опубликовано (published).
+   Опубликованный остаётся и «снятым», поэтому план на месяц по съёмке считается как раньше.
+   Вся статистика (баланс, анализ, отчёт) — только по опубликованным, и без сторис. */
+const METRICS = [['views', 'Просмотры', '👁'], ['likes', 'Лайки', '❤️'], ['comments', 'Комментарии', '💬'], ['reposts', 'Репосты', '🔁'], ['shares', 'Пересылки', '✈️'], ['saves', 'Сохранения', '🔖']];
+const ENG = ['likes', 'comments', 'reposts', 'shares', 'saves'];
+/* сторис — единственный сегмент, который в статистику не идёт: «Ваша жизнь» (сторис 3 р./нед.) */
+const isStories = sb => !!sb && (/^сторис/i.test(sb.hint || '') || (sb.name || '').trim().toLowerCase() === 'ваша жизнь');
+const isStoriesIdea = i => isStories(subOf(i.catId, i.subId));
+const inStats = i => !!i.published && !isStoriesIdea(i);
+const pubAt = i => i.publishedAt || i.doneAt || i.createdAt || 0;
+const hasStats = st => !!st && METRICS.some(([k]) => +st[k] > 0);
+const statusOf = i => i.published ? 'pub' : i.done ? 'done' : 'todo';
+/* ER — вовлечённость: все реакции ÷ просмотры, в процентах */
+const erOf = st => hasStats(st) && +st.views > 0 ? ENG.reduce((a, k) => a + Math.max(0, +st[k] || 0), 0) / +st.views * 100 : null;
+function aggStats(ideas) {
+  const r = { n: ideas.length, withStats: 0, er: null };
+  for (const [k] of METRICS) r[k] = 0;
+  for (const i of ideas) {
+    if (!hasStats(i.stats)) continue;
+    r.withStats++;
+    for (const [k] of METRICS) r[k] += Math.max(0, +i.stats[k] || 0);
+  }
+  if (r.views) r.er = ENG.reduce((a, k) => a + r[k], 0) / r.views * 100;
+  return r;
+}
+const fmtInt = n => Math.round(n).toLocaleString('ru-RU');
+const fmtPct = v => v == null ? '—' : v.toFixed(1).replace('.', ',') + '%';
+const toDateInput = ts => { const d = new Date(ts || Date.now()); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
 
 /* --- цвета подтем: устойчивые оттенки базового цвета категории --- */
 const SHADES = [[0, 0], [-12, -15], [12, 13], [-22, 6], [18, -9], [-6, 20], [8, -20], [-28, 0], [26, 6]];
@@ -648,6 +750,8 @@ const ICONS = {
   trash: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>',
   back: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>',
   arrow: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>',
+  send: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/></svg>',
+  chart: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M22 20H2"/></svg>',
 };
 const icon = n => { const t = document.createElement('template'); t.innerHTML = ICONS[n]; return t.content.firstChild; };
 /* textarea растёт под весь текст — внутри поля прокрутки нет (полоса выглядела чужеродно) */
@@ -878,9 +982,9 @@ function originFromEl(el) {
 }
 /* История браузера повторяет навигацию приложения: системная кнопка «назад» на Android
    закрывает окно или возвращает на предыдущий экран, а не сворачивает приложение.
-   Глубина записи = уровень экрана (0 главная, 1 категория, 2 подтема). */
+   Глубина записи = уровень экрана (0 главная, 1 категория или «Опубликованные», 2 подтема). */
 const Nav = {
-  level: r => r.level === 'home' ? 0 : r.level === 'cat' ? 1 : 2,
+  level: r => r.level === 'home' ? 0 : r.level === 'sub' ? 2 : 1,
   silent: 0,        // сколько popstate мы вызвали сами (history.back / go) и должны пропустить
   after: null,      // что записать, когда наш собственный back отработает
   init() {
@@ -905,7 +1009,7 @@ const Nav = {
     if (sheetClose) { sheetClose(true); return; }
     if (st && st.sheet) { history.back(); return; }   // запись окна без окна — перешагиваем
     let r = (st && st.app && st.route) || { level: 'home' };
-    if (r.level !== 'home' && !cat(r.catId)) r = { level: 'home' };
+    if ((r.level === 'cat' || r.level === 'sub') && !cat(r.catId)) r = { level: 'home' };
     if (r.level === 'sub' && !subOf(r.catId, r.subId)) r = { level: 'cat', catId: r.catId };
     if (r.level === route.level && r.catId === route.catId && r.subId === route.subId) return;
     go(r, { dir: this.level(r) < this.level(route) ? 'out' : 'in', fromHistory: true });
@@ -943,6 +1047,7 @@ function go(next, { dir = 'in', origin, fromHistory = false } = {}) {
 function buildView(r) {
   if (r.level === 'cat') return CatView(r.catId);
   if (r.level === 'sub') return SubView(r.catId, r.subId);
+  if (r.level === 'published') return PublishedView();
   return HomeView();
 }
 function commit() { persist(); currentView && currentView.update(); renderCrumbs(); }
@@ -958,13 +1063,24 @@ function rerender() {
   renderCrumbs();
 }
 
+/* кнопка «Опубликованные» в шапке: счётчик вышедших роликов, подсветка на своём экране */
+const pubBtn = document.getElementById('pubBtn');
+function updatePubBtn() {
+  const n = state.ideas.filter(i => i.published).length;
+  document.getElementById('pubCount').textContent = n || '';
+  pubBtn.classList.toggle('on', route.level === 'published');
+}
+pubBtn.addEventListener('click', () => { if (route.level !== 'published') go({ level: 'published' }, { dir: 'in', origin: originFromEl(pubBtn) }); });
+
 function renderCrumbs() {
+  updatePubBtn();
   const nav = document.getElementById('crumbs');
   nav.innerHTML = '';
   const c = cat(route.catId), sb = c && subOf(route.catId, route.subId);
   if (route.level === 'home') { nav.append(h('span.cur', {}, 'Главная')); return; }
   nav.append(h('button', { onclick: () => go({ level: 'home' }, { dir: 'out' }) }, 'Главная'), h('span.sep', {}, '›'));
-  if (route.level === 'cat') nav.append(h('span.cur', { style: `color:${c.color}` }, c.name));
+  if (route.level === 'published') nav.append(h('span.cur', { style: 'color:var(--good)' }, 'Опубликованные'));
+  else if (route.level === 'cat') nav.append(h('span.cur', { style: `color:${c.color}` }, c.name));
   else {
     nav.append(h('button', { onclick: () => go({ level: 'cat', catId: c.id }, { dir: 'out' }) }, c.name), h('span.sep', {}, '›'));
     nav.append(h('span.cur', {}, sb ? sb.name : '…'));
@@ -981,8 +1097,8 @@ function HomeView() {
   const donut = Donut({
     onClick: (seg, e, path) => { const o = originFromEl(path); if (o) setOrigin(o.x, o.y); go({ level: 'cat', catId: seg.key }, { dir: 'in', origin: o }); },
     onHover: (seg, e) => {
-      const c = cat(seg.key), all = ideasIn(c.id), dn = all.filter(i => i.done).length;
-      showTip(`${c.name} · ${seg.pct}%<small>${all.length ? `${pIdeas(all.length)} · снято ${dn}` : 'пока пусто'} · открыть →</small>`, e.clientX, e.clientY);
+      const c = cat(seg.key), all = ideasIn(c.id), dn = all.filter(i => i.done).length, pb = all.filter(i => i.published).length;
+      showTip(`${c.name} · ${seg.pct}%<small>${all.length ? `${pIdeas(all.length)} · снято ${dn} · опубликовано ${pb}` : 'пока пусто'} · открыть →</small>`, e.clientX, e.clientY);
     }
   });
   const center = h('div.center', {}, h('div', {}, h('div.big', { id: 'cTotal' }), h('div.sub', { id: 'cSub' })));
@@ -1012,7 +1128,7 @@ function HomeView() {
 
   /* --- баланс снятого --- */
   const balBig = h('div.big'), balBar = h('div.bar'), balLegend = h('div.legend'), balTip = h('div.tip');
-  const balCard = h('div.card', {}, h('h3', {}, 'Снято · баланс реализованного'),
+  const balCard = h('div.card', {}, h('h3', {}, 'Опубликовано · баланс реализованного'),
     h('div.bal-nums', {}, balBig), balBar, balLegend, balTip);
 
   const analysis = AnalysisCard();
@@ -1027,9 +1143,9 @@ function HomeView() {
       { key: E.id, label: E.name, value: ideasE.length, color: E.color },
       { key: P.id, label: P.name, value: ideasP.length, color: P.color }
     ]);
-    const dnAll = state.ideas.filter(i => i.done).length;
+    const dnAll = state.ideas.filter(i => i.done).length, pbAll = state.ideas.filter(i => i.published).length;
     center.querySelector('#cTotal').textContent = total;
-    center.querySelector('#cSub').innerHTML = total ? `${plural(total, 'идея', 'идеи', 'идей')} · снято <b>${dnAll}</b>` : 'пока пусто';
+    center.querySelector('#cSub').innerHTML = total ? `${plural(total, 'идея', 'идеи', 'идей')} · снято <b>${dnAll}</b> · вышло <b>${pbAll}</b>` : 'пока пусто';
     const [sp, se] = shares([ideasP.length, ideasE.length]);
     glowP.style.opacity = total ? .08 + .12 * sp / 100 : .1;
     glowE.style.opacity = total ? .08 + .12 * se / 100 : .1;
@@ -1065,10 +1181,11 @@ function HomeView() {
     planFoot.append(h('span', {}, prevPlan != null || prevDone ? `${MONTHS_ACC[prev.getMonth()][0].toUpperCase() + MONTHS_ACC[prev.getMonth()].slice(1)}: ${prevDone}${prevPlan != null ? ' из ' + prevPlan : ''}` : 'Первый месяц учёта'),
       h('span', {}, donePM.length ? `в этом месяце: личное ${pmP} · экспертное ${donePM.length - pmP}` : ''));
 
-    // баланс снятого
-    const dP = ideasP.filter(i => i.done).length, dE = ideasE.filter(i => i.done).length, dT = dP + dE;
+    // баланс опубликованного (сторис не считаем)
+    const dP = ideasP.filter(inStats).length, dE = ideasE.filter(inStats).length, dT = dP + dE;
+    const waiting = state.ideas.filter(i => i.done && !i.published && !isStoriesIdea(i)).length;
     const [bp, be] = shares([dP, dE]);
-    balBig.innerHTML = `${dT}<small>${plural(dT, 'ролик снят', 'ролика снято', 'роликов снято')} · в очереди ${total - dT}</small>`;
+    balBig.innerHTML = `${dT}<small>${plural(dT, 'ролик опубликован', 'ролика опубликовано', 'роликов опубликовано')} · снято, ждут публикации ${waiting}</small>`;
     balBar.innerHTML = '';
     if (dT) balBar.append(h('i.p', { style: `width:${bp}%` }), h('i.e', { style: `width:${be}%` }));
     balLegend.innerHTML = '';
@@ -1078,11 +1195,11 @@ function HomeView() {
     // совет
     let tip;
     if (!total) tip = ['✨', 'Добавь первую идею — диаграмма оживёт. Начни с того, что снял бы уже завтра.'];
-    else if (!dT) tip = ['🎬', `Идей уже ${total}, снятых пока нет. Отметь галочкой первый снятый ролик — здесь появится баланс.`];
-    else if (dP === dE) tip = ['⚖️', h('span', {}, 'Снятое в идеальном балансе ', h('b', {}, '50/50'), '. Держи ритм.')];
+    else if (!dT) tip = ['🎬', waiting ? `Снято ${pVideos(waiting)}, но ничего ещё не вышло. Выложил — нажми «Опубликовано» под сценарием, и здесь появится баланс.` : `Идей уже ${total}, опубликованных пока нет. Снял — нажми «Снято», выложил — «Опубликовано»: здесь появится баланс.`];
+    else if (dP === dE) tip = ['⚖️', h('span', {}, 'Вышедшее в идеальном балансе ', h('b', {}, '50/50'), '. Держи ритм.')];
     else {
-      const lag = dP < dE ? P : E, diff = Math.abs(dP - dE), pool = ideasIn(lag.id).filter(i => !i.done).length;
-      tip = ['🎯', h('span', {}, 'Следующим снимай ', h('b', { style: `color:${lag.color}` }, lag.name.toLowerCase()), `: отстаёт на ${pVideos(diff)}. `, pool ? `В очереди ${pIdeas(pool)}.` : 'Идей в очереди нет — добавь.')];
+      const lag = dP < dE ? P : E, diff = Math.abs(dP - dE), pool = ideasIn(lag.id).filter(i => !i.published && !isStoriesIdea(i)).length;
+      tip = ['🎯', h('span', {}, 'Следующим выкладывай ', h('b', { style: `color:${lag.color}` }, lag.name.toLowerCase()), `: отстаёт на ${pVideos(diff)}. `, pool ? `В работе ${pIdeas(pool)}.` : 'Идей в работе нет — добавь.')];
     }
     balTip.innerHTML = ''; balTip.append(h('span.ic', {}, tip[0]), h('span', {}, tip[1]));
   }
@@ -1091,18 +1208,18 @@ function HomeView() {
 }
 
 /* ===================================================================
-   Анализ снятого — только реализованные ролики, чисто количественно
+   Анализ опубликованного — только вышедшие рилсы и посты, чисто количественно
    =================================================================== */
 const AN_PERIODS = [[30, '30 дней'], [90, '90 дней'], [0, 'всё время']];
 const fmtNum = v => Number.isInteger(v) ? String(v) : v.toFixed(1).replace('.', ',');
-/* какого контента не хватает: считаем по снятым (done) роликам за период */
+/* какого контента не хватает: считаем по опубликованным роликам за период, сторис не участвуют */
 function analyze(days) {
   const since = days ? Date.now() - days * 864e5 : 0;
-  const done = state.ideas.filter(i => i.done && (i.doneAt || i.createdAt || 0) >= since);
+  const done = state.ideas.filter(i => inStats(i) && pubAt(i) >= since);
   const D = done.length, nc = state.categories.length || 1;
   const cats = state.categories.map(c => {
     const n = done.filter(i => i.catId === c.id).length;
-    const subs = c.subtopics.map(sb => ({
+    const subs = c.subtopics.filter(sb => !isStories(sb)).map(sb => ({
       cat: c, sub: sb, color: subColor(c, sb),
       done: done.filter(i => i.subId === sb.id).length,
       queue: ideasIn(c.id, sb.id).filter(i => !i.done).length
@@ -1132,9 +1249,9 @@ function AnalysisCard() {
   const cols = h('div.an-cols'), seq = h('div.an-seq');
   const nextBox = h('div.an-next', {}, h('h4', {}, 'Что снимать дальше, чтобы выровнять баланс'), seq);
   const el = h('div.card.an-card', {},
-    h('div.an-head', {}, h('h3', {}, 'Анализ снятого · только реализованное'), filters),
+    h('div.an-head', {}, h('h3', {}, 'Анализ опубликованного · только вышедшее'), filters),
     h('div.an-sum', {}, sumBig, sumBar), legend, verdict, cols, nextBox,
-    h('p.an-foot', {}, 'Считаются только ролики с галочкой «снято» — планы и очередь не учитываются. Ориентир: линии 50/50, внутри линии — подтемы поровну. Штрих на полоске — среднее по линии.'));
+    h('p.an-foot', {}, 'Считаются только опубликованные рилсы и посты — сторис, очередь и снятое без публикации не учитываются. Ориентир: линии 50/50, внутри линии — подтемы поровну. Штрих на полоске — среднее по линии.'));
   const openSub = (x, e) => go({ level: 'sub', catId: x.cat.id, subId: x.sub.id }, { dir: 'in', origin: originFromEl(e.currentTarget) });
   function update() {
     const period = state.analysisPeriod ?? 0;
@@ -1142,7 +1259,7 @@ function AnalysisCard() {
     for (const [d, lbl] of AN_PERIODS) filters.append(h('button', { class: period === d ? 'on' : '', onclick: () => { state.analysisPeriod = d; commit(); } }, lbl));
     const { D, cats, next } = analyze(period);
     const periodTxt = period ? `за ${period} дней` : 'за всё время';
-    sumBig.innerHTML = `${D}<small>${plural(D, 'ролик снят', 'ролика снято', 'роликов снято')} ${periodTxt}</small>`;
+    sumBig.innerHTML = `${D}<small>${plural(D, 'ролик опубликован', 'ролика опубликовано', 'роликов опубликовано')} ${periodTxt}</small>`;
     const pct = shares(cats.map(c => c.done));
     sumBar.innerHTML = ''; legend.innerHTML = ''; cols.innerHTML = ''; seq.innerHTML = ''; verdict.innerHTML = '';
     cats.forEach((c, i) => {
@@ -1151,7 +1268,7 @@ function AnalysisCard() {
     });
     nextBox.hidden = !D;
     if (!D) {
-      verdict.append(h('span.ic', {}, '📊'), h('span', {}, `Снятых роликов ${periodTxt} нет. Отметь галочкой то, что уже вышло, — анализ считает только реализованное, а не планы.`));
+      verdict.append(h('span.ic', {}, '📊'), h('span', {}, `Опубликованных роликов ${periodTxt} нет. Нажми «Опубликовано» у того, что уже вышло, — анализ считает только вышедшее, а не планы.`));
       return;
     }
     // вердикт: какой линии и каких подтем не хватает
@@ -1210,8 +1327,8 @@ function CatView(catId) {
   const donut = Donut({
     onClick: (seg, e, path) => { const o = originFromEl(path); go({ level: 'sub', catId, subId: seg.key }, { dir: 'in', origin: o }); },
     onHover: (seg, e) => {
-      const all = ideasIn(catId, seg.key), dn = all.filter(i => i.done).length;
-      showTip(`${seg.label}${seg.fmt ? ` (${seg.fmt})` : ''} · ${seg.pct}%<small>${all.length ? `${pIdeas(all.length)} · снято ${dn}` : 'пока пусто'} · открыть →</small>`, e.clientX, e.clientY);
+      const all = ideasIn(catId, seg.key), dn = all.filter(i => i.done).length, pb = all.filter(i => i.published).length;
+      showTip(`${seg.label}${seg.fmt ? ` (${seg.fmt})` : ''} · ${seg.pct}%<small>${all.length ? `${pIdeas(all.length)} · снято ${dn} · опубликовано ${pb}` : 'пока пусто'} · открыть →</small>`, e.clientX, e.clientY);
     }
   });
   const center = h('div.center', {}, h('div', {}, h('div.big'), h('div.sub')));
@@ -1235,16 +1352,19 @@ function CatView(catId) {
     meta.textContent = `${pIdeas(all.length)} · ${total ? share + '% всего контента' : 'контента пока нет'}`;
     donut.update(c.subtopics.map(sb => ({ key: sb.id, label: sb.name, fmt: sb.hint || '', value: ideasIn(catId, sb.id).length, color: subColor(c, sb) })));
     center.querySelector('.big').textContent = all.length;
-    center.querySelector('.sub').innerHTML = `${plural(all.length, 'идея', 'идеи', 'идей')} · снято <b>${all.filter(i => i.done).length}</b>`;
+    center.querySelector('.sub').innerHTML = `${plural(all.length, 'идея', 'идеи', 'идей')} · снято <b>${all.filter(i => i.done).length}</b> · вышло <b>${all.filter(i => i.published).length}</b>`;
     list.innerHTML = '';
     if (!c.subtopics.length) list.append(h('div.empty', {}, 'Подтем нет. Создай первую — например, ', h('b', {}, '«Польза»'), '.'));
     for (const sb of c.subtopics) {
-      const ideas = ideasIn(catId, sb.id), dn = ideas.filter(i => i.done).length, col = subColor(c, sb);
+      const ideas = ideasIn(catId, sb.id), pb = ideas.filter(i => i.published).length, dn = ideas.filter(i => i.done && !i.published).length, col = subColor(c, sb);
       const row = h('div.sub-row', { 'data-key': sb.id, onclick: e => { if (e.target.closest('.plus')) return; go({ level: 'sub', catId, subId: sb.id }, { dir: 'in', origin: originFromEl(row) }); } },
         h('span.dot', { style: `background:${col}` }),
         h('span.name', {}, sb.name, sb.hint ? h('small', {}, `(${sb.hint})`) : null),
-        h('span.cnt', {}, ideas.length ? h('span', {}, h('b', {}, ideas.length), ` · снято ${dn}`) : 'пусто'),
-        h('span.mini', { title: `снято ${dn} из ${ideas.length}` }, h('i', { style: `width:${ideas.length ? dn / ideas.length * 100 : 0}%;background:${col}` })),
+        h('span.cnt', {}, ideas.length ? h('span', {}, h('b', {}, ideas.length), ` · снято ${dn + pb} · вышло ${pb}`) : 'пусто'),
+        // полоска: яркое — опубликовано, бледное — снято и ждёт публикации
+        h('span.mini', { title: `опубликовано ${pb}, снято ${dn}, в очереди ${ideas.length - dn - pb}` },
+          h('i', { style: `width:${ideas.length ? pb / ideas.length * 100 : 0}%;background:${col}` }),
+          h('i', { style: `width:${ideas.length ? dn / ideas.length * 100 : 0}%;background:${col};opacity:.4` })),
         h('button.plus', { title: `Добавить в «${sb.name}»`, onmouseenter: e => e.currentTarget.style.background = col, onmouseleave: e => e.currentTarget.style.background = '', onclick: e => openAddSheet(catId, sb.id, e) }, '+'),
         h('span.arrow', {}, icon('arrow')));
       list.append(row);
@@ -1276,7 +1396,7 @@ function newSubtopicInline(list, c) {
 function SubView(catId, subId) {
   const c = cat(catId);
   const el = h('div.view.sub', { style: `--accent:${c.color}` });
-  let filter = 'all', editingId = null;
+  let filter = 'todo', editingId = null;
   const title = h('h2', {}, h('span.sw', { style: `background:${subColor(c, subOf(catId, subId) || {})}` }), h('span.tname'), h('span.fmt'));
   const meta = h('span.meta');
   const renameBtn = h('button.ghost-btn', { onclick: startRename }, icon('edit'), 'Переименовать');
@@ -1290,12 +1410,13 @@ function SubView(catId, subId) {
     addIdea(catId, subId, v, ''); input.value = ''; input.focus();
   } }, input, h('button.btn', { type: 'submit' }, '+ Добавить'));
   const filters = h('div.filters');
+  const segStats = h('div.seg-stats');   // статистика подтемы — видна на вкладке «Опубликовано»
   const ul = h('ul.ideas');
   el.append(
     h('div.view-head', {},
       h('button.back', { onclick: () => go({ level: 'cat', catId }, { dir: 'out' }) }, icon('back'), c.name),
       title, meta, h('span.spacer'), renameBtn, delBtn),
-    form, filters, ul);
+    form, filters, segStats, ul);
 
   function startRename() {
     const sb = subOf(catId, subId); if (!sb) return;
@@ -1317,49 +1438,37 @@ function SubView(catId, subId) {
     persist(); go({ level: 'cat', catId }, { dir: 'out' });
     toast(`Подтема «${sb.name}» удалена`, { action: 'Отменить', onAction: () => { delete state.tombstones[sb.id]; sb.updatedAt = Date.now(); c.subtopics.splice(idx, 0, sb); commit(); } });
   }
-  function ideaRow(i) {
-    const li = h('li.idea', { class: i.done ? 'done' : '', 'data-id': i.id });
-    if (editingId === i.id) {
-      li.classList.add('editing');
-      const ta = autosize(h('textarea', { value: i.title, placeholder: 'Текст идеи или сценария' })), note = h('input', { value: i.note || '', placeholder: 'Заметка: формат, локация, что показать…' });
-      const sel = SubtopicPicker({ catId: i.catId, subId: i.subId });
-      const saveIt = () => {
-        const v = ta.value.trim(); if (!v) { ta.focus(); return; }
-        const { catId: nc, subId: ns } = sel.value; const moved = nc !== i.catId || ns !== i.subId;
-        Object.assign(i, { title: v, note: note.value.trim(), catId: nc, subId: ns, updatedAt: Date.now() }); editingId = null; commit();
-        if (moved) toast(`Перенесено в «${cat(nc).name} › ${subOf(nc, ns).name}»`, { action: 'Открыть', onAction: () => go({ level: 'sub', catId: nc, subId: ns }, { dir: 'in' }) });
-      };
-      // Enter — новая строка (сценарии многострочные), Ctrl/⌘+Enter — сохранить
-      ta.addEventListener('keydown', e => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); saveIt(); } if (e.key === 'Escape') { editingId = null; update(); } });
-      li.append(h('div.edit-form', {}, ta, note, h('div.row', {}, sel.el, h('button.btn', { onclick: saveIt }, 'Сохранить'), h('button.btn.secondary', { onclick: () => { editingId = null; update(); } }, 'Отмена'))));
-      setTimeout(() => ta.focus(), 30);
-      return li;
-    }
-    const chk = h('button.check', { title: i.done ? 'Вернуть в очередь' : 'Отметить снятым', 'aria-pressed': String(!!i.done), onclick: () => toggleDone(i) }, icon('check'));
-    const metaRow = h('div.meta', {}, h('span', {}, `добавлено ${fmtDate(i.createdAt)}`), i.done && i.doneAt ? h('span.done-tag', {}, `✓ снято ${fmtDate(i.doneAt)}`) : null);
-    li.append(chk,
-      h('div.body', {}, h('div.title', {}, i.title), i.note ? h('div.note', {}, i.note) : null, metaRow),
-      h('div.acts', {},
-        h('button', { title: 'Редактировать', onclick: () => { editingId = i.id; update(); } }, icon('edit')),
-        h('button.del', { title: 'Удалить', onclick: () => removeIdea(i, li) }, icon('trash'))));
-    return li;
-  }
+  const ctx = i => ({ editing: editingId === i.id, setEditing: id => { editingId = id; update(); } });
   function update() {
     const sb = subOf(catId, subId);
     if (!sb) { go({ level: 'cat', catId }, { dir: 'out' }); return; }
     title.querySelector('.tname').textContent = sb.name;
     title.querySelector('.fmt').textContent = sb.hint ? `(${sb.hint})` : '';
-    const all = ideasIn(catId, subId), dn = all.filter(i => i.done);
-    meta.textContent = `${pIdeas(all.length)} · снято ${dn.length}`;
+    const all = ideasIn(catId, subId);
+    const todo = all.filter(i => !i.done), done = all.filter(i => i.done && !i.published), pub = all.filter(i => i.published);
+    meta.textContent = `${pIdeas(all.length)} · снято ${done.length + pub.length} · вышло ${pub.length}`;
     delBtn.style.display = all.length ? 'none' : '';
     filters.innerHTML = '';
-    for (const [k, lbl, n] of [['all', 'Все', all.length], ['todo', 'В очереди', all.length - dn.length], ['done', 'Снято', dn.length]])
+    for (const [k, lbl, n] of [['todo', 'В очереди', todo.length], ['done', 'Снято', done.length], ['pub', 'Опубликовано', pub.length]])
       filters.append(h('button', { class: filter === k ? 'on' : '', onclick: () => { filter = k; update(); } }, `${lbl} ${n}`));
-    const shown = all.filter(i => filter === 'all' || (filter === 'done') === !!i.done)
-      .sort((a, b) => (a.done - b.done) || (b.createdAt - a.createdAt));
+    // статистика сегмента — только по опубликованным этой подтемы; сторис в статистику не идут
+    segStats.innerHTML = '';
+    if (filter === 'pub') {
+      if (isStories(sb)) segStats.append(h('div.tip', {}, h('span.ic', {}, 'ℹ️'), h('span', {}, 'Это сторис — в статистику и анализ они не входят. Здесь просто список того, что вышло.')));
+      else segStats.append(h('div.card', {}, h('h3', {}, `Статистика · ${sb.name} · только опубликованное`), statsBlock(aggStats(pub))));
+    }
+    const shown = filter === 'todo' ? todo.sort((a, b) => b.createdAt - a.createdAt)
+      : filter === 'done' ? done.sort((a, b) => (b.doneAt || 0) - (a.doneAt || 0))
+      : pub.sort((a, b) => pubAt(b) - pubAt(a));
     ul.innerHTML = '';
-    if (!shown.length) ul.append(h('div.empty', {}, all.length ? 'В этом фильтре пусто.' : h('span', {}, 'Идей пока нет. Впиши первую — хук, сценарий или просто мысль ', h('b', {}, '«снять про…»'), '.')));
-    for (const i of shown) ul.append(ideaRow(i));
+    if (!shown.length) {
+      const txt = !all.length ? h('span', {}, 'Идей пока нет. Впиши первую — хук, сценарий или просто мысль ', h('b', {}, '«снять про…»'), '.')
+        : filter === 'todo' ? 'Очередь пуста — всё снято. Добавь новую идею.'
+        : filter === 'done' ? h('span', {}, 'Снятых, но ещё не опубликованных нет. Кнопка ', h('b', {}, '«Снято»'), ' под сценарием в очереди переносит его сюда.')
+        : h('span', {}, 'Опубликованных пока нет. В разделе «Снято» нажми ', h('b', {}, '«Опубликовано»'), ' у вышедшего ролика.');
+      ul.append(h('div.empty', {}, txt));
+    }
+    for (const i of shown) ul.append(ideaCard(i, ctx(i)));
   }
   update();
   setTimeout(() => { if (!ideasIn(catId, subId).length) input.focus({ preventScroll: true }); }, 650);
@@ -1401,19 +1510,249 @@ function SubtopicPicker(initial) {
 }
 
 /* ===================================================================
+   Карточка идеи — общая для экрана подтемы и «Опубликованных».
+   ctx: editing — карточка в режиме правки; setEditing(id|null) — переключить;
+   showPlace — показывать «Линия › Подтема» (в общем списке опубликованных)
+   =================================================================== */
+function ideaCard(i, ctx = {}) {
+  const st = statusOf(i);
+  const li = h('li.idea', { class: st, 'data-id': i.id });
+  const c = cat(i.catId), sb = subOf(i.catId, i.subId);
+  if (ctx.editing) {
+    li.classList.add('editing');
+    const ta = autosize(h('textarea', { value: i.title, placeholder: 'Текст идеи или сценария' })), note = h('input', { value: i.note || '', placeholder: 'Заметка: формат, локация, что показать…' });
+    const sel = SubtopicPicker({ catId: i.catId, subId: i.subId });
+    const saveIt = () => {
+      const v = ta.value.trim(); if (!v) { ta.focus(); return; }
+      const { catId: nc, subId: ns } = sel.value; const moved = nc !== i.catId || ns !== i.subId;
+      Object.assign(i, { title: v, note: note.value.trim(), catId: nc, subId: ns, updatedAt: Date.now() }); ctx.setEditing(null); commit();
+      if (moved) toast(`Перенесено в «${cat(nc).name} › ${subOf(nc, ns).name}»`, { action: 'Открыть', onAction: () => go({ level: 'sub', catId: nc, subId: ns }, { dir: 'in' }) });
+    };
+    // Enter — новая строка (сценарии многострочные), Ctrl/⌘+Enter — сохранить
+    ta.addEventListener('keydown', e => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); saveIt(); } if (e.key === 'Escape') ctx.setEditing(null); });
+    li.append(h('div.edit-form', {}, ta, note, h('div.row', {}, sel.el, h('button.btn', { onclick: saveIt }, 'Сохранить'), h('button.btn.secondary', { onclick: () => ctx.setEditing(null) }, 'Отмена'))));
+    setTimeout(() => ta.focus(), 30);
+    return li;
+  }
+  const body = h('div.body', {},
+    ctx.showPlace && c ? h('div.place', {}, h('span.dot', { style: `background:${sb ? subColor(c, sb) : c.color}` }), `${c.name} › ${sb ? sb.name : '—'}`) : null,
+    h('div.title', {}, i.title), i.note ? h('div.note', {}, i.note) : null);
+  const acts = h('div.acts', {},
+    h('button', { title: 'Редактировать', onclick: () => ctx.setEditing(i.id) }, icon('edit')),
+    h('button.del', { title: 'Удалить', onclick: () => removeIdea(i, li) }, icon('trash')));
+  const foot = h('div.idea-foot'), meta = h('div.meta');
+  if (st === 'todo') {
+    meta.append(h('span', {}, `добавлено ${fmtDate(i.createdAt)}`));
+    foot.append(h('button.st-btn', { onclick: () => markDone(i) }, icon('check'), 'Снято'), meta);
+  } else if (st === 'done') {
+    meta.append(h('span.done-tag', {}, `✓ снято ${fmtDate(i.doneAt || i.createdAt)}`));
+    foot.append(h('button.st-btn.pub', { onclick: e => markPublished(i, e) }, icon('send'), 'Опубликовано'),
+      h('button.st-link', { onclick: () => unDone(i) }, '← в очередь'), meta);
+  } else {
+    meta.append(h('span.done-tag', {}, `📣 опубликовано ${fmtDate(pubAt(i))}`));
+    if (isStories(sb)) foot.append(h('span.stat-note', {}, 'сторис · в статистику не входит'));
+    else {
+      if (hasStats(i.stats)) foot.append(statChips(i.stats));
+      foot.append(h('button.st-btn.secondary', { onclick: e => openStatsSheet(i, e) }, icon('chart'), hasStats(i.stats) ? 'Изменить статистику' : 'Добавить статистику'));
+    }
+    foot.append(h('button.st-link', { onclick: () => unPublish(i) }, '← в снятые'), meta);
+  }
+  li.append(h('div.main', {}, body, acts), foot);
+  return li;
+}
+function statChips(st) {
+  const box = h('div.stat-chips');
+  for (const [k, lbl, ic] of METRICS) box.append(h('span.stat-chip', { title: lbl }, ic, fmtInt(+st[k] || 0)));
+  const er = erOf(st);
+  if (er != null) box.append(h('span.stat-chip', { title: 'ER — все реакции ÷ просмотры' }, 'ER', h('small', {}, fmtPct(er))));
+  return box;
+}
+/* сводка по набору опубликованных: сколько вышло, сумма и среднее по каждой метрике, ER */
+function statsBlock(a) {
+  const box = h('div');
+  box.append(h('div.stats-sum', {}, h('div.big', {}, String(a.n), h('small', {}, `${plural(a.n, 'ролик опубликован', 'ролика опубликовано', 'роликов опубликовано')}${a.n ? ` · статистика есть у ${a.withStats}` : ''}`))));
+  if (!a.n) { box.append(h('div.stats-note', {}, 'Опубликованных роликов пока нет — статистика появится, когда что-то выйдет.')); return box; }
+  const grid = h('div.stats-grid');
+  for (const [k, lbl, ic] of METRICS)
+    grid.append(h('div.stat-tile', {}, h('div.k', {}, `${ic} ${lbl}`), h('div.v', {}, fmtInt(a[k])), h('div.a', {}, a.withStats ? `≈ ${fmtInt(a[k] / a.withStats)} на ролик` : 'нет данных')));
+  grid.append(h('div.stat-tile.er', {}, h('div.k', {}, '📈 ER'), h('div.v', {}, fmtPct(a.er)), h('div.a', {}, 'реакции ÷ просмотры')));
+  box.append(grid);
+  if (a.withStats < a.n) box.append(h('div.stats-note', {}, `У ${a.n - a.withStats} ${plural(a.n - a.withStats, 'ролика', 'роликов', 'роликов')} статистика ещё не добавлена — нажми «Добавить статистику» в карточке.`));
+  return box;
+}
+
+/* ===================================================================
    Операции с идеями
    =================================================================== */
 function addIdea(catId, subId, title, note) {
-  const idea = { id: uid(), catId, subId, title, note: note || '', createdAt: Date.now(), updatedAt: Date.now(), done: false, doneAt: null };
+  const idea = { id: uid(), catId, subId, title, note: note || '', createdAt: Date.now(), updatedAt: Date.now(), done: false, doneAt: null, published: false, publishedAt: null, stats: null };
   state.ideas.push(idea); commit();
   return idea;
 }
-function toggleDone(i) {
-  i.done = !i.done; i.doneAt = i.done ? Date.now() : null; i.updatedAt = Date.now(); commit();
-  if (i.done) {
-    const key = nowKey(), n = doneInMonth(key).length, t = planFor(key);
-    toast(t && n === t ? `🏆 ${n} из ${t} — план месяца выполнен!` : t ? `✓ Снято ${n} из ${t} в этом месяце` : `✓ Снято: ${n} в этом месяце`);
+/* в очереди → снято */
+function markDone(i) {
+  i.done = true; i.doneAt = Date.now(); i.updatedAt = Date.now(); commit();
+  const key = nowKey(), n = doneInMonth(key).length, t = planFor(key);
+  toast(t && n === t ? `🏆 ${n} из ${t} — план месяца выполнен!` : t ? `✓ Снято ${n} из ${t} в этом месяце` : `✓ Снято: ${n} в этом месяце`, { action: 'Отменить', onAction: () => unDone(i) });
+}
+/* снято → в очередь (публикация тоже снимается) */
+function unDone(i) { i.done = false; i.doneAt = null; i.published = false; i.publishedAt = null; i.updatedAt = Date.now(); commit(); }
+/* снято → опубликовано; сразу предлагаем вписать статистику */
+function markPublished(i) {
+  const now = Date.now();
+  i.published = true; i.publishedAt = now; if (!i.done) { i.done = true; i.doneAt = now; } i.updatedAt = now; commit();
+  if (isStoriesIdea(i)) toast('📣 Опубликовано');
+  else toast('📣 Опубликовано · впиши статистику, когда появятся цифры', { action: 'Статистика', onAction: () => openStatsSheet(i) });
+}
+/* опубликовано → снято (статистика остаётся на случай возврата) */
+function unPublish(i) { i.published = false; i.publishedAt = null; i.updatedAt = Date.now(); commit(); toast('Возвращено в «Снято»'); }
+
+/* окно статистики опубликованного ролика: дата публикации и шесть метрик из Instagram */
+function openStatsSheet(i, e) {
+  const c = cat(i.catId);
+  openSheet((sheet, close) => {
+    sheet.style.setProperty('--accent', c ? c.color : 'var(--expert)');
+    const inputs = {}, grid = h('div.stats-form');
+    const date = h('input.date', { type: 'date', value: toDateInput(pubAt(i)) });
+    const saveIt = () => {
+      const stats = {};
+      for (const [k] of METRICS) { const v = Math.round(parseFloat(String(inputs[k].value).replace(/\s/g, '').replace(',', '.'))); stats[k] = v > 0 ? v : 0; }
+      i.stats = stats; i.statsAt = Date.now();
+      const d = date.value ? new Date(date.value + 'T12:00:00').getTime() : NaN;
+      if (!isNaN(d)) i.publishedAt = d;
+      i.updatedAt = Date.now(); commit(); close(); toast('Статистика сохранена');
+    };
+    for (const [k, lbl, ic] of METRICS) {
+      const inp = h('input', { type: 'number', inputmode: 'numeric', min: 0, step: 1, placeholder: '0', value: i.stats && +i.stats[k] > 0 ? i.stats[k] : '' });
+      inp.addEventListener('keydown', ev => { if (ev.key === 'Enter') { ev.preventDefault(); saveIt(); } });
+      inputs[k] = inp; grid.append(h('label', {}, `${ic} ${lbl}`, inp));
+    }
+    sheet.append(h('h3', {}, h('span.sw', { style: `background:${c ? c.color : 'var(--expert)'}` }), 'Статистика ролика'),
+      h('p.txt', { style: 'font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis' }, i.title.replace(/\s+/g, ' ')),
+      h('div.lbl', {}, 'Дата публикации'), date,
+      h('div.lbl', {}, 'Показатели из Instagram'), grid,
+      h('div.foot', {}, h('button.btn.secondary', { onclick: close }, 'Отмена'), h('button.btn', { onclick: saveIt }, 'Сохранить')));
+    setTimeout(() => inputs.views.focus(), isPhone() ? 350 : 80);
+  }, e);
+}
+
+/* ===================================================================
+   Экран «Опубликованные»: отчёт по всем вышедшим роликам (без сторис),
+   разбивка по подтемам, топ по просмотрам и общий список
+   =================================================================== */
+function PublishedView() {
+  const el = h('div.view.pubv');
+  let period = 0, editingId = null;
+  const meta = h('span.meta'), filters = h('div.filters');
+  const report = h('div.card'), bySub = h('div.card'), top = h('div.card');
+  const listHead = h('div.pub-list-head'), ul = h('ul.ideas');
+  el.append(
+    h('div.view-head', {},
+      h('button.back', { onclick: () => go({ level: 'home' }, { dir: 'out' }) }, icon('back'), 'Главная'),
+      h('h2', {}, h('span.sw', { style: 'background:var(--good)' }), 'Опубликованные'), meta, h('span.spacer'), filters),
+    report, h('div.pub-top', {}, bySub, top), listHead, ul);
+  const ctx = i => ({ editing: editingId === i.id, showPlace: true, setEditing: id => { editingId = id; update(); } });
+  function update() {
+    const since = period ? Date.now() - period * 864e5 : 0;
+    const allPub = state.ideas.filter(i => i.published && pubAt(i) >= since).sort((a, b) => pubAt(b) - pubAt(a));
+    const counted = allPub.filter(inStats), stories = allPub.length - counted.length;
+    const shotAll = state.ideas.filter(i => i.done && !isStoriesIdea(i)).length;
+    const waiting = state.ideas.filter(i => i.done && !i.published && !isStoriesIdea(i)).length;
+    filters.innerHTML = '';
+    for (const [d, lbl] of AN_PERIODS) filters.append(h('button', { class: period === d ? 'on' : '', onclick: () => { period = d; update(); } }, lbl));
+    const periodTxt = period ? `за ${period} дней` : 'за всё время';
+    meta.textContent = `${pVideos(counted.length)}${stories ? ` · сторис ${stories}` : ''}`;
+
+    // --- отчёт ---
+    const a = aggStats(counted);
+    const [P, E] = state.categories;
+    const nP = counted.filter(i => i.catId === P.id).length, nE = counted.length - nP, [sp, se] = shares([nP, nE]);
+    report.innerHTML = '';
+    report.append(
+      h('div.an-head', {}, h('h3', {}, `Отчёт · ${periodTxt}`), h('button.ghost-btn', { onclick: () => copyReport(counted, a, periodTxt) }, '📋 Скопировать отчёт для анализа')),
+      statsBlock(a));
+    const bar = h('div.bar');
+    if (counted.length) bar.append(h('i.p', { style: `width:${sp}%` }), h('i.e', { style: `width:${se}%` }));
+    report.append(bar, h('div.legend', {},
+      h('div.it', {}, h('span.dot', { style: `background:${P.color}` }), `${P.name} `, h('b', {}, counted.length ? `${nP} · ${sp}%` : '0')),
+      h('div.it', {}, h('span.dot', { style: `background:${E.color}` }), `${E.name} `, h('b', {}, counted.length ? `${nE} · ${se}%` : '0')),
+      h('div.it', {}, 'Снято всего ', h('b', {}, shotAll), ' · ждут публикации ', h('b', {}, waiting))),
+      h('p.an-foot', {}, 'Сторис в статистику не входят. ER = (лайки + комментарии + репосты + пересылки + сохранения) ÷ просмотры. «В среднем на ролик» — по роликам, у которых заполнена статистика.'));
+
+    // --- по подтемам ---
+    bySub.innerHTML = ''; bySub.append(h('h3', {}, 'По подтемам'));
+    const rows = [];
+    for (const c of state.categories) for (const sb of c.subtopics) {
+      if (isStories(sb)) continue;
+      const xs = counted.filter(i => i.catId === c.id && i.subId === sb.id);
+      if (xs.length) rows.push({ c, sb, a: aggStats(xs) });
+    }
+    rows.sort((x, y) => y.a.n - x.a.n || y.a.views - x.a.views);
+    if (!rows.length) bySub.append(h('div.empty', {}, 'Пока нечего сравнивать — опубликованных роликов нет.'));
+    else {
+      const tbody = h('tbody');
+      for (const r of rows) tbody.append(h('tr.click', { title: `Открыть «${r.sb.name}»`, onclick: e => go({ level: 'sub', catId: r.c.id, subId: r.sb.id }, { dir: 'in', origin: originFromEl(e.currentTarget) }) },
+        h('td', {}, h('span.nm', {}, h('span.dot', { style: `background:${subColor(r.c, r.sb)}` }), r.sb.name, h('small', {}, r.c.name.toLowerCase()))),
+        h('td', {}, String(r.a.n)), ...METRICS.map(([k]) => h('td', {}, fmtInt(r.a[k]))), h('td', {}, fmtPct(r.a.er))));
+      tbody.append(h('tr.tot', {}, h('td', {}, 'Итого'), h('td', {}, String(a.n)), ...METRICS.map(([k]) => h('td', {}, fmtInt(a[k]))), h('td', {}, fmtPct(a.er))));
+      bySub.append(h('div.tbl-wrap', {}, h('table.tbl', {},
+        h('thead', {}, h('tr', {}, h('th', {}, 'Подтема'), h('th', {}, 'Роликов'), ...METRICS.map(([k, lbl, ic]) => h('th', { title: lbl }, ic)), h('th', {}, 'ER'))),
+        tbody)));
+    }
+
+    // --- топ по просмотрам ---
+    top.innerHTML = ''; top.append(h('h3', {}, 'Топ по просмотрам'));
+    const ranked = counted.filter(i => hasStats(i.stats)).sort((x, y) => (+y.stats.views || 0) - (+x.stats.views || 0)).slice(0, 5);
+    if (!ranked.length) top.append(h('div.empty', {}, 'Добавь статистику к роликам — здесь появятся лидеры.'));
+    else {
+      const list = h('div.top-list');
+      ranked.forEach((i, k) => {
+        const c = cat(i.catId), sb = subOf(i.catId, i.subId);
+        list.append(h('button.top-row', { title: 'Изменить статистику', onclick: e => openStatsSheet(i, e) },
+          h('span.num', { style: `background:${sb ? subColor(c, sb) : c.color}` }, String(k + 1)),
+          h('span.t', {}, i.title.split('\n')[0], h('small', {}, `${sb ? sb.name : '—'} · ${fmtDate(pubAt(i))}`)),
+          h('span.v', {}, fmtInt(i.stats.views), h('small', {}, `ER ${fmtPct(erOf(i.stats))}`))));
+      });
+      top.append(list);
+    }
+
+    // --- список ---
+    listHead.innerHTML = '';
+    listHead.append(h('h3', {}, `Все опубликованные · ${allPub.length}`), h('span.spacer'), h('span.meta', {}, stories ? `из них сторис: ${stories} (без статистики)` : ''));
+    ul.innerHTML = '';
+    if (!allPub.length) ul.append(h('div.empty', {}, h('span', {}, `Опубликованных роликов ${periodTxt} нет. В подтеме на вкладке «Снято» нажми `, h('b', {}, '«Опубликовано»'), ' у вышедшего ролика.')));
+    for (const i of allPub) ul.append(ideaCard(i, ctx(i)));
   }
+  update();
+  return { el, update, zoomTarget: () => null };
+}
+/* текстовый отчёт для вставки в чат — сводка, подтемы и каждый ролик с цифрами */
+function copyReport(ideas, a, periodTxt) {
+  const d = new Date(), L = [];
+  const metricsLine = s => METRICS.map(([k, lbl]) => `${lbl.toLowerCase()} ${fmtInt(s[k] || 0)}`).join(', ');
+  const [P, E] = state.categories, nP = ideas.filter(i => i.catId === P.id).length;
+  L.push(`Отчёт по опубликованным роликам · ${periodTxt} · ${d.getDate()} ${MONTHS_SHORT[d.getMonth()]} ${d.getFullYear()}`);
+  L.push(`Опубликовано: ${a.n} (${P.name.toLowerCase()} ${nP}, ${E.name.toLowerCase()} ${a.n - nP}). Статистика заполнена у ${a.withStats}. Сторис не учитываются.`);
+  L.push(`Сумма: ${metricsLine(a)} · ER ${fmtPct(a.er)}`);
+  if (a.withStats) { const avg = {}; for (const [k] of METRICS) avg[k] = a[k] / a.withStats; L.push(`В среднем на ролик: ${metricsLine(avg)}`); }
+  L.push('', 'По подтемам:');
+  for (const c of state.categories) for (const sb of c.subtopics) {
+    if (isStories(sb)) continue;
+    const xs = ideas.filter(i => i.catId === c.id && i.subId === sb.id); if (!xs.length) continue;
+    const s = aggStats(xs);
+    L.push(`- ${c.name} › ${sb.name}: ${pVideos(s.n)} · ${metricsLine(s)} · ER ${fmtPct(s.er)}`);
+  }
+  L.push('', 'Ролики (от новых к старым):');
+  ideas.forEach((i, n) => {
+    const c = cat(i.catId), sb = subOf(i.catId, i.subId), st = i.stats || {};
+    L.push(`${n + 1}. ${new Date(pubAt(i)).toLocaleDateString('ru-RU')} · ${c ? c.name : ''} › ${sb ? sb.name : ''} · «${i.title.replace(/\s+/g, ' ').slice(0, 160)}»` +
+      (hasStats(st) ? ` · ${metricsLine(st)} · ER ${fmtPct(erOf(st))}` : ' · статистики нет'));
+  });
+  copyText(L.join('\n')).then(ok => toast(ok ? 'Отчёт скопирован — вставь его в чат с Claude' : 'Не удалось скопировать'));
+}
+async function copyText(t) {
+  try { await navigator.clipboard.writeText(t); return true; } catch (e) {}
+  try { const ta = h('textarea', { value: t, style: 'position:fixed;opacity:0' }); document.body.append(ta); ta.select(); const ok = document.execCommand('copy'); ta.remove(); return ok; } catch (e) { return false; }
 }
 function removeIdea(i, li) {
   const idx = state.ideas.indexOf(i);
@@ -1775,7 +2114,7 @@ function mergeStates(a, b) {
     return { ...c, subtopics: subs.filter(sb => used.has(sb.id) || !(tomb[sb.id] > (sb.updatedAt || 0))) };
   });
   for (const c of older.categories) if (!categories.find(x => x.id === c.id)) categories.push(c);
-  return { version: 4, categories, ideas: alive, plans: { ...older.plans, ...newer.plans }, lastPlan: newer.lastPlan ?? older.lastPlan ?? 8, tombstones: tomb, updatedAt: Date.now() };
+  return { version: 5, categories, ideas: alive, plans: { ...older.plans, ...newer.plans }, lastPlan: newer.lastPlan ?? older.lastPlan ?? 8, tombstones: tomb, updatedAt: Date.now() };
 }
 
 /* ===================================================================
