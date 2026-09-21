@@ -547,6 +547,67 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .auth-form .btn{margin-top:6px;padding:14px 18px;font-size:15px;background:linear-gradient(90deg,var(--personal),var(--expert))}
 .auth-form .err{color:var(--personal);font-size:13px;font-weight:600;min-height:18px}
 .auth-card .note{color:var(--ink-3);font-size:12px;margin:14px 0 0;text-align:center;line-height:1.5}
+
+/* ── Генератор идей ─────────────────────────────────────────── */
+.ideas .methods{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 8px;margin:0 -2px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.ideas .methods::-webkit-scrollbar{display:none}
+.ideas .methods .chip{flex:none;--accent:var(--ink)}
+.ideas .methods .chip.on{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.ideas .how{color:var(--ink-3);font-size:13px;line-height:1.45;margin:0 0 14px;max-width:62ch}
+.gen{padding:22px 22px 18px}
+.gen .kicker{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:12px;font-size:12px}
+.gen .mname{font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-2)}
+.gen .mhint{color:var(--ink-3);font-weight:500}
+.gen .q{margin:0 0 14px;font-size:clamp(20px,2.6vw,25px);line-height:1.38;font-weight:700;letter-spacing:-.015em;text-wrap:pretty;max-width:30ch}
+.slot{display:inline;white-space:normal}
+.gen .q::first-letter{text-transform:uppercase}
+.slot .w{display:inline;font:inherit;color:var(--ink);background:linear-gradient(transparent 68%,color-mix(in srgb,var(--sc,var(--expert)) 32%,transparent) 68%);-webkit-box-decoration-break:clone;box-decoration-break:clone;padding:0 2px;border-radius:3px;cursor:pointer;-webkit-tap-highlight-color:transparent;outline:none;transition:background-color .2s}
+.slot .w:focus-visible{box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--sc,var(--expert))}
+.slot .w:hover{background-color:color-mix(in srgb,var(--sc,var(--expert)) 14%,transparent)}
+.gen .locks{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:-4px 0 14px}
+.gen .locks .lbl{color:var(--ink-3);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-right:4px}
+.gen .locks .chip{padding:5px 10px;font-size:12px;--accent:var(--ink)}
+.gen .locks .chip.on{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.gen .locks .chip svg{width:12px;height:12px}
+.slot.lock .w{background:linear-gradient(transparent 68%,color-mix(in srgb,var(--ink) 22%,transparent) 68%);cursor:default}
+.slot.flip .w{animation:slotFlip .32s cubic-bezier(.2,.8,.2,1) both}
+@keyframes slotFlip{from{opacity:0;filter:blur(3px);transform:translateY(5px)}to{opacity:1;filter:blur(0);transform:none}}
+.slot-in{font:inherit;color:var(--ink);background:var(--surface-2);border:1px solid var(--line);border-bottom:2px solid var(--expert);border-radius:8px;padding:2px 8px;width:min(100%,26ch);outline:none}
+.slot-in:focus{border-color:var(--expert)}
+.gen textarea{width:100%;min-height:96px;resize:none;overflow:hidden;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:16px;line-height:1.5;color:var(--ink);font-family:inherit}
+.gen textarea:focus{outline:none;border-color:var(--ink-3)}
+.gen textarea::placeholder{color:var(--ink-3)}
+.gen .err{color:var(--personal);font-size:13px;font-weight:600;min-height:18px;margin-top:6px}
+.gen .target{display:flex;align-items:center;gap:10px;margin:4px 0 14px;flex-wrap:wrap}
+.gen .target .lbl,.gen .ai .lbl{color:var(--ink-3);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.gen .acts{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.gen .acts .btn svg,.gen .acts .ghost-btn svg{width:15px;height:15px}
+.gen .ghost-btn[disabled]{opacity:.5}
+.gen .ai{margin-top:14px}
+.gen .ai:empty{display:none}
+.gen .ai .lbl{display:block;margin-bottom:8px}
+.gen .think{color:var(--ink-3);font-size:13px;margin:0}
+.gen .think.bad{color:var(--personal)}
+.gen .angle{display:block;width:100%;text-align:left;padding:10px 12px;border-radius:10px;background:var(--surface-2);border:1px solid transparent;color:var(--ink);font-size:14px;line-height:1.45;margin-bottom:6px;transition:border-color .2s,background .2s}
+.gen .angle:hover{border-color:var(--line-2);background:var(--surface-3)}
+.bank h3{margin:0 0 10px;font-size:15px;font-weight:800;letter-spacing:-.01em}
+.bank .hint{text-align:left}
+.bank-list{list-style:none;margin:0;padding:0}
+.bank-list li{display:flex;gap:12px;align-items:flex-start;padding:10px 8px;border-radius:10px;cursor:pointer;transition:background .2s}
+.bank-list li:hover{background:var(--surface-2)}
+.bank-list .dot{width:10px;height:10px;border-radius:3px;flex:none;margin-top:6px}
+.bank-list .b{min-width:0}
+.bank-list .t{font-weight:600;font-size:14px;line-height:1.35;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bank-list small{color:var(--ink-3);font-size:12px}
+.ideas-btn.on{border-color:var(--ink)}
+@media (max-width:700px){
+  .gen{padding:18px 16px 14px}
+  .gen .q{font-size:21px}
+  .gen .acts .btn{flex:1;justify-content:center}
+  .gen .acts .spacer{display:none}
+  .gen .acts .ghost-btn{order:3;width:100%;justify-content:center}
+}
+@media (prefers-reduced-motion:reduce){.slot.flip .w{animation:none}}
 </style>
 </head>
 <body>
@@ -558,6 +619,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
     </div>
     <nav class="crumbs" id="crumbs"></nav>
     <div class="menu-wrap">
+      <button class="pub-btn ideas-btn" id="ideasBtn" title="Генератор идей"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/><circle cx="12" cy="12" r="3.2"/></svg><span>Идеи</span></button>
       <button class="pub-btn" id="pubBtn" title="Все опубликованные ролики и статистика"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/></svg><span>Опубликованные</span><b id="pubCount"></b></button>
       <button class="sync" id="syncPill" title="Состояние синхронизации · нажми, чтобы обновить"><i class="d"></i><span>…</span></button>
       <button class="icon-btn" id="menuBtn" title="Меню" aria-label="Меню">
@@ -796,6 +858,9 @@ const ICONS = {
   back: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>',
   arrow: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>',
   send: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/></svg>',
+  spark: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/><circle cx="12" cy="12" r="3.2"/></svg>',
+  pin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16v5"/><path d="M8 3h8l-1 6 3 3H6l3-3z"/></svg>',
+  dice: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="4"/><circle cx="9" cy="9" r="1.1" fill="currentColor"/><circle cx="15" cy="15" r="1.1" fill="currentColor"/><circle cx="15" cy="9" r="1.1" fill="currentColor"/><circle cx="9" cy="15" r="1.1" fill="currentColor"/></svg>',
   chart: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M22 20H2"/></svg>',
 };
 const icon = n => { const t = document.createElement('template'); t.innerHTML = ICONS[n]; return t.content.firstChild; };
@@ -1093,6 +1158,7 @@ function buildView(r) {
   if (r.level === 'cat') return CatView(r.catId);
   if (r.level === 'sub') return SubView(r.catId, r.subId);
   if (r.level === 'published') return PublishedView();
+  if (r.level === 'ideas') return IdeasView();
   return HomeView();
 }
 function commit() { persist(); currentView && currentView.update(); renderCrumbs(); }
@@ -1114,8 +1180,11 @@ function updatePubBtn() {
   const n = state.ideas.filter(i => i.published).length;
   document.getElementById('pubCount').textContent = n || '';
   pubBtn.classList.toggle('on', route.level === 'published');
+  ideasBtn.classList.toggle('on', route.level === 'ideas');
 }
 pubBtn.addEventListener('click', () => { if (route.level !== 'published') go({ level: 'published' }, { dir: 'in', origin: originFromEl(pubBtn) }); });
+const ideasBtn = document.getElementById('ideasBtn');
+ideasBtn.addEventListener('click', () => { if (route.level !== 'ideas') go({ level: 'ideas' }, { dir: 'in', origin: originFromEl(ideasBtn) }); });
 
 function renderCrumbs() {
   updatePubBtn();
@@ -1125,6 +1194,7 @@ function renderCrumbs() {
   if (route.level === 'home') { nav.append(h('span.cur', {}, 'Главная')); return; }
   nav.append(h('button', { onclick: () => go({ level: 'home' }, { dir: 'out' }) }, 'Главная'), h('span.sep', {}, '›'));
   if (route.level === 'published') nav.append(h('span.cur', { style: 'color:var(--good)' }, 'Опубликованные'));
+  else if (route.level === 'ideas') nav.append(h('span.cur', {}, 'Идеи'));
   else if (route.level === 'cat') nav.append(h('span.cur', { style: `color:${c.color}` }, c.name));
   else {
     nav.append(h('button', { onclick: () => go({ level: 'cat', catId: c.id }, { dir: 'out' }) }, c.name), h('span.sep', {}, '›'));
@@ -2232,6 +2302,256 @@ function mergeStates(a, b) {
   });
   for (const c of older.categories) if (!categories.find(x => x.id === c.id)) categories.push(c);
   return { version: 5, categories, ideas: alive, plans: { ...older.plans, ...newer.plans }, lastPlan: newer.lastPlan ?? older.lastPlan ?? 8, tombstones: tomb, updatedAt: Date.now() };
+}
+
+/* ===================================================================
+   Генератор идей: методики × случайные слоты. Идею пишет человек,
+   приложение задаёт вопрос и ограничение. Всё офлайн, кроме кнопки
+   «Подсказать угол» (воркер → Claude).
+   =================================================================== */
+const IDEA_DATA = {
+  // случайный стимул — предметы из быта, Еревана и зала
+  objects: `чайник · собачья будка · зонт · лифт · будильник · пробка на дороге · банкомат · очередь · парковка · светофор · маршрутка · кофемашина · стиральная машина · велосипед · связка ключей · дверной замок · стремянка · качели · песочница · шахматы · домино · пазл · кроссворд · конверт · курьер · доставка еды · меню в кафе · официант · кассир · весы · линейка · компас · навигатор · зарядка для телефона · розетка · батарейка · пароль от wi-fi · примерочная · чек из магазина · скидка · распродажа · гарантия · инструкция от мебели · шуруп · отвёртка · молоток · гвоздь · дрель · скотч · ножницы · иголка · пуговица · шнурки · носки · дождь · снег · лёд на тротуаре · лестница · эскалатор · перила · домофон · коврик у двери · шкаф · вешалка · чемодан · рюкзак · паспорт · граница · самолёт · посадочный талон · ремень безопасности · автошкола · инструктор по вождению · зеркало заднего вида · парковка задним ходом · коробка передач · ручник · бензин · шиномонтаж · автомойка · такси · каршеринг · Каскад · Вернисаж · Арарат · ущелье · лаваш · тонир · кофе по-восточному · гранат · абрикос · рынок · обмен валют · соцкарта · бюро переводов · аренда квартиры · пункт выдачи · посылка · тапочки · плед · настольная лампа · фонарик · свеча · спички · кастрюля · сковородка · тесто · дрожжи · духовка · кухонный таймер · микроволновка · холодильник · лёд в стакане · фильтр для воды · чайный пакетик · сахар · соль · рецепт · кухонные весы · шаги в телефоне · фитнес-браслет · бассейн · спасательный круг · надувной матрас · велотренажёр · гантели · коврик для йоги · скакалка · мяч · судья со свистком · детский сад · школьный звонок · дневник · двойка · домашка · экзамен · шпаргалка · выпускной · ранец · парта · мел · музыкалка · гаммы · метроном · наушники · плейлист · радио · караоке · микрофон · сцена · занавес · билет в театр · гардероб · антракт · попкорн · сериал · спойлер · подписка на сервис · обновление приложения · перезагрузка · батарея 1% · режим полёта · автозамена · голосовое сообщение · «печатает…» · прочитано без ответа · стикер · аватарка · скриншот · пробное занятие · абонемент · талон в поликлинику · прививка · зубная щётка · стоматолог · пластырь · витамины · градусник · аптечка · страховка · ипотека · копилка · наличные · сдача · чаевые · разделить счёт · бронь столика · рецепт бабушки · семейный альбом · ёлка · подарок · обёртка · открытка · тамада · первый танец молодожёнов · медляк · диджей · барная стойка · последний автобус · ночное такси · ключ под ковриком · будка охранника · шлагбаум · счётчик воды · квитанция · соседи сверху · перфоратор в 8 утра · балкон · стремянка · антенна · пульт от телевизора · переходник · удлинитель · термос · зонтик от солнца · солнцезащитный крем · очки · линзы · прищепка · бельевая верёвка · утюг · пятно на рубашке · химчистка · сапожник · ремонт часов · пружина · шестерёнка · гайка · рычаг · противовес · весы-качели · маятник · компас · якорь · парус · руль · педали · цепь на велосипеде · спущенное колесо · насос`.split(' · '),
+  // предмет в зале — то, что физически рядом
+  hall: 'зеркало во всю стену · стена, у которой стоят · колонка · паркет · дверь зала · часы на стене · бутылка воды · полотенце · кроссовки · туфли на каблуке · телефон на штативе · окно · пустой зал · розетка для колонки · лавка вдоль стены · вешалка · ключ от зала · чек за аренду зала · выключатель света · табличка «занято» · коврик у входа · счёт «раз-два-ча-ча-ча» · тишина между треками · чужая сумка на лавке · опоздавший · первый, кто вышел в центр · последний, кто ушёл'.split(' · '),
+  // чужой мир — область, в которой зритель уже эксперт
+  worlds: 'парковка задним ходом · первый день на новой работе · изучение языка · ремонт квартиры · ипотека · воспитание ребёнка · сдача на права · переезд в другую страну · поход в горы · диета · первое свидание · собеседование · спортзал в январе · сборка мебели из коробки · выпечка хлеба · очередь в поликлинике · приготовление кофе · поиск квартиры · игра в шахматы · обучение плаванию · вождение в пробке · сдача экзамена · покупка обуви · сад и рассада · настройка wi-fi · путешествие с пересадками · ремонт велосипеда · утро понедельника · очередь на границе · переговоры о зарплате'.split(' · '),
+  // понятия из латины, которые надо объяснить
+  concepts: 'перенос веса · базовый шаг · ведение в паре · счёт вслух · работа бёдер · осанка · первое занятие · страх зеркала · партнёр · темп · ошибки новичка · туфли · растяжка · «нет слуха» · стопа · рамка · поворот · пауза в музыке · повторение · плато на третьей неделе · импровизация · взгляд · руки · дыхание · «поздно начинать» · мужская партия · женская партия · опоздание на занятие · пропуск занятия · первое выступление'.split(' · '),
+  // кто → кому
+  pairs: 'ученица → подруге, которая третий год говорит «я бы пошла» · жена → мужу, который ждёт в машине · мама → взрослой дочери · дочь → маме, которой 50 · коллега → коллеге после корпоратива · невеста → жениху · жених → невесте · свидетельница → невесте · тот, кто переехал → другу, который остался · тот, кто остался → тому, кто переехал · новичок → новичку · студент → одногруппнику · сосед → соседу · брат → сестре · сестра → брату · бывший ученик → нынешнему · тридцатилетний → однокласснику · местный → релоканту · релокант → местному · тот, кто стеснялся → тому, кто стесняется · та, кто похудела → той, кто «сначала похудею» · мужчина → другу, который «это не моё» · девушка → парню, который не танцует · родитель → родителю: «отдать ребёнка на танцы?» · взрослый → своим родителям · ученица → себе через год · человек «без слуха» → такому же · тот, кто бросил на третьей неделе → тому, кто на второй · интроверт → интроверту · та, кто танцует на кухне → такой же · фитнес-тренер → клиентке · психолог → клиенту · врач → пациенту с осанкой · офисный работник → коллеге с больной спиной · бариста → постоянному гостю · таксист → пассажиру · тот, кто пришёл один → тому, кто боится один · пара → другой паре · мама в декрете → маме в декрете · человек после 40 → ровеснику · уехавший из Еревана → оставшемуся · тот, кто ждал год → тому, кто ждёт'.split(' · '),
+  // восемь механик репоста
+  mechanics: [
+    ['метка своих', '«видео поймут те, у кого…» — зритель узнаёт не себя, а конкретного человека'],
+    ['голос вместо зрителя', 'говоришь вслух то, что человек сам сказать не может'],
+    ['прямая инструкция', '«отправь той, кто…» — работает, только если адресат создан в теле ролика'],
+    ['общая память', 'пересылка ровесникам как валюта узнавания: дискотека, кружок, свадьба'],
+    ['вердикт', 'занять позицию: отправляют, чтобы поспорить чужими словами'],
+    ['ставка в цифре', 'конкретное число создаёт незакрытый вопрос: «4000 драм — дорого?»'],
+    ['возраст + прозрение', '«мне 29, и я только сейчас понял…» — возраст даёт право на вывод'],
+    ['серийный персонаж', 'узнаваемая рамка, накопительный эффект от ролика к ролику']
+  ],
+  // возраст × место — общая память
+  memories: '13 · школьная дискотека · 17 · выпускной · 19 · первая вечеринка в общаге · 22 · свадьба друга · 25 · корпоратив · 28 · день рождения в баре · 30 · своя свадьба · 33 · первый отпуск с детьми · 35 · встреча выпускников · 40 · юбилей родителей · 45 · свадьба ребёнка · 7 · кружок, куда привели за руку · 10 · утренник · 15 · первая любовь · 29 · переезд в другую страну · 24 · первая работа · 21 · последний экзамен · 38 · сорокалетие лучшего друга · 50 · пенсия родителей · 16 · лагерь'.split(' · ').reduce((a, x, i, arr) => (i % 2 ? a : [...a, [x, arr[i + 1]]]), []),
+  // ваши фразы из расшифровок — это уже крючки
+  phrases: 'народ набирался, набирался, набирался · стопы как щупальца у осьминога · в бёдрах маятник · приемлемая цена · всего полчаса и готово · а много это или мало? · а я её ещё и не набрал · может быть, дорого · как человек расцветает на паркете · вот с сентября, вот похудею · стой, погоди, не перелистывай · не просто попой крутишь · понимаешь, да? · в Твери было проще · улетали за считанные часы · пункт выдачи Wildberries · 5 тысяч драм в час · прям кайфанула · собрать, поменять · поехали · мне пишут «спасибо» — и на этом всё · осталось найти людей, которые придут · заплатил свои деньги · это моя недоработка'.split(' · '),
+  // расхожие советы — чтобы спорить
+  advice: 'не считай, чувствуй музыку · сначала купи туфли · без растяжки не получится · начинать надо в детстве · мужчинам латина не идёт · сначала найди партнёра, потом иди · сначала похудей · смотри уроки на YouTube, зал не нужен · раза в неделю достаточно · главное — талант · танцы — это для молодых · в тридцать уже поздно · нужно чувство ритма от природы · расслабься и не думай · просто повторяй за тренером · сначала техника, потом музыка · без зеркала не научишься · бери абонемент на год — для мотивации · в кроссовках нельзя · латина — это про сексуальность · стесняешься — значит, не твоё · первое занятие покажет, есть ли способности · надо ходить на пробные в пять школ · пока не научишься дома, в зал не иди'.split(' · '),
+  // ваши числа — для ставки в цифре
+  numbers: '5 000 драм в час за зал · 4 человека в группе · 10 лет с детьми · 29 лет · 52 занятия в году · 20 минут страха · 3 016 просмотров · полчаса в бюро переводов · третий день в Ереване · 11 500 драм за день · 4 000 драм за занятие · 181 сантиметр · 1 356 просмотров · 3 занятия на базовый шаг · 6 дней, за которые тело забывает · 2 года «собираюсь»'.split(' · '),
+  // наоборот
+  inverts: 'что, если наоборот? · что, если это запрещено? · что, если делать это в десять раз медленнее? · что, если это на улице, не в зале? · что, если без музыки? · что, если зритель — ребёнок семи лет? · что, если рассказать это бабушке? · что, если это последний ролик в жизни? · что, если у тебя минута до занятия? · что, если это правда только в Ереване? · что, если это скажет ученица, а не тренер? · что, если это стоит в 10 раз дороже? · что, если это бесплатно?'.split(' · '),
+  // пересборка своего ролика
+  scamper: 'замени одно слово в крючке на противоположное · убери из него цифру — что останется? · переверни финал: вопрос вместо ответа · перенеси в другое место: улица, кухня, Каскад · сожми до десяти секунд · сними без единого слова · расскажи от лица ученицы · соедини с другим своим роликом · сделай это серией из пяти · оставь только последнюю фразу — это новый крючок'.split(' · ')
+};
+
+const IDEA_METHODS = [
+  { id: 'random', name: 'Случайный предмет', how: 'Де Боно. Мозг не придумывает из пустоты, но соединяет два несвязанных предмета — и в стыке рождается угол.',
+    slots: ['object', 'pillar'], q: s => ['Возьми ', s.object, '. Объясни через него что-то для подтемы ', s.pillar, '. Где это одно и то же?'] },
+  { id: 'analogy', name: 'Чужой мир', how: 'Синектика. Объясни своё через область, где зритель уже эксперт.',
+    slots: ['concept', 'world'], q: s => ['Объясни ', s.concept, ' так, как будто это ', s.world, '. Что там первый шаг, а что — ошибка новичка?'] },
+  { id: 'pair', name: 'Кто → кому', how: 'Стратегия 360. Начать не с темы, а с двух людей: кто перешлёт и кому.',
+    slots: ['pair', 'mechanic'], q: s => [s.pair, '. Что она перешлёт и какой фразой? Механика — ', s.mechanic, '.'] },
+  { id: 'mechanic', name: 'Механика × тема', how: 'Восемь механик репоста, проверенных на реальных роликах. Случайная механика на случайную подтему.',
+    slots: ['mechanic', 'pillar'], q: s => ['Механика ', s.mechanic, ' для подтемы ', s.pillar, '. Кто перешлёт и кому?'] },
+  { id: 'against', name: 'Против совета', how: 'Вердикт. Взять расхожий совет из ниши и сказать, где он ложь. Отправляют, чтобы занять сторону.',
+    slots: ['advice'], q: s => ['Говорят: ', s.advice, '. Где это ложь? Кому ты это скажешь в лицо?'] },
+  { id: 'invert', name: 'Наоборот', how: 'Перевернуть привычное. Один вопрос «что, если…» — и тема, о которой все говорят одинаково, звучит иначе.',
+    slots: ['concept', 'invert'], q: s => [s.concept, ' — ', s.invert] },
+  { id: 'hall', name: 'Предмет в зале', how: 'То, что физически рядом на съёмке. Предмет становится главным героем — камера уже на нём.',
+    slots: ['hall', 'pillar'], q: s => ['Сними ролик, где ', s.hall, ' — главный герой. Что он знает про новичков, чего не знают они сами?'] },
+  { id: 'memory', name: 'Возраст × место', how: 'Общая память. Возраст даёт право на вывод, место — детали, которые есть у всех.',
+    slots: ['memory', 'pillar'], q: s => ['Тебе ', s.memory, '. Что там было с танцами — или без них? Кому из тех людей ты отправишь это сейчас?'] },
+  { id: 'phrase', name: 'Твоё слово', how: 'Фразы из ваших же расшифровок. Это уже крючки — их не надо придумывать, надо продолжить.',
+    slots: ['phrase', 'pillar'], q: s => ['Ты сам сказал: ', s.phrase, '. Это первая фраза ролика. Что дальше?'] },
+  { id: 'number', name: 'Ставка в цифре', how: 'Конкретное число — незакрытый вопрос. Под ним спорят, а споря — отмечают друг друга.',
+    slots: ['number', 'pillar'], q: s => [s.number, '. Это много или мало? Для кого именно?'] },
+  { id: 'scamper', name: 'Пересборка', how: 'SCAMPER. Взять свой готовый ролик и изменить в нём ровно одну вещь.',
+    slots: ['own', 'scamper'], q: s => ['Возьми ролик ', s.own, '. ', s.scamper] },
+  { id: 'dm', name: 'Вопрос из директа', how: 'Реальный вопрос за неделю — самый честный источник. Отвечать не тому, кто спросил, а тому, кому он это перешлёт.',
+    slots: ['dm', 'mechanic'], q: s => ['Тебя спросили: ', s.dm, '. Ответь не ему — тому, кому он это перешлёт. Механика — ', s.mechanic, '.'] }
+];
+const IDEA_SLOT_NAMES = { object: 'предмет', pillar: 'подтема', concept: 'понятие', world: 'чужой мир', pair: 'кто → кому', mechanic: 'механика', advice: 'совет', invert: 'вопрос', hall: 'в зале', memory: 'возраст · место', phrase: 'твоя фраза', number: 'число', own: 'твой ролик', scamper: 'что сделать', dm: 'вопрос' };
+const IDEA_DM_KEY = 'fuchiji-cb-dm';
+
+const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+function pickNot(arr, prev) { if (arr.length < 2) return arr[0]; let v; do { v = pick(arr); } while (v === prev); return v; }
+
+/* один слот: значение для показа + служебные данные (подтема → куда сохранять) */
+function rollSlot(kind, prev) {
+  const D = IDEA_DATA;
+  switch (kind) {
+    case 'object': return { text: pickNot(D.objects, prev && prev.text) };
+    case 'hall': return { text: pickNot(D.hall, prev && prev.text) };
+    case 'concept': return { text: pickNot(D.concepts, prev && prev.text) };
+    case 'world': return { text: pickNot(D.worlds, prev && prev.text) };
+    case 'pair': return { text: pickNot(D.pairs, prev && prev.text) };
+    case 'advice': return { text: pickNot(D.advice, prev && prev.text) };
+    case 'invert': return { text: pickNot(D.inverts, prev && prev.text) };
+    case 'phrase': return { text: pickNot(D.phrases, prev && prev.text) };
+    case 'number': return { text: pickNot(D.numbers, prev && prev.text) };
+    case 'scamper': return { text: pickNot(D.scamper, prev && prev.text) };
+    case 'mechanic': { const m = pickNot(D.mechanics, prev && prev.m); return { text: m[0], hint: m[1], m }; }
+    case 'memory': { const m = pickNot(D.memories, prev && prev.m); return { text: `${m[0]}, ${m[1]}`, m }; }
+    case 'pillar': {
+      const all = state.categories.flatMap(c => c.subtopics.filter(sb => !isStories(sb)).map(sb => ({ c, sb })));
+      const p = pickNot(all, prev && prev.p);
+      return { text: p.sb.name, p, catId: p.c.id, subId: p.sb.id, color: p.c.color };
+    }
+    case 'own': {
+      const mine = state.ideas.filter(i => !isStoriesIdea(i)).map(i => i.title.split('\n')[0].replace(/^\d+\s*·\s*/, '').slice(0, 70));
+      return { text: mine.length ? pickNot(mine, prev && prev.text) : 'ролик про туфли' };
+    }
+    case 'dm': {
+      let list = []; try { list = JSON.parse(localStorage.getItem(IDEA_DM_KEY)) || []; } catch (e) {}
+      return { text: list.length ? pickNot(list, prev && prev.text) : '', editable: true };
+    }
+  }
+  return { text: '' };
+}
+
+function IdeasView() {
+  const el = h('div.view.ideas');
+  let method = IDEA_METHODS[0], slots = {}, locked = {}, hint = null, busy = false;
+  const meta = h('span.meta');
+  const methods = h('div.methods');
+  const how = h('p.how');
+  const card = h('div.card.gen');
+  const bank = h('div.card.bank');
+  el.append(
+    h('div.view-head', {},
+      h('button.back', { onclick: () => go({ level: 'home' }, { dir: 'out' }) }, icon('back'), 'Главная'),
+      h('h2', {}, icon('spark'), 'Идеи'), meta, h('span.spacer')),
+    methods, how, card, bank);
+
+  function rollAll(force) {
+    for (const k of method.slots) if (force || !slots[k] || !locked[k]) slots[k] = rollSlot(k, slots[k]);
+    hint = null;
+  }
+  function setMethod(m) { method = m; slots = {}; locked = {}; rollAll(true); drawMethods(); drawCard(); }
+
+  function drawMethods() {
+    methods.innerHTML = '';
+    for (const m of IDEA_METHODS) methods.append(h('button.chip', { class: m.id === method.id ? 'on' : '', onclick: () => setMethod(m) }, m.name));
+    how.textContent = method.how;
+  }
+
+  /* слово в вопросе: тап — перекрутить только его. Закрепление — рядом чипами */
+  function slotEl(kind) {
+    const v = slots[kind];
+    const wrap = h('span.slot', { class: locked[kind] ? 'lock' : '', title: IDEA_SLOT_NAMES[kind] });
+    if (v.editable) {
+      const inp = h('input.slot-in', { value: v.text, placeholder: 'вставь вопрос из директа', onchange: () => { v.text = inp.value.trim(); if (v.text) { let l = []; try { l = JSON.parse(localStorage.getItem(IDEA_DM_KEY)) || []; } catch (e) {} l = [v.text, ...l.filter(x => x !== v.text)].slice(0, 30); try { localStorage.setItem(IDEA_DM_KEY, JSON.stringify(l)); } catch (e) {} } } });
+      wrap.append(inp); return wrap;
+    }
+    const reroll = () => { if (locked[kind]) return; slots[kind] = rollSlot(kind, v); hint = null; const nw = slotEl(kind); nw.classList.add('flip'); wrap.replaceWith(nw); };
+    const w = h('span.w', { role: 'button', tabindex: 0, style: v.color ? `--sc:${v.color}` : '', onclick: reroll, onkeydown: ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); reroll(); } } }, v.text);
+    wrap.append(w);
+    return wrap;
+  }
+  function locksRow() {
+    const row = h('div.locks', {}, h('span.lbl', {}, 'Закрепить'));
+    for (const k of method.slots) if (!slots[k].editable) {
+      const b = h('button.chip', { class: locked[k] ? 'on' : '', onclick: () => { locked[k] = !locked[k]; b.classList.toggle('on', locked[k]); card.querySelectorAll('.slot').forEach((s, i) => { if (method.slots.filter(x => !slots[x].editable)[i] === k) s.classList.toggle('lock', locked[k]); }); } }, icon('pin'), IDEA_SLOT_NAMES[k]);
+      row.append(b);
+    }
+    return row;
+  }
+
+  function drawCard() {
+    card.innerHTML = '';
+    const parts = method.q(Object.fromEntries(method.slots.map(k => [k, k])));
+    const q = h('p.q');
+    for (const p of parts) q.append(typeof p === 'string' && method.slots.includes(p) ? slotEl(p) : p);
+    const mech = slots.mechanic;
+    const ta = autosize(h('textarea', { placeholder: 'Твоя идея — одной-тремя строками. Первая строка станет крючком.' }));
+    ta.addEventListener('keydown', ev => { if (ev.key === 'Enter' && (ev.ctrlKey || ev.metaKey)) { ev.preventDefault(); saveIt(); } });
+    const pillar = slots.pillar;
+    const target = h('div.target');
+    let tCat = pillar ? pillar.catId : null, tSub = pillar ? pillar.subId : null;
+    function drawTarget() {
+      target.innerHTML = '';
+      const c = cat(tCat), sb = c && subOf(tCat, tSub);
+      target.append(h('span.lbl', {}, 'В очередь →'),
+        h('button.chip', { style: c ? `--accent:${c.color}` : '', class: sb ? 'on' : '', onclick: ev => SubtopicPickerAny(ev, (cId, sId) => { tCat = cId; tSub = sId; drawTarget(); }) }, sb ? `${c.name} › ${sb.name}` : 'выбрать подтему'));
+    }
+    drawTarget();
+    const err = h('div.err');
+    const aiBox = h('div.ai');
+    function drawAi() {
+      aiBox.innerHTML = '';
+      if (busy) { aiBox.append(h('p.think', {}, 'Думаю над углами…')); return; }
+      if (!hint) return;
+      if (hint.error) { aiBox.append(h('p.think.bad', {}, hint.error)); return; }
+      aiBox.append(h('p.lbl', {}, 'Три угла — нажми, чтобы взять за основу'));
+      for (const a of hint.angles) aiBox.append(h('button.angle', { onclick: () => { ta.value = ta.value.trim() ? ta.value.trimEnd() + '\n' + a : a; ta.dispatchEvent(new Event('input')); ta.focus(); } }, a));
+    }
+    const saveIt = () => {
+      const v = ta.value.trim();
+      if (!v) { err.textContent = 'Сначала напиши идею — хотя бы одну строку.'; ta.focus(); return; }
+      if (!tCat || !tSub) { err.textContent = 'Выбери подтему, куда положить.'; return; }
+      const src = { method: method.id, slots: Object.fromEntries(method.slots.map(k => [k, slots[k].text])) };
+      const note = `${method.name} · ` + method.slots.map(k => slots[k].text).join(' · ');
+      const idea = addIdea(tCat, tSub, v, note);
+      idea.source = src; idea.updatedAt = Date.now(); commit();
+      toast('В очереди · ' + (subOf(tCat, tSub) || {}).name, { action: 'Открыть', onAction: () => go({ level: 'sub', catId: tCat, subId: tSub }) });
+      rollAll(false); drawCard();
+    };
+    const askAi = async () => {
+      if (busy) return;
+      const a = Auth.get();
+      if (!a) { hint = { error: 'Подсказка работает только после входа.' }; drawAi(); return; }
+      busy = true; drawAi();
+      const r = await api('POST', '/api/angle', { method: method.name, question: parts.map(p => typeof p === 'string' && slots[p] ? slots[p].text : p).join(''), slots: Object.fromEntries(method.slots.map(k => [k, slots[k].text])), draft: ta.value.trim() });
+      busy = false;
+      hint = r.ok && r.data && Array.isArray(r.data.angles) ? { angles: r.data.angles } : { error: r.error || 'Не получилось. Попробуй ещё раз.' };
+      drawAi();
+    };
+    card.append(
+      h('div.kicker', {}, h('span.mname', {}, method.name), mech && mech.hint ? h('span.mhint', {}, mech.hint) : null),
+      q, locksRow(), ta, err, target,
+      h('div.acts', {},
+        h('button.btn.secondary', { onclick: () => { rollAll(false); drawCard(); } }, icon('dice'), 'Ещё карточку'),
+        h('button.ghost-btn', { onclick: askAi, disabled: busy }, icon('spark'), 'Подсказать угол'),
+        h('span.spacer'),
+        h('button.btn', { style: cat(tCat) ? `--accent:${cat(tCat).color}` : '', onclick: saveIt }, 'В очередь', icon('arrow'))),
+      aiBox);
+    drawAi();
+  }
+
+  function drawBank() {
+    bank.innerHTML = '';
+    const mine = state.ideas.filter(i => i.source).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+    meta.textContent = mine.length ? `${mine.length} из генератора` : '';
+    bank.append(h('h3', {}, 'Из генератора'));
+    if (!mine.length) { bank.append(h('p.hint', {}, 'Здесь появятся идеи, которые ты сохранишь с этой карточки. Они же лягут в очередь своей подтемы.')); return; }
+    const ul = h('ul.bank-list');
+    for (const i of mine.slice(0, 12)) {
+      const c = cat(i.catId), sb = c && subOf(i.catId, i.subId), m = IDEA_METHODS.find(x => x.id === i.source.method);
+      ul.append(h('li', { onclick: () => c && sb && go({ level: 'sub', catId: c.id, subId: sb.id }) },
+        h('i.dot', { style: `background:${c ? c.color : 'var(--ink-3)'}` }),
+        h('div.b', {}, h('div.t', {}, i.title.split('\n')[0]), h('small', {}, [m ? m.name : '', sb ? sb.name : '', i.published ? 'опубликовано' : i.done ? 'снято' : 'в очереди'].filter(Boolean).join(' · ')))));
+    }
+    bank.append(ul);
+  }
+
+  function update() { drawBank(); }
+  rollAll(true); drawMethods(); drawCard(); drawBank();
+  return { el, update };
+}
+
+/* выбор подтемы из любой категории — маленькое окно поверх карточки */
+function SubtopicPickerAny(e, onPick) {
+  openSheet((sheet, close) => {
+    sheet.append(h('h3', {}, 'Куда положить'));
+    for (const c of state.categories) {
+      sheet.append(h('div.lbl', { style: `color:${c.color}` }, c.name));
+      const chips = h('div.chips');
+      for (const sb of c.subtopics) chips.append(h('button.chip', { style: `--accent:${c.color}`, onclick: () => { onPick(c.id, sb.id); close(); } }, sb.name));
+      sheet.append(chips);
+    }
+    sheet.append(h('div.foot', {}, h('button.btn.secondary', { onclick: close }, 'Отмена')));
+  }, e);
 }
 
 /* ===================================================================
