@@ -393,6 +393,33 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .stats-form input::-webkit-outer-spin-button,.stats-form input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 .stats-form input[type=number]{-moz-appearance:textfield;appearance:textfield}
 
+/* поле «Подписалось» — седьмое, одно в последнем ряду: растягиваем на всю ширину */
+.stats-form label:last-child:nth-child(odd){grid-column:1/-1}
+
+/* ---------- рейтинг роликов подтемы ---------- */
+.rate-card{margin-top:14px}
+.rate-axes{font-size:12px;font-weight:600;color:var(--ink-3);white-space:nowrap}
+.rate-verdict{display:flex;flex-direction:column;gap:6px;margin-top:12px;padding:12px 14px;border-radius:12px;background:var(--surface-2);font-size:14px;color:var(--ink-2);line-height:1.45}
+.rate-verdict .ln{display:flex;gap:10px;align-items:flex-start}
+.rate-verdict .ic{flex:none;font-size:16px;line-height:1.3}
+.rate-verdict b{color:var(--ink);font-weight:700}
+.rate-list{display:flex;flex-direction:column;gap:6px;margin-top:12px}
+.rate-row{display:grid;grid-template-columns:24px minmax(0,1fr) auto;gap:6px 10px;align-items:center;padding:9px 10px;border-radius:10px;background:var(--surface-2);border:1px solid transparent;cursor:pointer;width:100%;text-align:left;transition:border-color .2s,background .2s}
+.rate-row:hover{border-color:var(--line-2);background:var(--surface-3)}
+.rate-row .num{width:24px;height:24px;border-radius:7px;display:grid;place-items:center;font-size:12px;font-weight:800;flex:none}
+.rate-row .t{min-width:0;font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rate-row .t small{display:block;color:var(--ink-3);font-weight:600;font-size:11px;font-variant-numeric:tabular-nums}
+.rate-row .sc{font-weight:800;font-size:16px;letter-spacing:-.02em;white-space:nowrap;font-variant-numeric:tabular-nums}
+.rate-row .sc small{color:var(--ink-3);font-weight:600;font-size:11px;letter-spacing:0}
+.rate-row.top .sc{color:var(--good)}
+.rate-row .track{grid-column:1/-1;height:6px;border-radius:3px;background:var(--surface);overflow:hidden;position:relative}
+.rate-row .track i{display:block;height:100%;border-radius:3px;transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.rate-row .track .avg{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--ink-3);opacity:.9}
+/* место в рейтинге — в подписи карточки опубликованного */
+.rank-tag{display:inline-flex;align-items:center;gap:4px;font-weight:700;color:var(--ink-2);padding:1px 7px;border-radius:99px;background:var(--surface-2)}
+.rank-tag small{color:var(--ink-3);font-weight:600}
+.rank-tag.top{color:var(--good)}
+
 /* ---------- экран «Опубликованные» ---------- */
 .pub-btn{display:inline-flex;align-items:center;gap:7px;height:38px;padding:0 12px;border-radius:11px;background:var(--surface);border:1px solid var(--line);color:var(--ink-2);font-size:13px;font-weight:700;white-space:nowrap;transition:background .2s,color .2s,border-color .2s}
 .pub-btn:hover,.pub-btn.on{background:var(--surface-2);color:var(--ink)}
@@ -401,9 +428,10 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .pub-btn b:empty{display:none}
 @media (max-width:700px){.pub-btn span{display:none}}
 .pubv .view-head .filters{margin:0}
-.pub-top{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr);gap:14px;align-items:start;margin-top:14px}
-@media (max-width:860px){.pub-top{grid-template-columns:minmax(0,1fr)}}
-.pub-top .card{margin:0}
+.rate-slot{margin-top:14px}
+.rate-slot + .card{margin-top:14px}
+.rate-more{display:block;width:100%;margin-top:8px;padding:9px;border-radius:10px;font-size:13px;font-weight:700;color:var(--ink-2);background:var(--surface-2);transition:background .2s,color .2s}
+.rate-more:hover{background:var(--surface-3);color:var(--ink)}
 .tbl-wrap{overflow-x:auto;margin-top:10px}
 .tbl{width:100%;border-collapse:collapse;font-size:13px;white-space:nowrap}
 .tbl th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3);font-weight:700;text-align:right;padding:6px 8px;border-bottom:1px solid var(--line)}
@@ -633,7 +661,8 @@ function doneInMonth(key) { return state.ideas.filter(i => i.done && i.doneAt &&
    Ролик проходит три состояния: в очереди → снято (done) → опубликовано (published).
    Опубликованный остаётся и «снятым», поэтому план на месяц по съёмке считается как раньше.
    Вся статистика (баланс, анализ, отчёт) — только по опубликованным, и без сторис. */
-const METRICS = [['views', 'Просмотры', '👁'], ['likes', 'Лайки', '❤️'], ['comments', 'Комментарии', '💬'], ['reposts', 'Репосты', '🔁'], ['shares', 'Пересылки', '✈️'], ['saves', 'Сохранения', '🔖']];
+const METRICS = [['views', 'Просмотры', '👁'], ['likes', 'Лайки', '❤️'], ['comments', 'Комментарии', '💬'], ['reposts', 'Репосты', '🔁'], ['shares', 'Пересылки', '✈️'], ['saves', 'Сохранения', '🔖'], ['followers', 'Подписалось', '👤']];
+/* реакции для ER — подписки в них не входят: это результат ролика, а не вовлечённость */
 const ENG = ['likes', 'comments', 'reposts', 'shares', 'saves'];
 /* сторис — единственный сегмент, который в статистику не идёт: «Ваша жизнь» (сторис 3 р./нед.) */
 const isStories = sb => !!sb && (/^сторис/i.test(sb.hint || '') || (sb.name || '').trim().toLowerCase() === 'ваша жизнь');
@@ -655,7 +684,23 @@ function aggStats(ideas) {
   if (r.views) r.er = ENG.reduce((a, k) => a + r[k], 0) / r.views * 100;
   return r;
 }
+/* сколько подписалось на 1 000 просмотров — конверсия ролика в подписку */
+const convOf = st => hasStats(st) && +st.views > 0 ? (+st.followers || 0) / +st.views * 1000 : null;
+/* --- рейтинг роликов внутри набора (подтемы) ---
+   Индекс 0–100: по каждой оси ролик получает долю от лучшего в наборе, индекс — среднее по осям.
+   Оси: охват (просмотры), вовлечённость (ER), рост (подписалось). Ось выпадает, если по ней у всех нули,
+   чтобы ролики без подписок не тянули вниз тех, у кого подписки просто не вписаны. */
+const RATE_AXES = [['views', 'просмотры', st => +st.views || 0], ['er', 'ER', st => erOf(st) || 0], ['followers', 'подписки', st => +st.followers || 0]];
+function rateIdeas(ideas) {
+  const xs = ideas.filter(i => hasStats(i.stats));
+  const axes = RATE_AXES.map(([k, lbl, f]) => ({ k, lbl, f, max: Math.max(0, ...xs.map(i => f(i.stats))) })).filter(a => a.max > 0);
+  const rows = xs.map(i => ({ i, score: axes.length ? Math.round(axes.reduce((a, x) => a + x.f(i.stats) / x.max, 0) / axes.length * 100) : 0 }));
+  rows.sort((a, b) => b.score - a.score || (+b.i.stats.views || 0) - (+a.i.stats.views || 0));
+  rows.forEach((r, n) => { r.rank = n + 1; r.of = rows.length; });
+  return { rows, axes, byId: Object.fromEntries(rows.map(r => [r.i.id, r])) };
+}
 const fmtInt = n => Math.round(n).toLocaleString('ru-RU');
+const fmtX = v => v.toFixed(v < 10 ? 1 : 0).replace('.', ',') + '×';
 const fmtPct = v => v == null ? '—' : v.toFixed(1).replace('.', ',') + '%';
 const toDateInput = ts => { const d = new Date(ts || Date.now()); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
 
@@ -1438,7 +1483,8 @@ function SubView(catId, subId) {
     persist(); go({ level: 'cat', catId }, { dir: 'out' });
     toast(`Подтема «${sb.name}» удалена`, { action: 'Отменить', onAction: () => { delete state.tombstones[sb.id]; sb.updatedAt = Date.now(); c.subtopics.splice(idx, 0, sb); commit(); } });
   }
-  const ctx = i => ({ editing: editingId === i.id, setEditing: id => { editingId = id; update(); } });
+  let rating = null;   // рейтинг опубликованных этой подтемы — считается на вкладке «Опубликовано»
+  const ctx = i => ({ editing: editingId === i.id, rank: rating && rating.byId[i.id], setEditing: id => { editingId = id; update(); } });
   function update() {
     const sb = subOf(catId, subId);
     if (!sb) { go({ level: 'cat', catId }, { dir: 'out' }); return; }
@@ -1452,10 +1498,14 @@ function SubView(catId, subId) {
     for (const [k, lbl, n] of [['todo', 'В очереди', todo.length], ['done', 'Снято', done.length], ['pub', 'Опубликовано', pub.length]])
       filters.append(h('button', { class: filter === k ? 'on' : '', onclick: () => { filter = k; update(); } }, `${lbl} ${n}`));
     // статистика сегмента — только по опубликованным этой подтемы; сторис в статистику не идут
-    segStats.innerHTML = '';
+    segStats.innerHTML = ''; rating = null;
     if (filter === 'pub') {
       if (isStories(sb)) segStats.append(h('div.tip', {}, h('span.ic', {}, 'ℹ️'), h('span', {}, 'Это сторис — в статистику и анализ они не входят. Здесь просто список того, что вышло.')));
-      else segStats.append(h('div.card', {}, h('h3', {}, `Статистика · ${sb.name} · только опубликованное`), statsBlock(aggStats(pub))));
+      else {
+        segStats.append(h('div.card', {}, h('h3', {}, `Статистика · ${sb.name} · только опубликованное`), statsBlock(aggStats(pub))));
+        rating = rateIdeas(pub);
+        if (rating.rows.length) segStats.append(ratingCard(rating, { title: `Рейтинг роликов · ${sb.name}`, col: subColor(c, sb), scope: 'в подтеме' }));
+      }
     }
     const shown = filter === 'todo' ? todo.sort((a, b) => b.createdAt - a.createdAt)
       : filter === 'done' ? done.sort((a, b) => (b.doneAt || 0) - (a.doneAt || 0))
@@ -1550,6 +1600,7 @@ function ideaCard(i, ctx = {}) {
       h('button.st-link', { onclick: () => unDone(i) }, '← в очередь'), meta);
   } else {
     meta.append(h('span.done-tag', {}, `📣 опубликовано ${fmtDate(pubAt(i))}`));
+    if (ctx.rank) meta.append(h('span.rank-tag', { class: ctx.rank.rank === 1 ? 'top' : '', title: 'Место в рейтинге подтемы · индекс 0–100' }, `№${ctx.rank.rank} из ${ctx.rank.of}`, h('small', {}, String(ctx.rank.score))));
     if (isStories(sb)) foot.append(h('span.stat-note', {}, 'сторис · в статистику не входит'));
     else {
       if (hasStats(i.stats)) foot.append(statChips(i.stats));
@@ -1579,6 +1630,78 @@ function statsBlock(a) {
   box.append(grid);
   if (a.withStats < a.n) box.append(h('div.stats-note', {}, `У ${a.n - a.withStats} ${plural(a.n - a.withStats, 'ролика', 'роликов', 'роликов')} статистика ещё не добавлена — нажми «Добавить статистику» в карточке.`));
   return box;
+}
+
+/* рейтинг роликов: ранжированный список с индексом и короткие выводы —
+   кто лучший, насколько оторвался, кто приносит подписчиков и вовлечённость.
+   opts: title; col — цвет полосок (для подтемы), иначе цвет подтемы каждого ролика;
+   showPlace — подписывать подтему в строке (общий рейтинг); limit — сколько строк показать сразу */
+function ratingCard(rating, opts = {}) {
+  const { rows, axes } = rating, scope = opts.scope || 'в подтеме';
+  const rowCol = r => opts.col || (() => { const c = cat(r.i.catId), sb = subOf(r.i.catId, r.i.subId); return c ? (sb ? subColor(c, sb) : c.color) : 'var(--ink-3)'; })();
+  const card = h('div.card.rate-card');
+  card.append(h('div.an-head', {}, h('h3', {}, opts.title || 'Рейтинг роликов'),
+    h('span.rate-axes', { title: 'Индекс 0–100: доля от лучшего по каждой оси, среднее по осям' }, axes.map(a => a.lbl).join(' · '))));
+
+  // --- выводы ---
+  const verdict = h('div.rate-verdict');
+  const first = t => t.title.split('\n')[0].replace(/\s+/g, ' ').trim();
+  const q = i => `«${first(i).slice(0, 70)}${first(i).length > 70 ? '…' : ''}»`;
+  const line = (ic, ...kids) => verdict.append(h('div.ln', {}, h('span.ic', {}, ic), h('span', {}, ...kids)));
+  const best = rows[0], bs = best.i.stats;
+  if (rows.length === 1) {
+    line('🏆', 'Пока один ролик со статистикой — ', h('b', {}, q(best.i)), '. Сравнивать не с чем: впиши цифры остальным, и рейтинг оживёт.');
+  } else {
+    const bits = [`${fmtInt(bs.views)} просмотров`];
+    if (erOf(bs) != null) bits.push(`ER ${fmtPct(erOf(bs))}`);
+    if (+bs.followers > 0) bits.push(`+${fmtInt(bs.followers)} подписчиков`);
+    line('🏆', 'Лучший — ', h('b', {}, q(best.i)), `: ${bits.join(', ')}.`);
+    // отрыв лидера по просмотрам от медианы: большой — тема «выстрелила», малый — ролики идут ровно
+    const views = rows.map(r => +r.i.stats.views || 0).sort((a, b) => a - b), med = views[Math.floor(views.length / 2)];
+    const ratio = med > 0 ? (+bs.views || 0) / med : 0;
+    if (ratio >= 2) line('🚀', 'Лидер собрал в ', h('b', {}, fmtX(ratio)), ' больше просмотров, чем типичный ролик — такой формат или тему стоит повторить.');
+    else if (med > 0) line('📊', `Ролики идут ровно: лидер обошёл типичный ролик лишь в ${fmtX(ratio)}. Резких удач пока нет — пробуй новые хуки.`);
+    // общий рейтинг: какая подтема держит верх таблицы
+    if (opts.showPlace && rows.length >= 3) {
+      const cnt = {}; for (const r of rows.slice(0, 3)) { const k = r.i.catId + '/' + r.i.subId; cnt[k] = (cnt[k] || 0) + 1; }
+      const [k, n] = Object.entries(cnt).sort((a, b) => b[1] - a[1])[0];
+      const sbTop = subOf(...k.split('/'));
+      if (n >= 2 && sbTop) line('🎯', `В топ-3 ${n === 3 ? 'все три ролика' : 'два ролика'} из `, h('b', {}, `«${sbTop.name}»`), ' — эта подтема сейчас работает лучше всех, давай ей больше места.');
+    }
+    const byF = rows.filter(r => +r.i.stats.followers > 0).sort((a, b) => +b.i.stats.followers - +a.i.stats.followers)[0];
+    if (byF && byF !== best) line('👤', 'Подписчиков приносит лучше всех ', h('b', {}, q(byF.i)), ` — +${fmtInt(byF.i.stats.followers)}, ${convOf(byF.i.stats).toFixed(1).replace('.', ',')} на 1 000 просмотров.`);
+    const byEr = rows.filter(r => erOf(r.i.stats) != null).sort((a, b) => erOf(b.i.stats) - erOf(a.i.stats))[0];
+    if (byEr && byEr !== best && byEr !== byF) line('💬', 'Сильнее всего вовлекает ', h('b', {}, q(byEr.i)), ` — ER ${fmtPct(erOf(byEr.i.stats))} при ${fmtInt(byEr.i.stats.views)} просмотрах.`);
+    const weak = rows.filter(r => r.score < 35).length;
+    if (weak) line('⚠️', `${weak} ${plural(weak, 'ролик заметно слабее', 'ролика заметно слабее', 'роликов заметно слабее')} лидера (индекс ниже 35) — посмотри, что у них общего: хук, длина, тема.`);
+  }
+  card.append(verdict);
+
+  // --- список ---
+  const list = h('div.rate-list');
+  const avg = rows.reduce((a, r) => a + r.score, 0) / rows.length;
+  const limit = opts.limit || rows.length;
+  let expanded = false;
+  const more = rows.length > limit ? h('button.rate-more', { type: 'button', onclick: () => { expanded = !expanded; draw(); } }) : null;
+  function draw() {
+    list.innerHTML = '';
+    for (const r of expanded ? rows : rows.slice(0, limit)) {
+      const st = r.i.stats, er = erOf(st), col = rowCol(r), sb = subOf(r.i.catId, r.i.subId);
+      const sub = [fmtDate(pubAt(r.i)), `👁 ${fmtInt(st.views)}`];
+      if (er != null) sub.push(`ER ${fmtPct(er)}`);
+      if (+st.followers > 0) sub.push(`👤 +${fmtInt(st.followers)}`);
+      if (opts.showPlace && sb) sub.unshift(sb.name);
+      list.append(h('button.rate-row', { type: 'button', class: r.rank === 1 ? 'top' : '', title: 'Изменить статистику', onclick: e => openStatsSheet(r.i, e) },
+        h('span.num', { style: `background:${r.rank === 1 ? col : 'var(--surface-3)'};color:${r.rank === 1 ? '#fff' : 'var(--ink-2)'}` }, String(r.rank)),
+        h('span.t', {}, first(r.i), h('small', {}, sub.join(' · '))),
+        h('span.sc', {}, String(r.score), h('small', {}, '/100')),
+        h('span.track', {}, h('i', { style: `width:${r.score}%;background:${col}` }), h('span.avg', { style: `left:${avg}%`, title: `среднее ${Math.round(avg)}` }))));
+    }
+    if (more) more.textContent = expanded ? 'Свернуть' : `Показать все ${rows.length}`;
+  }
+  draw();
+  card.append(list, ...(more ? [more] : []), h('p.an-foot', {}, `Индекс считает, насколько ролик близок к лучшему ${scope} по каждой оси (${axes.map(a => a.lbl).join(', ')}) — 100 у того, кто лучший по всем. Штрих — среднее. Нажми на строку, чтобы поправить цифры.`));
+  return card;
 }
 
 /* ===================================================================
@@ -1644,14 +1767,15 @@ function PublishedView() {
   const el = h('div.view.pubv');
   let period = 0, editingId = null;
   const meta = h('span.meta'), filters = h('div.filters');
-  const report = h('div.card'), bySub = h('div.card'), top = h('div.card');
+  const report = h('div.card'), rate = h('div.rate-slot'), bySub = h('div.card');
   const listHead = h('div.pub-list-head'), ul = h('ul.ideas');
+  let rating = null;   // общий рейтинг по всем опубликованным за период
   el.append(
     h('div.view-head', {},
       h('button.back', { onclick: () => go({ level: 'home' }, { dir: 'out' }) }, icon('back'), 'Главная'),
       h('h2', {}, h('span.sw', { style: 'background:var(--good)' }), 'Опубликованные'), meta, h('span.spacer'), filters),
-    report, h('div.pub-top', {}, bySub, top), listHead, ul);
-  const ctx = i => ({ editing: editingId === i.id, showPlace: true, setEditing: id => { editingId = id; update(); } });
+    report, rate, bySub, listHead, ul);
+  const ctx = i => ({ editing: editingId === i.id, showPlace: true, rank: rating && rating.byId[i.id], setEditing: id => { editingId = id; update(); } });
   function update() {
     const since = period ? Date.now() - period * 864e5 : 0;
     const allPub = state.ideas.filter(i => i.published && pubAt(i) >= since).sort((a, b) => pubAt(b) - pubAt(a));
@@ -1669,7 +1793,7 @@ function PublishedView() {
     const nP = counted.filter(i => i.catId === P.id).length, nE = counted.length - nP, [sp, se] = shares([nP, nE]);
     report.innerHTML = '';
     report.append(
-      h('div.an-head', {}, h('h3', {}, `Отчёт · ${periodTxt}`), h('button.ghost-btn', { onclick: () => copyReport(counted, a, periodTxt) }, '📋 Скопировать отчёт для анализа')),
+      h('div.an-head', {}, h('h3', {}, `Отчёт · ${periodTxt}`), h('button.ghost-btn', { onclick: () => copyReport(counted, a, periodTxt, rating) }, '📋 Скопировать отчёт для анализа')),
       statsBlock(a));
     const bar = h('div.bar');
     if (counted.length) bar.append(h('i.p', { style: `width:${sp}%` }), h('i.e', { style: `width:${se}%` }));
@@ -1677,7 +1801,7 @@ function PublishedView() {
       h('div.it', {}, h('span.dot', { style: `background:${P.color}` }), `${P.name} `, h('b', {}, counted.length ? `${nP} · ${sp}%` : '0')),
       h('div.it', {}, h('span.dot', { style: `background:${E.color}` }), `${E.name} `, h('b', {}, counted.length ? `${nE} · ${se}%` : '0')),
       h('div.it', {}, 'Снято всего ', h('b', {}, shotAll), ' · ждут публикации ', h('b', {}, waiting))),
-      h('p.an-foot', {}, 'Сторис в статистику не входят. ER = (лайки + комментарии + репосты + пересылки + сохранения) ÷ просмотры. «В среднем на ролик» — по роликам, у которых заполнена статистика.'));
+      h('p.an-foot', {}, 'Сторис в статистику не входят. ER = (лайки + комментарии + репосты + пересылки + сохранения) ÷ просмотры. «Подписалось» в ER не входит. «В среднем на ролик» — по роликам, у которых заполнена статистика.'));
 
     // --- по подтемам ---
     bySub.innerHTML = ''; bySub.append(h('h3', {}, 'По подтемам'));
@@ -1700,21 +1824,11 @@ function PublishedView() {
         tbody)));
     }
 
-    // --- топ по просмотрам ---
-    top.innerHTML = ''; top.append(h('h3', {}, 'Топ по просмотрам'));
-    const ranked = counted.filter(i => hasStats(i.stats)).sort((x, y) => (+y.stats.views || 0) - (+x.stats.views || 0)).slice(0, 5);
-    if (!ranked.length) top.append(h('div.empty', {}, 'Добавь статистику к роликам — здесь появятся лидеры.'));
-    else {
-      const list = h('div.top-list');
-      ranked.forEach((i, k) => {
-        const c = cat(i.catId), sb = subOf(i.catId, i.subId);
-        list.append(h('button.top-row', { title: 'Изменить статистику', onclick: e => openStatsSheet(i, e) },
-          h('span.num', { style: `background:${sb ? subColor(c, sb) : c.color}` }, String(k + 1)),
-          h('span.t', {}, i.title.split('\n')[0], h('small', {}, `${sb ? sb.name : '—'} · ${fmtDate(pubAt(i))}`)),
-          h('span.v', {}, fmtInt(i.stats.views), h('small', {}, `ER ${fmtPct(erOf(i.stats))}`))));
-      });
-      top.append(list);
-    }
+    // --- общий рейтинг: все подтемы вместе, лидеры сверху ---
+    rating = rateIdeas(counted);
+    rate.innerHTML = '';
+    rate.append(rating.rows.length ? ratingCard(rating, { title: `Рейтинг роликов · ${periodTxt}`, showPlace: true, limit: 7, scope: 'среди всех' })
+      : h('div.card', {}, h('h3', {}, 'Рейтинг роликов'), h('div.empty', {}, 'Добавь статистику к роликам — здесь появятся лидеры.')));
 
     // --- список ---
     listHead.innerHTML = '';
@@ -1727,7 +1841,7 @@ function PublishedView() {
   return { el, update, zoomTarget: () => null };
 }
 /* текстовый отчёт для вставки в чат — сводка, подтемы и каждый ролик с цифрами */
-function copyReport(ideas, a, periodTxt) {
+function copyReport(ideas, a, periodTxt, rating) {
   const d = new Date(), L = [];
   const metricsLine = s => METRICS.map(([k, lbl]) => `${lbl.toLowerCase()} ${fmtInt(s[k] || 0)}`).join(', ');
   const [P, E] = state.categories, nP = ideas.filter(i => i.catId === P.id).length;
@@ -1742,11 +1856,14 @@ function copyReport(ideas, a, periodTxt) {
     const s = aggStats(xs);
     L.push(`- ${c.name} › ${sb.name}: ${pVideos(s.n)} · ${metricsLine(s)} · ER ${fmtPct(s.er)}`);
   }
+  const rk = rating && rating.byId || {};
+  if (rating && rating.rows.length) L.push('', `Рейтинг (индекс 0–100 — доля от лучшего по осям: ${rating.axes.map(x => x.lbl).join(', ')}):`,
+    ...rating.rows.map(r => `${r.rank}. ${r.score}/100 · «${r.i.title.replace(/\s+/g, ' ').slice(0, 80)}»`));
   L.push('', 'Ролики (от новых к старым):');
   ideas.forEach((i, n) => {
-    const c = cat(i.catId), sb = subOf(i.catId, i.subId), st = i.stats || {};
+    const c = cat(i.catId), sb = subOf(i.catId, i.subId), st = i.stats || {}, r = rk[i.id];
     L.push(`${n + 1}. ${new Date(pubAt(i)).toLocaleDateString('ru-RU')} · ${c ? c.name : ''} › ${sb ? sb.name : ''} · «${i.title.replace(/\s+/g, ' ').slice(0, 160)}»` +
-      (hasStats(st) ? ` · ${metricsLine(st)} · ER ${fmtPct(erOf(st))}` : ' · статистики нет'));
+      (hasStats(st) ? ` · ${metricsLine(st)} · ER ${fmtPct(erOf(st))}${r ? ` · рейтинг ${r.score}/100 (№${r.rank})` : ''}` : ' · статистики нет'));
   });
   copyText(L.join('\n')).then(ok => toast(ok ? 'Отчёт скопирован — вставь его в чат с Claude' : 'Не удалось скопировать'));
 }
