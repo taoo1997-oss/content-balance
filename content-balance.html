@@ -559,21 +559,18 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .gen .mname{font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-2)}
 .gen .mhint{color:var(--ink-3);font-weight:500}
 .gen .q{margin:0 0 14px;font-size:clamp(20px,2.6vw,25px);line-height:1.38;font-weight:700;letter-spacing:-.015em;text-wrap:pretty;max-width:30ch}
-.slot{display:inline;white-space:normal}
+.slot{display:inline-flex;align-items:baseline;gap:2px;max-width:100%;vertical-align:baseline}
 .gen .q::first-letter{text-transform:uppercase}
-.slot .w{display:inline;font:inherit;color:var(--ink);background:linear-gradient(transparent 68%,color-mix(in srgb,var(--sc,var(--expert)) 32%,transparent) 68%);-webkit-box-decoration-break:clone;box-decoration-break:clone;padding:0 2px;border-radius:3px;cursor:pointer;-webkit-tap-highlight-color:transparent;outline:none;transition:background-color .2s}
-.slot .w:focus-visible{box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--sc,var(--expert))}
-.slot .w:hover{background-color:color-mix(in srgb,var(--sc,var(--expert)) 14%,transparent)}
-.gen .locks{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:-4px 0 14px}
-.gen .locks .lbl{color:var(--ink-3);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-right:4px}
-.gen .locks .chip{padding:5px 10px;font-size:12px;--accent:var(--ink)}
-.gen .locks .chip.on{background:var(--ink);border-color:var(--ink);color:var(--bg)}
-.gen .locks .chip svg{width:12px;height:12px}
-.slot.lock .w{background:linear-gradient(transparent 68%,color-mix(in srgb,var(--ink) 22%,transparent) 68%);cursor:default}
-.slot.flip .w{animation:slotFlip .32s cubic-bezier(.2,.8,.2,1) both}
+.blank{font:inherit;color:var(--ink);background:transparent;border:0;border-bottom:2px solid color-mix(in srgb,var(--sc,var(--expert)) 55%,transparent);border-radius:0;padding:0 2px;min-width:4ch;max-width:100%;outline:none;transition:border-color .2s,background .2s}
+.blank::placeholder{color:var(--ink);opacity:.38}
+.blank:focus{border-bottom-color:var(--sc,var(--expert));background:color-mix(in srgb,var(--sc,var(--expert)) 8%,transparent);border-radius:4px 4px 0 0}
+.blank:not(:placeholder-shown){border-bottom-color:var(--ink)}
+.slot .re{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:6px;color:var(--ink-3);align-self:center;opacity:.75;transition:opacity .2s,color .2s,background .2s}
+.slot .re svg{width:13px;height:13px}
+.slot .re:hover{opacity:1;color:var(--ink);background:var(--surface-2)}
+.slot.flip .blank{animation:slotFlip .32s cubic-bezier(.2,.8,.2,1) both}
 @keyframes slotFlip{from{opacity:0;filter:blur(3px);transform:translateY(5px)}to{opacity:1;filter:blur(0);transform:none}}
-.slot-in{font:inherit;color:var(--ink);background:var(--surface-2);border:1px solid var(--line);border-bottom:2px solid var(--expert);border-radius:8px;padding:2px 8px;width:min(100%,26ch);outline:none}
-.slot-in:focus{border-color:var(--expert)}
+@media (prefers-reduced-motion:reduce){.slot.flip .blank{animation:none}}
 .gen textarea{width:100%;min-height:96px;resize:none;overflow:hidden;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:16px;line-height:1.5;color:var(--ink);font-family:inherit}
 .gen textarea:focus{outline:none;border-color:var(--ink-3)}
 .gen textarea::placeholder{color:var(--ink-3)}
@@ -607,8 +604,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
   .gen .acts .spacer{display:none}
   .gen .acts .ghost-btn{order:3;width:100%;justify-content:center}
 }
-@media (prefers-reduced-motion:reduce){.slot.flip .w{animation:none}}
-</style>
+@media (prefers-reduced-motion:reduce){</style>
 </head>
 <body>
 <div class="app">
@@ -2404,7 +2400,7 @@ function rollSlot(kind, prev) {
     }
     case 'dm': {
       let list = []; try { list = JSON.parse(localStorage.getItem(IDEA_DM_KEY)) || []; } catch (e) {}
-      return { text: list.length ? pickNot(list, prev && prev.text) : '', editable: true };
+      return { text: list.length ? pickNot(list, prev && prev.text) : '', editable: true };  // без примера, если директ ещё пуст
     }
   }
   return { text: '' };
@@ -2412,7 +2408,7 @@ function rollSlot(kind, prev) {
 
 function IdeasView() {
   const el = h('div.view.ideas');
-  let method = IDEA_METHODS[0], slots = {}, locked = {}, hint = null, busy = false;
+  let method = IDEA_METHODS[0], slots = {}, hint = null, busy = false;
   const meta = h('span.meta');
   const methods = h('div.methods');
   const how = h('p.how');
@@ -2425,38 +2421,35 @@ function IdeasView() {
     methods, how, card, bank);
 
   function rollAll(force) {
-    for (const k of method.slots) if (force || !slots[k] || !locked[k]) slots[k] = rollSlot(k, slots[k]);
+    for (const k of method.slots) { const typed = slots[k] && slots[k].typed; if (force || !slots[k] || !typed) slots[k] = Object.assign(rollSlot(k, slots[k]), { typed: force ? '' : typed }); }
     hint = null;
   }
-  function setMethod(m) { method = m; slots = {}; locked = {}; rollAll(true); drawMethods(); drawCard(); }
+  function setMethod(m) { method = m; slots = {}; rollAll(true); drawMethods(); drawCard(); }
 
   function drawMethods() {
     methods.innerHTML = '';
     for (const m of IDEA_METHODS) methods.append(h('button.chip', { class: m.id === method.id ? 'on' : '', onclick: () => setMethod(m) }, m.name));
-    how.textContent = method.how;
+    how.textContent = method.how + ' Пропуски — твои: пиши своё. Серое — пример; тап — взять его, кубик — другой.';
   }
 
-  /* слово в вопросе: тап — перекрутить только его. Закрепление — рядом чипами */
+  /* пропуск в вопросе: пишешь своё; случайный пример — полупрозрачной подсказкой.
+     Тап по подсказке — взять её; ↻ — другой пример. Своё введённое переживает «ещё карточку» */
   function slotEl(kind) {
     const v = slots[kind];
-    const wrap = h('span.slot', { class: locked[kind] ? 'lock' : '', title: IDEA_SLOT_NAMES[kind] });
-    if (v.editable) {
-      const inp = h('input.slot-in', { value: v.text, placeholder: 'вставь вопрос из директа', onchange: () => { v.text = inp.value.trim(); if (v.text) { let l = []; try { l = JSON.parse(localStorage.getItem(IDEA_DM_KEY)) || []; } catch (e) {} l = [v.text, ...l.filter(x => x !== v.text)].slice(0, 30); try { localStorage.setItem(IDEA_DM_KEY, JSON.stringify(l)); } catch (e) {} } } });
-      wrap.append(inp); return wrap;
-    }
-    const reroll = () => { if (locked[kind]) return; slots[kind] = rollSlot(kind, v); hint = null; const nw = slotEl(kind); nw.classList.add('flip'); wrap.replaceWith(nw); };
-    const w = h('span.w', { role: 'button', tabindex: 0, style: v.color ? `--sc:${v.color}` : '', onclick: reroll, onkeydown: ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); reroll(); } } }, v.text);
-    wrap.append(w);
+    const wrap = h('span.slot', { title: IDEA_SLOT_NAMES[kind] });
+    const inp = h('input.blank', { value: v.typed || '', placeholder: v.text || IDEA_SLOT_NAMES[kind], style: v.color ? `--sc:${v.color}` : '', 'aria-label': IDEA_SLOT_NAMES[kind] });
+    const fit = () => { const s = inp.value || inp.placeholder || ''; inp.style.width = Math.min(40, Math.max(4, s.length + 1)) + 'ch'; };
+    inp.addEventListener('input', () => { v.typed = inp.value; hint = null; fit(); });
+    inp.addEventListener('blur', () => { if (kind === 'dm' && inp.value.trim()) { let l = []; try { l = JSON.parse(localStorage.getItem(IDEA_DM_KEY)) || []; } catch (e) {} l = [inp.value.trim(), ...l.filter(x => x !== inp.value.trim())].slice(0, 30); try { localStorage.setItem(IDEA_DM_KEY, JSON.stringify(l)); } catch (e) {} } });
+    inp.addEventListener('keydown', ev => { if (ev.key === 'Tab' && !inp.value && inp.placeholder) { ev.preventDefault(); inp.value = inp.placeholder; v.typed = inp.value; fit(); } });
+    // тап по пустому полю с подсказкой — берём подсказку целиком (на телефоне это удобнее Tab)
+    inp.addEventListener('click', () => { if (!inp.value && inp.placeholder && v.text) { inp.value = inp.placeholder; v.typed = inp.value; fit(); inp.select(); } });
+    const re = v.editable ? null : h('button.re', { title: 'Другой пример', 'aria-label': 'Другой пример', onclick: () => { const typed = v.typed; slots[kind] = Object.assign(rollSlot(kind, v), { typed }); const nw = slotEl(kind); nw.classList.add('flip'); wrap.replaceWith(nw); } }, icon('dice'));
+    wrap.append(inp); if (re) wrap.append(re);
+    requestAnimationFrame(fit);
     return wrap;
   }
-  function locksRow() {
-    const row = h('div.locks', {}, h('span.lbl', {}, 'Закрепить'));
-    for (const k of method.slots) if (!slots[k].editable) {
-      const b = h('button.chip', { class: locked[k] ? 'on' : '', onclick: () => { locked[k] = !locked[k]; b.classList.toggle('on', locked[k]); card.querySelectorAll('.slot').forEach((s, i) => { if (method.slots.filter(x => !slots[x].editable)[i] === k) s.classList.toggle('lock', locked[k]); }); } }, icon('pin'), IDEA_SLOT_NAMES[k]);
-      row.append(b);
-    }
-    return row;
-  }
+  const slotText = k => (slots[k].typed || '').trim() || slots[k].text || '';
 
   function drawCard() {
     card.innerHTML = '';
@@ -2490,8 +2483,8 @@ function IdeasView() {
       const v = ta.value.trim();
       if (!v) { err.textContent = 'Сначала напиши идею — хотя бы одну строку.'; ta.focus(); return; }
       if (!tCat || !tSub) { err.textContent = 'Выбери подтему, куда положить.'; return; }
-      const src = { method: method.id, slots: Object.fromEntries(method.slots.map(k => [k, slots[k].text])) };
-      const note = `${method.name} · ` + method.slots.map(k => slots[k].text).join(' · ');
+      const src = { method: method.id, slots: Object.fromEntries(method.slots.map(k => [k, slotText(k)])) };
+      const note = `${method.name} · ` + method.slots.map(k => slotText(k)).filter(Boolean).join(' · ');
       const idea = addIdea(tCat, tSub, v, note);
       idea.source = src; idea.updatedAt = Date.now(); commit();
       toast('В очереди · ' + (subOf(tCat, tSub) || {}).name, { action: 'Открыть', onAction: () => go({ level: 'sub', catId: tCat, subId: tSub }) });
@@ -2502,14 +2495,14 @@ function IdeasView() {
       const a = Auth.get();
       if (!a) { hint = { error: 'Подсказка работает только после входа.' }; drawAi(); return; }
       busy = true; drawAi();
-      const r = await api('POST', '/api/angle', { method: method.name, question: parts.map(p => typeof p === 'string' && slots[p] ? slots[p].text : p).join(''), slots: Object.fromEntries(method.slots.map(k => [k, slots[k].text])), draft: ta.value.trim() });
+      const r = await api('POST', '/api/angle', { method: method.name, question: parts.map(p => typeof p === 'string' && slots[p] ? slotText(p) : p).join(''), slots: Object.fromEntries(method.slots.map(k => [k, slotText(k)])), draft: ta.value.trim() });
       busy = false;
       hint = r.ok && r.data && Array.isArray(r.data.angles) ? { angles: r.data.angles } : { error: r.error || 'Не получилось. Попробуй ещё раз.' };
       drawAi();
     };
     card.append(
       h('div.kicker', {}, h('span.mname', {}, method.name), mech && mech.hint ? h('span.mhint', {}, mech.hint) : null),
-      q, locksRow(), ta, err, target,
+      q, ta, err, target,
       h('div.acts', {},
         h('button.btn.secondary', { onclick: () => { rollAll(false); drawCard(); } }, icon('dice'), 'Ещё карточку'),
         h('button.ghost-btn', { onclick: askAi, disabled: busy }, icon('spark'), 'Подсказать угол'),
