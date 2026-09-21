@@ -549,9 +549,8 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .auth-card .note{color:var(--ink-3);font-size:12px;margin:14px 0 0;text-align:center;line-height:1.5}
 
 /* ── Генератор идей ─────────────────────────────────────────── */
-.ideas .methods{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 8px;margin:0 -2px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
-.ideas .methods::-webkit-scrollbar{display:none}
-.ideas .methods .chip{flex:none;--accent:var(--ink)}
+.ideas .methods{display:flex;flex-wrap:wrap;gap:8px;padding:2px 0 14px}
+.ideas .methods .chip{--accent:var(--ink)}
 .ideas .methods .chip.on{background:var(--ink);border-color:var(--ink);color:var(--bg)}
 .ideas .how{color:var(--ink-3);font-size:13px;line-height:1.45;margin:0 0 14px;max-width:62ch}
 .gen{padding:22px 22px 18px}
