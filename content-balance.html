@@ -693,6 +693,7 @@ function tombstone(id) { state.tombstones[id] = Date.now(); }
 /* --- селекторы --- */
 const cat = id => state.categories.find(c => c.id === id);
 const subOf = (catId, subId) => (cat(catId) || { subtopics: [] }).subtopics.find(s => s.id === subId);
+const pending = list => list.filter(i => !i.published).length;   // ждут съёмки или публикации
 const ideasIn = (catId, subId) => state.ideas.filter(i => i.catId === catId && (!subId || i.subId === subId));
 const monthKey = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
 const nowKey = () => monthKey(new Date());
@@ -1196,7 +1197,7 @@ function HomeView() {
     onClick: (seg, e, path) => { const o = originFromEl(path); if (o) setOrigin(o.x, o.y); go({ level: 'cat', catId: seg.key }, { dir: 'in', origin: o }); },
     onHover: (seg, e) => {
       const c = cat(seg.key), all = ideasIn(c.id), dn = all.filter(i => i.done).length, pb = all.filter(i => i.published).length;
-      showTip(`${c.name} · ${seg.pct}%<small>${all.length ? `${pIdeas(all.length)} · снято ${dn} · опубликовано ${pb}` : 'пока пусто'} · открыть →</small>`, e.clientX, e.clientY);
+      showTip(`${c.name} · ${seg.pct}%<small>${all.length ? `ждут ${all.length - pb} · снято ${dn} · опубликовано ${pb} · всего ${all.length}` : 'пока пусто'} · открыть →</small>`, e.clientX, e.clientY);
     }
   });
   const center = h('div.center', {}, h('div', {}, h('div.big', { id: 'cTotal' }), h('div.sub', { id: 'cSub' })));
@@ -1238,8 +1239,8 @@ function HomeView() {
     const total = ideasP.length + ideasE.length;
     // по часовой от верха: сначала экспертное (правая половина), затем личное (левая) — как кнопки под кольцом
     donut.update([
-      { key: E.id, label: E.name, value: ideasE.length, color: E.color },
-      { key: P.id, label: P.name, value: ideasP.length, color: P.color }
+      { key: E.id, label: E.name, value: ideasE.length, sub: ideasE.length ? `ждут ${pending(ideasE)}` : '', color: E.color },
+      { key: P.id, label: P.name, value: ideasP.length, sub: ideasP.length ? `ждут ${pending(ideasP)}` : '', color: P.color }
     ]);
     const dnAll = state.ideas.filter(i => i.done).length, pbAll = state.ideas.filter(i => i.published).length;
     center.querySelector('#cTotal').textContent = total;
@@ -1426,7 +1427,7 @@ function CatView(catId) {
     onClick: (seg, e, path) => { const o = originFromEl(path); go({ level: 'sub', catId, subId: seg.key }, { dir: 'in', origin: o }); },
     onHover: (seg, e) => {
       const all = ideasIn(catId, seg.key), dn = all.filter(i => i.done).length, pb = all.filter(i => i.published).length;
-      showTip(`${seg.label}${seg.fmt ? ` (${seg.fmt})` : ''} · ${seg.pct}%<small>${all.length ? `${pIdeas(all.length)} · снято ${dn} · опубликовано ${pb}` : 'пока пусто'} · открыть →</small>`, e.clientX, e.clientY);
+      showTip(`${seg.label}${seg.fmt ? ` (${seg.fmt})` : ''} · ${seg.pct}%<small>${all.length ? `ждут ${all.length - pb} · снято ${dn} · опубликовано ${pb} · всего ${all.length}` : 'пока пусто'} · открыть →</small>`, e.clientX, e.clientY);
     }
   });
   const center = h('div.center', {}, h('div', {}, h('div.big'), h('div.sub')));
@@ -1448,7 +1449,7 @@ function CatView(catId) {
     const all = ideasIn(catId), total = state.ideas.length;
     const [share] = shares([all.length, total - all.length]);
     meta.textContent = `${pIdeas(all.length)} · ${total ? share + '% всего контента' : 'контента пока нет'}`;
-    donut.update(c.subtopics.map(sb => ({ key: sb.id, label: sb.name, fmt: sb.hint || '', value: ideasIn(catId, sb.id).length, color: subColor(c, sb) })));
+    donut.update(c.subtopics.map(sb => { const li = ideasIn(catId, sb.id); return { key: sb.id, label: sb.name, fmt: sb.hint || '', value: li.length, sub: li.length ? `ждут ${pending(li)}` : '', color: subColor(c, sb) }; }));
     center.querySelector('.big').textContent = all.length;
     center.querySelector('.sub').innerHTML = `${plural(all.length, 'идея', 'идеи', 'идей')} · снято <b>${all.filter(i => i.done).length}</b> · вышло <b>${all.filter(i => i.published).length}</b>`;
     list.innerHTML = '';
@@ -1458,7 +1459,7 @@ function CatView(catId) {
       const row = h('div.sub-row', { 'data-key': sb.id, onclick: e => { if (e.target.closest('.plus')) return; go({ level: 'sub', catId, subId: sb.id }, { dir: 'in', origin: originFromEl(row) }); } },
         h('span.dot', { style: `background:${col}` }),
         h('span.name', {}, sb.name, sb.hint ? h('small', {}, `(${sb.hint})`) : null),
-        h('span.cnt', {}, ideas.length ? h('span', {}, h('b', {}, ideas.length), ` · снято ${dn + pb} · вышло ${pb}`) : 'пусто'),
+        h('span.cnt', {}, ideas.length ? h('span', {}, 'ждут ', h('b', {}, ideas.length - pb), ` · вышло ${pb} · всего ${ideas.length}`) : 'пусто'),
         // полоска: яркое — опубликовано, бледное — снято и ждёт публикации
         h('span.mini', { title: `опубликовано ${pb}, снято ${dn}, в очереди ${ideas.length - dn - pb}` },
           h('i', { style: `width:${ideas.length ? pb / ideas.length * 100 : 0}%;background:${col}` }),
